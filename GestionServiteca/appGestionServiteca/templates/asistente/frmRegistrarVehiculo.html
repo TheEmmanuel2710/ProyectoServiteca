@@ -21,12 +21,23 @@
                 <div class="invalid-feedback">Por favor ingrese la placa del vehiculo.</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtMarca" class="fw-bold">Marca:</label>
-                <input type="text" name="txtMarca" class="form-control" id="txtMarca"
-                    placeholder="Marca del vehiculo" required>
-                <div class="invalid-feedback">Por favor ingrese la placa del vehiculo.</div>
-
-
+                <label for="cbMarca" class="fw-bold">Marca:</label>
+                <select name="cbMarca" id="cbMarca" class="form-select" required>
+                    <option value="Seleccione">Seleccione</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Nissan">Nissan</option>
+                    <option value="Mazda">Mazda</option>
+                    <option value="Hyundai">Hyundai</option>
+                    <option value="Chevrolet">Chevrolet</option>
+                    <option value="BMW">BMW</option>
+                    <option value="Suzuki">Suzuki</option>
+                    <option value="Ford">Ford</option>
+                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+                    <option value="Audi">Audi</option>
+                    <option value="Audi">Renault</option>
+                       
+                </select>
+                <div class="invalid-feedback">Por favor ingrese la marca del vehiculo.</div>
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="txtModelo" class="fw-bold">Modelo</label>
@@ -38,9 +49,11 @@
                 <label for="cbTipoV" class="fw-bold">Tipo de Vehiculo:</label>
                 <select name="cbTipoV" id="cbTipoV" class="form-select" required>
                     <option value="">Seleccione</option>
-                    <option value="Electrónico">Electrónico</option>
-                    <option value="Gasolina">Gasolina</option>
+                        {% for tipo in tipoVeh %}
+                            <option value="{{tipo.0}}">{{tipo.1}}</option>
+                        {% endfor %}
                 </select>
+                <div class="invalid-feedback">Por favor ingrese el tipo del vehiculo.</div>
             </div>
             <br>
             <div class="d-flex justify-content-center">

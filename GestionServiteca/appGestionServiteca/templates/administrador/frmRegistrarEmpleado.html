@@ -47,10 +47,11 @@
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="cbEstado" class="fw-bold">Estado del Empleado:</label>
-                <select name="cbEstado" id="cbEstado" class="form-select" required>
+                <select name="cbTipo" id="cbTipo" class="form-select" required>
                     <option value="">Seleccione</option>
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo">Inactivo</option>
+                        {% for tipo in estadoEmpl %}
+                            <option value="{{tipo.0}}">{{tipo.1}}</option>
+                        {% endfor %}
                 </select>
                 <div class="invalid-feedback">Por favor eliga el estado del empleado</div>
             </div>

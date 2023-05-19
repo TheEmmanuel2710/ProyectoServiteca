@@ -31,7 +31,7 @@
                     <td>{{usuario.userTipo}}</td>
                     <td><img src="../media/{{usuario.userFoto}}" width="50" height="50"></td>
                     <td class="text-center">
-                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 3rem;"></i>
+                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 2rem;"></i>
                     </td>
                 </tr>
             {% endfor %}
@@ -41,7 +41,7 @@
 
 
 <script>
-    cargarDataTable($("#tblPersonas"),"LISTADO PERSONAS",4);
+    cargarDataTable($("#tblPersonas"),"LISTADO USUARIOS",4);
 </script>
 {%endblock %}
 {% block piePagina %}

@@ -28,12 +28,12 @@
             </div>
             <div class="form-group row">                
                 <div class="mb-3 col-lg-6">
-                    <label for="cbTipo" class="fw-bold">Tipo</label>
+                    <label for="cbTipo" class="fw-bold">Tipo Usuario:</label>
                     <select name="cbTipo" id="cbTipo" class="form-select" required>
                         <option value="">Seleccione</option>
-                        <option value="Administrativo">Administrativo</option>
-                        <option value="Asistente">Asistente</option>
-                        <option value="Tecnico">Tecnico</option>
+                            {% for tipo in tipoUsuario %}
+                                <option value="{{tipo.0}}">{{tipo.1}}</option>
+                            {% endfor %}
                     </select>
                 </div>
                 <div class="mb-3 col-lg-6">  

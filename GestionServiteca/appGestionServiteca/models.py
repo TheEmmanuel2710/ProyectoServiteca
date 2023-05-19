@@ -21,31 +21,31 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username}"
         
+class Persona(models.Model):
+    perIdentificacion = models.CharField(max_length=15,unique=True,db_comment="Identificacion de la persona")
+    perNombres = models.CharField(max_length=55,db_comment="Nombres de la persona")
+    perApellidos = models.CharField(max_length=55,db_comment="Apellidos de la persona")
+    perCorreo  = models.CharField(max_length=55,unique=True,db_comment="Correo de la persona")
+    perNumeroCelular = models.CharField(max_length=55,unique=True,db_comment="Numero de celular de la persona")   
+
 class Cliente(models.Model):
-    identificacion = models.CharField(max_length=55,unique=True, null=False,db_comment="Identificacion del cliente")
-    nombres = models.CharField(max_length=55,null=True,db_comment="Nombres del cliente")
-    apellidos = models.CharField(max_length=55,null=True,db_comment="Apellidos del cliente")
-    correo  = models.CharField(max_length=55,unique=False,db_comment="Correo del cliente")
-    numeroCelular = models.CharField(max_length=55,unique=True,null=False,db_comment="Numero de celular del cliente")
-    
+    cliDireccion  = models.CharField(max_length=55,unique=False,null=True,db_comment="Direccion del cliente")
+    cliPersona=models.ForeignKey(Persona,on_delete=models.PROTECT,db_comment="Hace relación a la persona FK")
     def __str__(self):
-        return f"{self.nombres} {self.apellidos}"    
+        return f"{self.cliDireccion}"    
 
 class Vehiculo(models.Model):
-    placa=models.CharField(max_length=6,unique=True,null=False,db_comment="Placa del vehiculo")
-    marca=models.CharField(max_length=15,null=False,db_comment="Marca del vehiculo")
-    modelo=models.CharField(max_length=15,null=True,db_comment="Modelo del vehiculo")
-    tipo=models.CharField(max_length=15,choices=tipoVehiculo,null=False,db_comment="Tipo de vehiculo")
+    vehPlaca=models.CharField(max_length=6,unique=True,db_comment="Placa del vehiculo")
+    vehMarca=models.CharField(max_length=15,db_comment="Marca del vehiculo")
+    vehModelo=models.CharField(max_length=15,null=True,db_comment="Modelo del vehiculo")
+    vehTipo=models.CharField(max_length=15,choices=tipoVehiculo,db_comment="Tipo de vehiculo")
     
     def __str__(self):
-        return f"{self.placa}" 
+        return f"{self.vehPlaca}" 
     
 class Empleado(models.Model):
-    identificacion = models.CharField(max_length=15,unique=True, null=False,db_comment="Identificacion del empleado")
-    nombres = models.CharField(max_length=55,null=True,db_comment="Nombres del empleado")
-    apellidos = models.CharField(max_length=55,null=True,db_comment="Apellidos del empleado")
-    correo  = models.CharField(max_length=55,unique=False,db_comment="Correo del cliente")
-    numeroCelular = models.CharField(max_length=55,unique=True,null=False,db_comment="Numero de celular del empleado")
-    cargo = models.CharField(max_length=30,unique=True,null=False,db_comment="Cargo del empleado")
-    sueldo = models.IntegerField(null=False,db_comment="Suelo del empleado")
-    estado=models.CharField(max_length=15,choices=estadoEmpleados,null=True,db_comment="Estado del empleado")
+    empCargo = models.CharField(max_length=30,unique=True,db_comment="Cargo del empleado")
+    empSueldo = models.IntegerField(null=False,db_comment="Suelo del empleado")
+    empEstado=models.CharField(max_length=15,choices=estadoEmpleados,db_comment="Estado del empleado")
+    empPersona=models.ForeignKey(Persona,on_delete=models.PROTECT,db_comment="Hace relación a la persona FK")
+ 

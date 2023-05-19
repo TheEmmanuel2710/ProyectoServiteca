@@ -20,18 +20,20 @@
                 <th>Nombre Completo</th>
                 <th>Correo</th>
                 <th>Numero de celular</th>
+                <th>Direccion</th>
                 <th>Acción</th>
             </tr>
         </thead>
         <tbody>
             {% for cliente in clientes %}
                 <tr>
-                    <td>{{cliente.identificacion}}</td>
-                    <td>{{cliente.nombres}} {{cliente.apellidos}}</td>
-                    <td>{{cliente.correo}}</td>
-                    <td>{{cliente.numeroCelular}}</td>
+                    <td>{{cliente.cliPersona.perIdentificacion}}</td>
+                    <td>{{cliente.cliPersona.perNombres}} {{cliente.cliPersona.perAapellidos}}</td>
+                    <td>{{cliente.cliPersona.perCorreo}}</td>
+                    <td>{{cliente.cliPersona.perNumeroCelular}}</td>
+                    <td>{{cliente.cliDireccion}}</td>
                     <td class="text-center">
-                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 3rem;"></i>
+                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 2rem;"></i>
                     </td>
                 </tr>
             {% endfor %}

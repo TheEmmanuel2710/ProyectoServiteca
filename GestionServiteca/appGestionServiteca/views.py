@@ -46,8 +46,17 @@ def inicioTecnico(request):
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
         roles = Group.objects.all()
-        retorno = {"roles":roles,"user":request.user}
+        retorno = {"roles":roles,"tipoUsuario":tipoUsuario,"user":request.user}
         return render(request, "administrador/frmRegistrarUsuario.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+
+def vistaGestionarUsuarios(request):
+    if request.user.is_authenticated:
+        usuarios=User.objects.all()
+        retorno = {"usuarios":usuarios,"user":request.user}
+        return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
@@ -101,17 +110,36 @@ def registrarUsuario(request):
     retorno = {"mensaje":mensaje}
     return render(request,"administrador/frmRegistrarUsuario.html",retorno)
 
+def vistaGestionarClientes(request):
+    if request.user.is_authenticated:
+        clientes=Cliente.objects.all()
+        retorno = {"clientes":clientes,"user":request.user}
+        return render(request,"asistente/vistaGestionarClientes.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+
+def vistaRegistrarClientes(request):
+    if request.user.is_authenticated:
+        retorno = {"user":request.user}
+        return render(request,"asistente/frmRegistrarCliente.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+
+
 def registrarCliente(request):
     try:
         identificacion = request.POST["txtIdentificacion"]
         nombres = request.POST["txtNombres"]
         apellidos = request.POST["txtApellidos"]
         correo = request.POST["txtCorreo"]
-        numeroC = request.POST["txtNumeroC"]
+        numeroC = request.POST["txtNumeroC"] 
+        direccion = request.POST["txtDireccion"] 
         with transaction.atomic():
-            
-            #crear un objeto de tipo User
-            cliente = Cliente(identificacion=identificacion, nombres=nombres, apellidos=apellidos, correo=correo, numeroCelular=numeroC)
+            persona=Persona(perIdentificacion=identificacion, perNombres=nombres, perApellidos=apellidos, perCorreo=correo, perNumeroCelular=numeroC)
+            persona.save()  
+            cliente = Cliente(cliDireccion=direccion,cliPersona=persona)
             cliente.save()
             mensaje="Cliente Agregado Correctamente" 
             retorno = {"mensaje":mensaje}
@@ -122,15 +150,32 @@ def registrarCliente(request):
     retorno = {"mensaje":mensaje}
     return render(request,"asistente/frmRegistrarCliente.html",retorno)
 
+def vistaGestionarVehiculos(request):
+    if request.user.is_authenticated:
+        vehiculos=Vehiculo.objects.all()
+        retorno = {"vehiculos":vehiculos,"user":request.user}
+        return render(request,"asistente/vistaGestionarVehiculos.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+
+def vistaRegistrarVehiculos(request):
+    if request.user.is_authenticated:
+        retorno = {"user":request.user,"tipoVeh":tipoVehiculo}
+        return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+
 def registrarVehiculo(request):
     try:
         placa = request.POST["txtPlaca"]
-        marca = request.POST["txtMarca"]
+        marca = request.POST["cbMarca"]
         modelo = request.POST["txtModelo"]
         tipoV = request.POST["cbTipoV"]
         with transaction.atomic():
             #crear un objeto de tipo User
-            vehiculo = Vehiculo(placa=placa, marca=marca, modelo=modelo, tipo=tipoV)
+            vehiculo = Vehiculo(vehPlaca=placa, vehMarca=marca, vehModelo=modelo, vehTipo=tipoV)
             vehiculo.save()
             mensaje="Vehiculo Agregado Correctamente" 
             retorno = {"mensaje":mensaje}
@@ -157,14 +202,6 @@ def generarPassword():
         password +=''.join(random.choice(caracteres))
     return password
 
-def vistaGestionarUsuarios(request):
-    if request.user.is_authenticated:
-        usuarios=User.objects.all()
-        retorno = {"usuarios":usuarios,"user":request.user}
-        return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
-    else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
 
 def vistaGestionarEmpleados(request):
     if request.user.is_authenticated:
@@ -177,63 +214,12 @@ def vistaGestionarEmpleados(request):
 
 def vistaRegistrarEmpleados(request):
     if request.user.is_authenticated:
-        retorno = {"user":request.user}
+        retorno = {"user":request.user,"estadoEmpl":estadoEmpleados}
         return render(request,"administrador/frmRegistrarEmpleado.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
 
-def vistaGestionarClientes(request):
-    if request.user.is_authenticated:
-        clientes=Cliente.objects.all()
-        retorno = {"clientes":clientes,"user":request.user}
-        return render(request,"asistente/vistaGestionarClientes.html",retorno)
-    else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
-
-def vistaRegistrarClientes(request):
-    if request.user.is_authenticated:
-        retorno = {"user":request.user}
-        return render(request,"asistente/frmRegistrarCliente.html",retorno)
-    else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
-
-def vistaGestionarVehiculos(request):
-    if request.user.is_authenticated:
-        vehiculos=Vehiculo.objects.all()
-        retorno = {"vehiculos":vehiculos,"user":request.user}
-        return render(request,"asistente/vistaGestionarVehiculos.html",retorno)
-    else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
-
-def vistaRegistrarVehiculos(request):
-    if request.user.is_authenticated:
-        retorno = {"user":request.user}
-        return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
-    else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
-
-def vistaGestionarServicios(request):
-    if request.user.is_authenticated:
-        servicios=User.objects.all()
-        retorno = {"servicios":servicios,"user":request.user}
-        return render(request,"administrador/vistaGestionarServicios.html",retorno)
-    else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
-
-def vistaRegistrarServicios(request):
-    if request.user.is_authenticated:
-        retorno = {"user":request.user}
-        return render(request,"administrador/frmRegistrarServicio.html",retorno)
-    else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
-    
 
     
 def vistaLogin(request):

@@ -28,14 +28,15 @@
         <tbody>
             {% for empleado in empleados %}
                 <tr>
-                    <td>{{empleado.identificacion}}</td>
-                    <td>{{empleado.nombreC}} {{empleado.apellidosC}}</td>
-                    <td>{{empleado.correo}}</td>
-                    <td>{{empleado.cargo}}</td>
-                    <td>{{empleado.sueldo}}</td>
-                    <td>{{empleado.estado}}</td>
+                    <td>{{empleado.empPersona.perIdentificacion}}</td>
+                    <td>{{empleado.empPersona.perNombres}} {{empleado.empPersona.perApellidos}}</td>
+                    <td>{{empleado.empPersona.perCorreo}}</td>
+                    <td>{{empleado.empPersona.perNumeroCelular}}</td>
+                    <td>{{empleado.empCargo}}</td>
+                    <td>{{empleado.empSueldo}}</td>
+                    <td>{{empleado.empEstado}}</td>
                     <td class="text-center">
-                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 3rem;"></i>
+                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 2rem;"></i>
                     </td>
                 </tr>
             {% endfor %}
@@ -43,44 +44,7 @@
     </table>
 </div>
 
-<!-- The Modal -->
-
-
 <script>
-    /*
-    $(document).ready(function() {
-        $('#tblElementos').DataTable( {
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend:    'copyHtml5',
-                    text:      '<i class="fa fa-files-o"></i>',
-                    titleAttr: 'COPY'
-                },
-                {
-                    extend:    'excelHtml5',
-                    text:      '<i class="fa fa-file-excel-o text-success"></i>',
-                    titleAttr: 'EXCEL'
-                },
-                {
-                    extend:    'csvHtml5',
-                    text:      '<i class="fa fa-file-text-o"></i>',
-                    titleAttr: 'CSV'
-                },
-                {
-                    extend:    'pdfHtml5',
-                    text:      '<i class="fa fa-file-pdf-o text-danger"</i>',
-                    titleAttr: 'PDF'
-                },
-                {
-                    extend:    'print',
-                    text:      '<i class="fa fa-print"></i>',
-                    titleAttr: 'PRINT'
-                },
-                
-            ]
-        } );
-    } );*/
     cargarDataTable($("#tblEmpleados"),"LISTADO DE EMPLEADOS",6);
 </script>
 {%endblock %}
