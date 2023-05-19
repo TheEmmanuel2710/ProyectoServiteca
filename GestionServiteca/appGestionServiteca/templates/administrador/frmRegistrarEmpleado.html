@@ -1,0 +1,126 @@
+{% extends "index.html" %}
+{% block encabezado %}
+{% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+{% include "administrador/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
+    <form id="frmRegistrarEmpleado" action="/registrarEmpleado/" method="post" enctype="multipart/form-data"
+        class="needs-validation w-75" novalidate>
+        {% csrf_token%}
+        <h3 class="text-center fw-bold">REGISTRAR EMPLEADOS</h3>
+        <br>
+        <div class="form-group row">
+            <div class="mb-3 col-lg-4">
+                <label for="txtIdentificacion" class="fw-bold">Identificacion:</label>
+                <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
+                    placeholder="Identificacion del empleado" required value="{{devolutivo.devElemento.eleNombre}}">
+                <div class="invalid-feedback">Por favor ingrese la identificacion del empleado</div>
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtNombre" class="fw-bold">Nombre completo:</label>
+                <input type="text" name="txtNombre" class="form-control" id="txtNombre"
+                    placeholder="Nombre del empleado" required value="{{devolutivo.devElemento.eleNombre}}">
+                <div class="invalid-feedback">Por favor ingrese el nombre del empleado</div>
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtCorreo" class="fw-bold">Correo Electrónico:</label>
+                <input type="text" name="txtCorreo" class="form-control" id="txtCorreo"
+                    placeholder="Correo del empleado" required value="{{devolutivo.devElemento.eleNombre}}">
+                <div class="invalid-feedback">Por favor ingrese el correo electronico del empleado</div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="mb-3 col-lg-4">
+                <label for="txtCargo" class="fw-bold">Cargo:</label>
+                <input type="text" name="txtCargo" class="form-control" id="txtCargo"
+                    placeholder="Cargo del empleado" required value="{{devolutivo.devPlacaSena}}">
+                <div class="invalid-feedback">Por favor ingrese el cargo del empleado</div>
+            </div>
+            <div class="mb-3 col-lg-4">
+              <label for="txtSueldo" class="fw-bold">Sueldo:</label>
+              <input type="number" class="form-control" id="txtSueldo" name="txtSueldo" placeholder="Sueldo del empleado" value="{{devolutivo.devValor}}" required/>
+              <div class="invalid-feedback">Por favor ingrese el sueldo del empleado.</div>                     
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="cbEstado" class="fw-bold">Estado del Empleado:</label>
+                <select name="cbEstado" id="cbEstado" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+                <div class="invalid-feedback">Por favor eliga el estado del empleado</div>
+            </div>
+        </div>
+        <br>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-secondary">Registrar</button>
+            <a href="/vistaGestionarEmpleados/"><button type="button" class="btn btn-danger mx-2">Cancelar</button></a>
+        </div>
+    </form>
+</div>
+
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Registro Empleados',
+        text: '{{mensaje}}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaRegistrarEmpleados/"
+        }
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Registro Elementos Devolutivos',
+        text: '{{mensaje}}',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('cbEstado').value = "{{empleado.estado}}"
+        }
+    })
+</script>
+{% endif %}
+{% endif %}
+
+<script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            "use strict";
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll(".needs-validation");
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach((form) => {
+                form.addEventListener(
+                    "submit",
+                    (event) => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add("was-validated");
+                    },
+                    false
+                );
+            });
+        })();
+</script>
+{%endblock %}
+{% block piePagina %}
+{% include "piePagina.html" %}
+{%endblock %}

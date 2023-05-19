@@ -1,0 +1,112 @@
+{% extends "index.html" %}
+{% block encabezado %}
+{% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+{% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
+    <form id="frmRegistrarVehiculo" action="/registrarVehiculo/" method="post" enctype="multipart/form-data"
+        class="needs-validation w-75" novalidate>
+        {% csrf_token%}
+        <h3 class="text-center fw-bold">REGISTRAR Vehiculos</h3>
+        <br>
+        <div class="form-group row">
+            <div class="mb-3 col-lg-4">
+                <label for="txtPlaca" class="fw-bold">Placa:</label>
+                <input type="text" name="txtPlaca" class="form-control" id="txtIdentificacion"
+                    placeholder="Placa del vehiculo" required>
+                <div class="invalid-feedback">Por favor ingrese la placa del vehiculo.</div>
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtMarca" class="fw-bold">Marca:</label>
+                <input type="text" name="txtMarca" class="form-control" id="txtMarca"
+                    placeholder="Marca del vehiculo" required>
+                <div class="invalid-feedback">Por favor ingrese la placa del vehiculo.</div>
+
+
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtModelo" class="fw-bold">Modelo</label>
+                <input type="text" name="txtModelo" class="form-control" id="txtModelo"
+                    placeholder="Modelo del vehiculo" required>
+                <div class="invalid-feedback">Por favor ingrese el modelo del vehiculo.</div>
+            </div>
+            <div class="mb-3 col-lg-6">
+                <label for="cbTipoV" class="fw-bold">Tipo de Vehiculo:</label>
+                <select name="cbTipoV" id="cbTipoV" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    <option value="Electrónico">Electrónico</option>
+                    <option value="Gasolina">Gasolina</option>
+                </select>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-secondary">Registrar</button>
+                <a href="/vistaGestionarVehiculos/"><button type="button" class="btn btn-danger mx-2">Cancelar</button></a>
+            </div>
+        </div>
+
+       
+    </form>
+</div>
+
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Registro Vehiculos',
+        text: '{{mensaje}}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaRegistrarVehiculos/"
+        }
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Registro Vehiculos',
+        text: '{{mensaje}}',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    })
+</script>
+{% endif %}
+{% endif %}
+
+<script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            "use strict";
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll(".needs-validation");
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach((form) => {
+                form.addEventListener(
+                    "submit",
+                    (event) => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add("was-validated");
+                    },
+                    false
+                );
+            });
+        })();
+</script>
+{%endblock %}
+{% block piePagina %}
+{% include "piePagina.html" %}
+{%endblock %}

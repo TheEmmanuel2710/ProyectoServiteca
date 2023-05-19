@@ -1,0 +1,51 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<h3 class="text-center fw-bold">GESTIONAR VEHICULOS</h3>
+
+<div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
+    <a href="/vistaRegistrarVehiculo/"><button class="btn btn-secondary">Agregar</button></a>
+    <br>
+    <br>
+    <table id="tblVehiculos" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center bg-dark text-white">
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Tipo</th>
+                <th>Modelo</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vehiculo in vehiculos %}
+                <tr>
+                    <td>{{vehiculo.placa}}</td>
+                    <td>{{vehiculo.marca}}</td>
+                    <td>{{vehiculo.tipo}}</td>
+                    <td>{{vehiculo.modelo}}</td>
+                    <td class="text-center">
+                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 3rem;"></i>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- The Modal -->
+
+
+<script>
+    cargarDataTable($("#tblVehiculos"),"LISTADO CLIENTES",4);
+</script>
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}

@@ -1,0 +1,116 @@
+{% extends "index.html" %}
+{% block encabezado %}
+{% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+{% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
+    <form id="frmRegistrarCliente" action="/registrarCliente/" method="post" enctype="multipart/form-data"
+        class="needs-validation w-75" novalidate>
+        {% csrf_token%}
+        <h3 class="text-center fw-bold">REGISTRAR CLIENTES</h3>
+        <br>
+        <div class="form-group row">
+            <div class="mb-3 col-lg-4">
+                <label for="txtIdentificacion" class="fw-bold">Identificacion:</label>
+                <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
+                    placeholder="Identificacion del cliente" required>
+                <div class="invalid-feedback">Por favor ingrese la identificacion del cliente.</div>
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtNombres" class="fw-bold">Nombres:</label>
+                <input type="text" name="txtNombres" class="form-control" id="txtNombres"
+                    placeholder="Nombre del empleado" required>
+                <div class="invalid-feedback">Por favor ingrese el nombre del cliente.</div>
+
+
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtApellidos" class="fw-bold">Apellidos</label>
+                <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
+                    placeholder="Apellidos del cliente" required>
+                <div class="invalid-feedback">Por favor ingrese el apellido del cliente.</div>
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtCorreo" class="fw-bold">Correo Electrónico:</label>
+                <input type="text" name="txtCorreo" class="form-control" id="txtCorreo" placeholder="Correo del cliente"
+                    required>
+                <div class="invalid-feedback">Por favor ingrese el correo electronico del cliente.</div>
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtNumeroC" class="fw-bold">Numero telefonico:</label>
+                <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
+                    placeholder="Numero telefonico del cliente" required />
+                <div class="invalid-feedback">Por favor ingrese el numero telefonico del cliente.</div>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-secondary">Registrar</button>
+                <a href="/vistaGestionarClientes/"><button type="button" class="btn btn-danger mx-2">Cancelar</button></a>
+            </div>
+        </div>
+
+       
+    </form>
+</div>
+
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Registro Clientes',
+        text: '{{mensaje}}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaRegistrarClientes/"
+        }
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Registro Clientes',
+        text: '{{mensaje}}',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    })
+</script>
+{% endif %}
+{% endif %}
+
+<script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            "use strict";
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll(".needs-validation");
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach((form) => {
+                form.addEventListener(
+                    "submit",
+                    (event) => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add("was-validated");
+                    },
+                    false
+                );
+            });
+        })();
+</script>
+{%endblock %}
+{% block piePagina %}
+{% include "piePagina.html" %}
+{%endblock %}

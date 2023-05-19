@@ -1,0 +1,50 @@
+{% extends "index.html" %}
+{% block encabezado %}
+    {% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+    {% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<h3 class="text-center fw-bold">GESTIONAR CLIENTES</h3>
+
+<div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
+    <a href="/vistaRegistrarCliente/"><button class="btn btn-secondary">Agregar</button></a>
+    <br>
+    <br>
+    <table id="tblClientes" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center bg-dark text-white">
+                <th>Identificacion</th>
+                <th>Nombre Completo</th>
+                <th>Correo</th>
+                <th>Numero de celular</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+                <tr>
+                    <td>{{cliente.identificacion}}</td>
+                    <td>{{cliente.nombres}} {{cliente.apellidos}}</td>
+                    <td>{{cliente.correo}}</td>
+                    <td>{{cliente.numeroCelular}}</td>
+                    <td class="text-center">
+                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 3rem;"></i>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    cargarDataTable($("#tblClientes"),"LISTADO CLIENTES",5);
+</script>
+{%endblock %}
+{% block piePagina %}
+    {% include "piePagina.html" %}
+{%endblock %}
