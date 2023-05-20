@@ -8,7 +8,7 @@
 {% block contenido %}
     <br>
     <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
-        <form id="frmRegistrarUsuario" action="/registrarUsuario/" method="post" enctype="multipart/form-data" class="was-validated w-75">                   
+        <form id="frmRegistrarUsuario" action="/registrarUsuario/" method="post" enctype="multipart/form-data" class="needs-validation w-75" novalidate>                   
             {% csrf_token%}
             <h3 class="text-center fw-bold">REGISTRAR USUARIO</h3>
             <br>
@@ -99,6 +99,31 @@
             </script>
         {% endif %}
     {% endif %}
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            "use strict";
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll(".needs-validation");
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach((form) => {
+                form.addEventListener(
+                    "submit",
+                    (event) => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add("was-validated");
+                    },
+                    false
+                );
+            });
+        })();
+</script>
 <br>
 {%endblock %}
 {% block piePagina %}

@@ -219,12 +219,27 @@ def vistaRegistrarEmpleados(request):
 
 def registrarEmpleado(request):
     try:
-        fiajeif=True
+        identificacion = request.POST["txtIdentificacion"]
+        nombres = request.POST["txtNombres"]
+        apellidos = request.POST["txtApellidos"]
+        correo = request.POST["txtCorreo"]
+        numeroC = request.POST["txtNumeroC"] 
+        cargo = request.POST["txtCargo"] 
+        sueldo = request.POST["txtSueldo"] 
+        estadoE = request.POST["cbEstado"] 
+        with transaction.atomic():
+            persona=Persona(perIdentificacion=identificacion, perNombres=nombres, perApellidos=apellidos, perCorreo=correo, perNumeroCelular=numeroC)
+            persona.save()  
+            cliente = Empleado(empCargo=cargo,empSueldo=sueldo,empEstado=estadoE,empPersona=persona)
+            cliente.save()
+            mensaje="Empleado Agregado Correctamente" 
+            retorno = {"mensaje":mensaje}
+            return redirect("/vistaGestionarEmpleados/", retorno)
     except Error as error:
         transaction.rollback()
         mensaje= f"{error}"
     retorno = {"mensaje":mensaje}
-    return render(request,"asistente/frmRegistrarEmpleado.html",retorno)    
+    return render(request,"administrador/frmRegistrarEmpleado.html",retorno)    
     
 def vistaLogin(request):
     return render(request,"frmIniciarSesion.html")

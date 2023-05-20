@@ -30,6 +30,7 @@ urlpatterns = [
     path('vistaGestionarUsuarios/',views.vistaGestionarUsuarios),
     path('vistaGestionarEmpleados/',views.vistaGestionarEmpleados),
     path('vistaRegistrarEmpleados/',views.vistaRegistrarEmpleados),
+    path('registrarEmpleado/',views.registrarEmpleado),
     path('vistaRegistrarUsuario/',views.vistaRegistrarUsuario),
     path('vistaGestionarClientes/',views.vistaGestionarClientes),
     path('vistaRegistrarCliente/',views.vistaRegistrarClientes),

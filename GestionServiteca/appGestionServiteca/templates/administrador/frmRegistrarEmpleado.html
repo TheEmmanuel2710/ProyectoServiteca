@@ -48,7 +48,7 @@
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="cbEstado" class="fw-bold">Estado del Empleado:</label>
-                <select name="cbTipo" id="cbTipo" class="form-select" required>
+                <select name="cbEstado" id="cbEstado" class="form-select" required>
                     <option value="">Seleccione</option>
                     {% for estado in estadoEmpl %}
                     <option value="{{estado.0}}">{{estado.1}}</option>
@@ -56,11 +56,17 @@
                 </select>
                 <div class="invalid-feedback">Por favor eliga el estado del empleado</div>
             </div>
-            <div class="mb-3 col-lg-4" style="margin: 0% auto;">
+            <div class="mb-3 col-lg-4">
                 <label for="txtCorreo" class="fw-bold">Correo Electrónico:</label>
                 <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
                     placeholder="Correo del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese el correo electronico del empleado</div>
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="txtNumeroC" class="fw-bold">Numero telefonico:</label>
+                <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
+                    placeholder="Numero telefonico del empleado" required />
+                <div class="invalid-feedback">Por favor ingrese el numero telefonico del empleado</div>
             </div>
         </div>
         <br>
