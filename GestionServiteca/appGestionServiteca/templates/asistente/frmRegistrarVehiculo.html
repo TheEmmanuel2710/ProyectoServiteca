@@ -11,58 +11,50 @@
     <form id="frmRegistrarVehiculo" action="/registrarVehiculo/" method="post" enctype="multipart/form-data"
         class="needs-validation w-75" novalidate>
         {% csrf_token%}
-        <h3 class="text-center fw-bold">REGISTRAR Vehiculos</h3>
+        <h3 class="text-center fw-bold">REGISTRAR VEHICULOS</h3>
         <br>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
                 <label for="txtPlaca" class="fw-bold">Placa:</label>
                 <input type="text" name="txtPlaca" class="form-control" id="txtIdentificacion"
                     placeholder="Placa del vehiculo" required>
-                <div class="invalid-feedback">Por favor ingrese la placa del vehiculo.</div>
+                <div class="invalid-feedback">Por favor ingrese la placa del vehiculo</div>
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="cbMarca" class="fw-bold">Marca:</label>
                 <select name="cbMarca" id="cbMarca" class="form-select" required>
-                    <option value="Seleccione">Seleccione</option>
-                    <option value="Toyota">Toyota</option>
-                    <option value="Nissan">Nissan</option>
-                    <option value="Mazda">Mazda</option>
-                    <option value="Hyundai">Hyundai</option>
-                    <option value="Chevrolet">Chevrolet</option>
-                    <option value="BMW">BMW</option>
-                    <option value="Suzuki">Suzuki</option>
-                    <option value="Ford">Ford</option>
-                    <option value="Mercedes-Benz">Mercedes-Benz</option>
-                    <option value="Audi">Audi</option>
-                    <option value="Audi">Renault</option>
-                       
+                    <option value="">Seleccione</option>
+                    {% for marca in tipoMar %}
+                    <option value="{{marca.0}}">{{marca.1}}</option>
+                    {% endfor %}
                 </select>
-                <div class="invalid-feedback">Por favor ingrese la marca del vehiculo.</div>
+                <div class="invalid-feedback">Por favor ingrese la marca del vehiculo</div>
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="txtModelo" class="fw-bold">Modelo</label>
                 <input type="text" name="txtModelo" class="form-control" id="txtModelo"
                     placeholder="Modelo del vehiculo" required>
-                <div class="invalid-feedback">Por favor ingrese el modelo del vehiculo.</div>
+                <div class="invalid-feedback">Por favor ingrese el modelo del vehiculo</div>
             </div>
-            <div class="mb-3 col-lg-6">
+            <div class="mb-3 col-lg-6" style="margin: 0% auto;">
                 <label for="cbTipoV" class="fw-bold">Tipo de Vehiculo:</label>
                 <select name="cbTipoV" id="cbTipoV" class="form-select" required>
                     <option value="">Seleccione</option>
-                        {% for tipo in tipoVeh %}
-                            <option value="{{tipo.0}}">{{tipo.1}}</option>
-                        {% endfor %}
+                    {% for tipo in tipoVeh %}
+                    <option value="{{tipo.0}}">{{tipo.1}}</option>
+                    {% endfor %}
                 </select>
-                <div class="invalid-feedback">Por favor ingrese el tipo del vehiculo.</div>
+                <div class="invalid-feedback">Por favor ingrese el tipo del vehiculo</div>
             </div>
             <br>
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-secondary">Registrar</button>
-                <a href="/vistaGestionarVehiculos/"><button type="button" class="btn btn-danger mx-2">Cancelar</button></a>
+                <a href="/vistaGestionarVehiculos/"><button type="button"
+                        class="btn btn-danger mx-2">Cancelar</button></a>
             </div>
         </div>
 
-       
+
     </form>
 </div>
 

@@ -67,7 +67,39 @@
             </div>
         </form>
     </div>
-    
+
+    {% if mensaje %}  
+        {% if estado %}  
+            <script>
+                Swal.fire({
+                    title: 'Registro Usuario',
+                    text: '{{mensaje}}',
+                    icon: 'success',               
+                    confirmButtonColor: '#3085d6',             
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href="/vistaRegistrarUsuarios/"
+                    }
+                });
+            </script>
+        {% else %}
+            <script>
+                Swal.fire({
+                    title: 'Registro Usuario',
+                    text: '{{mensaje}}',
+                    icon: 'warning',               
+                    confirmButtonColor: '#3085d6',             
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    
+                    }
+                })
+            </script>
+        {% endif %}
+    {% endif %}
+<br>
 {%endblock %}
 {% block piePagina %}
     {% include "piePagina.html" %}

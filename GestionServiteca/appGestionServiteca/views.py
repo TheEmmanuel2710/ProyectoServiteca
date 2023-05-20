@@ -92,10 +92,9 @@ def registrarUsuario(request):
             mensaje="Usuario Agregado Correctamente" 
             retorno = {"mensaje":mensaje}
             #enviar correo al usuario
-            asunto='Registro Sistema Inventario CIES-NEIVA'
+            asunto='Registro Sistema Serviteca'
             mensaje=f'Cordial saludo, <b>{user.first_name} {user.last_name}</b>, nos permitimos.\
-                informarle que usted ha sido registrado en el Sistema de Gestión de Inventario \
-                del Centro de la Industria, la Empresa y los Servicios CIES de la ciudad de Neiva.\
+                informarle que usted ha sido registrado en el Sistema de ServitecaOpita.\
                 Nos permitimos enviarle las credenciales de Ingreso a nuestro sistema.<br>\
                 <br><b>Username: </b> {user.username}\
                 <br><b>Password: </b> {passwordGenerado}\
@@ -126,7 +125,6 @@ def vistaRegistrarClientes(request):
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
-
 
 def registrarCliente(request):
     try:
@@ -161,7 +159,7 @@ def vistaGestionarVehiculos(request):
 
 def vistaRegistrarVehiculos(request):
     if request.user.is_authenticated:
-        retorno = {"user":request.user,"tipoVeh":tipoVehiculo}
+        retorno = {"user":request.user,"tipoVeh":tipoVehiculo,"tipoMar":tiposMarcas}
         return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
@@ -174,7 +172,6 @@ def registrarVehiculo(request):
         modelo = request.POST["txtModelo"]
         tipoV = request.POST["cbTipoV"]
         with transaction.atomic():
-            #crear un objeto de tipo User
             vehiculo = Vehiculo(vehPlaca=placa, vehMarca=marca, vehModelo=modelo, vehTipo=tipoV)
             vehiculo.save()
             mensaje="Vehiculo Agregado Correctamente" 
@@ -220,7 +217,14 @@ def vistaRegistrarEmpleados(request):
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
 
-
+def registrarEmpleado(request):
+    try:
+        fiajeif=True
+    except Error as error:
+        transaction.rollback()
+        mensaje= f"{error}"
+    retorno = {"mensaje":mensaje}
+    return render(request,"asistente/frmRegistrarEmpleado.html",retorno)    
     
 def vistaLogin(request):
     return render(request,"frmIniciarSesion.html")
