@@ -13,6 +13,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 import threading
 from smtplib import SMTPException
+
+
 # Create your views here.
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -25,7 +27,7 @@ def inicioAdministrador(request):
         return render(request,"administrador/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def inicioAsistente(request):
     if request.user.is_authenticated:
@@ -33,7 +35,7 @@ def inicioAsistente(request):
         return render(request,"asistente/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def inicioTecnico(request):
     if request.user.is_authenticated:
@@ -41,7 +43,15 @@ def inicioTecnico(request):
         return render(request,"tecnico/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
+
+def inicioCliente(request):
+    if request.user.is_authenticated:
+        datosSesion={"user": request.user}
+        return render(request,"cliente/inicio.html", datosSesion)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "menu.html",{"mensaje":mensaje})
     
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
@@ -50,7 +60,7 @@ def vistaRegistrarUsuario(request):
         return render(request, "administrador/frmRegistrarUsuario.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def vistaGestionarUsuarios(request):
     if request.user.is_authenticated:
@@ -59,7 +69,7 @@ def vistaGestionarUsuarios(request):
         return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def registrarUsuario(request):
     try:
@@ -116,7 +126,7 @@ def vistaGestionarClientes(request):
         return render(request,"asistente/vistaGestionarClientes.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def vistaRegistrarClientes(request):
     if request.user.is_authenticated:
@@ -124,9 +134,10 @@ def vistaRegistrarClientes(request):
         return render(request,"asistente/frmRegistrarCliente.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def registrarCliente(request):
+    estado=False
     try:
         identificacion = request.POST["txtIdentificacion"]
         nombres = request.POST["txtNombres"]
@@ -139,23 +150,22 @@ def registrarCliente(request):
             persona.save()  
             cliente = Cliente(cliDireccion=direccion,cliPersona=persona)
             cliente.save()
+            estado=True
             mensaje="Cliente Agregado Correctamente" 
-            retorno = {"mensaje":mensaje}
-            return redirect("/vistaGestionarClientes/", retorno)
     except Error as error:
         transaction.rollback()
         mensaje= f"{error}"
-    retorno = {"mensaje":mensaje}
+    retorno = {"mensaje":mensaje,"estado":estado}
     return render(request,"asistente/frmRegistrarCliente.html",retorno)
 
 def vistaGestionarVehiculos(request):
     if request.user.is_authenticated:
         vehiculos=Vehiculo.objects.all()
-        retorno = {"vehiculos":vehiculos,"user":request.user}
+        retorno = {"vehiculos":vehiculos,"tipoVeh":tipoVehiculo,"tipoMar":tiposMarcas,"user":request.user}
         return render(request,"asistente/vistaGestionarVehiculos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def vistaRegistrarVehiculos(request):
     if request.user.is_authenticated:
@@ -163,9 +173,10 @@ def vistaRegistrarVehiculos(request):
         return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def registrarVehiculo(request):
+    estado=False
     try:
         placa = request.POST["txtPlaca"]
         marca = request.POST["cbMarca"]
@@ -174,13 +185,12 @@ def registrarVehiculo(request):
         with transaction.atomic():
             vehiculo = Vehiculo(vehPlaca=placa, vehMarca=marca, vehModelo=modelo, vehTipo=tipoV)
             vehiculo.save()
+            estado=True
             mensaje="Vehiculo Agregado Correctamente" 
-            retorno = {"mensaje":mensaje}
-            return redirect("/vistaGestionarVehiculos/", retorno)
     except Error as error:
         transaction.rollback()
         mensaje= f"{error}"
-    retorno = {"mensaje":mensaje}
+    retorno = {"mensaje":mensaje,"estado":estado}
     return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
 
 def generarPassword():
@@ -203,11 +213,11 @@ def generarPassword():
 def vistaGestionarEmpleados(request):
     if request.user.is_authenticated:
         empleados=Empleado.objects.all()
-        retorno = {"empleados":empleados,"user":request.user}
+        retorno = {"empleados":empleados,"estadoEmpl":estadoEmpleados,"user":request.user}
         return render(request,"administrador/vistaGestionarEmpleados.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def vistaRegistrarEmpleados(request):
     if request.user.is_authenticated:
@@ -215,9 +225,10 @@ def vistaRegistrarEmpleados(request):
         return render(request,"administrador/frmRegistrarEmpleado.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+        return render(request, "menu.html",{"mensaje":mensaje})
 
 def registrarEmpleado(request):
+    estado=False
     try:
         identificacion = request.POST["txtIdentificacion"]
         nombres = request.POST["txtNombres"]
@@ -232,17 +243,17 @@ def registrarEmpleado(request):
             persona.save()  
             cliente = Empleado(empCargo=cargo,empSueldo=sueldo,empEstado=estadoE,empPersona=persona)
             cliente.save()
+            estado=True
             mensaje="Empleado Agregado Correctamente" 
-            retorno = {"mensaje":mensaje}
-            return redirect("/vistaGestionarEmpleados/", retorno)
     except Error as error:
         transaction.rollback()
         mensaje= f"{error}"
-    retorno = {"mensaje":mensaje}
+    retorno = {"mensaje":mensaje,"estado":estado}
     return render(request,"administrador/frmRegistrarEmpleado.html",retorno)    
     
+
 def vistaLogin(request):
-    return render(request,"frmIniciarSesion.html")
+    return render(request,"menu.html")
 
 def login(request):
     #validar el recapthcha
@@ -275,14 +286,14 @@ def login(request):
                 return redirect('/inicioTecnico')
         else:
             mensaje = "Usuario o Contraseña Incorrectas"
-            return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
+            return render(request, "inicio.html",{"mensaje":mensaje})
     else:
         mensaje="Debe validar primero el recaptcha"
-        return render(request, "frmIniciarSesion.html",{"mensaje" :mensaje})
+        return render(request, "inicio.html",{"mensaje" :mensaje})
     
 def salir(request):
     auth.logout(request)
-    return render(request, "frmIniciarSesion.html",
+    return render(request, "inicio.html",
                   {"mensaje":"Ha cerrado la sesión"})
     
 def enviarCorreo (asunto=None, mensaje=None, destinatario=None): 
@@ -301,3 +312,53 @@ def enviarCorreo (asunto=None, mensaje=None, destinatario=None):
     except SMTPException as error: 
         print(error)
 
+def vistaRegistrarServiciosPrestados(request):
+    if request.user.is_authenticated:
+        vehiculos=Vehiculo.objects.all()
+        clientes=Cliente.objects.all()
+        empleados=Empleado.objects.all()
+        servicios=Servicio.objects.all()
+        retorno = {"empleados":empleados,"servicios":servicios,"vehiculos":vehiculos,"clientes":clientes,"estadoSP":estadoServicioPrestado,"user":request.user}
+        return render(request,"asistente/frmRegistrarServicioPrestado.html",retorno)
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "menu.html",{"mensaje":mensaje})
+    
+def vistaGestionarFacturas(request):
+    if request.user.is_authenticated:
+        return render(request,"asistente/vistaGestionarFacturas.html")
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "menu.html",{"mensaje":mensaje})
+    
+def vistaGestionarSolicitudesV(request):
+    if request.user.is_authenticated:
+        return render(request,"tecnico/vistaGestionarSolicitudesVehiculos.html")
+    else:
+        mensaje="Debe iniciar sesión"
+        return render(request, "menu.html",{"mensaje":mensaje})
+
+def vistaGestionarConsultasC(request):
+    return render(request,"cliente/vistaGestionarConsultasC.html")
+    
+def consultarCliente(request):
+    try:
+        id = request.POST["txtIdentificacion"]
+        if id:
+            persona = Persona.objects.get(perIdentificacion=id)
+            mensaje = "Cliente consultado de manera exitosa"
+        else:
+            mensaje = "Por favor, ingrese una identificación"
+            persona = None
+    except Persona.DoesNotExist:
+        mensaje = "No se encontró un cliente con esa identificación"
+        persona = None
+    except Exception as error:
+        mensaje = f"Problemas --> {error}"
+        persona = None
+
+    retorno = {
+        "mensaje": mensaje,
+        "persona": persona,
+    }
+    return render(request, "cliente/vistaGestionarConsultasC.html", retorno)

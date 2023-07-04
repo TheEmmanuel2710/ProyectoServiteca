@@ -1,0 +1,191 @@
+{% extends "index.html" %}
+{% block encabezado %}
+{% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+{% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+{% load static%}
+
+<script src="{%static '../static/js/servicioP.js' %}"></script>
+<br>
+{% for material in materiales %}
+<script> cargarMateriales("{{material.id}}", "{{material.matElemento.eleCodigo}}", "{{material.matElemento.eleNombre}}");</script>
+{% endfor %}
+
+{% for unidad in unidadesMedida %}
+<script> cargarUnidadesMedida("{{unidad.id}}", "{{unidad.uniNombre}}");</script>
+{% endfor %}
+{% for servicio in servicios %}
+<script>
+    cargarServicios('{{servicio.id}}', '{{servicio.serNombre}}', '{{servicio.serCosto}}');
+</script>
+{% endfor%}
+<h3 class="text-center fw-bold">REGISTRAR SERVICIOS PRESTADOS </h3>
+<div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
+    <form id="frmRegistrarServicioPrestado" action="//" method="post" enctype="multipart/form-data"
+        class="needs-validation w-75" novalidate>
+        {% csrf_token%}
+        <div class="form-group row">
+            <div class="col-lg-4 mb-3">
+                <label for="cbCliente" class="fw-bold" style="color: black;">Cliente:</label>
+                <select name="cbCliente" id="cbCliente" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    {% for cliente in clientes %}
+                    <option
+                        value="{{cliente.cliPersona.perIdentificacion}}-{{cliente.cliPersona.perNombres}} {{cliente.cliPersona.perApellidos}}">
+                        {{cliente.cliPersona.perIdentificacion}}-{{cliente.cliPersona.perNombres}}
+                        {{cliente.cliPersona.perApellidos}}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Por favor seleccione el cliente</div>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <label for="cbVehiculo" class="fw-bold" style="color: black;">Vehiculo:</label>
+                <select name="cbVehiculo" id="cbVehiculo" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    {% for vehiculo in vehiculos %}
+                    <option value="{{vehiculo.vehPlaca}}">{{vehiculo.vehPlaca}}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Por favor seleccione el vehiculo</div>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <label for="cbEmpleado" class="fw-bold" style="color: black;">Empleado:</label>
+                <select name="cbEmpleado" id="cbEmpleado" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    {% for empleado in empleados %}
+                    <option value="{{empleado.empPersona.perNombres}} {{empleado.empPersona.perApellidos}}">
+                        {{empleado.empPersona.perNombres}} {{empleado.empPersona.perApellidos}}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Por favor seleccione el empleado</div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-4 mb-3">
+                <label for="cbEstado" class="fw-bold" style="color: black;">Estado del servicio
+                    prestado:</label>
+                <select name="cbEstado" id="cbEstado" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    {% for estado in estadoSP %}
+                    <option value="{{estado.0}}">{{estado.1}}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Por favor ingrese la marca del vehiculo</div>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <label for="cbServicio" class="fw-bold" style="color: black;">Servicio Solicitado:</label>
+                <select name="cbServicio" id="cbServicio" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    {% for servicio in servicios %}
+                    <option value="{{servicio.id}}">{{servicio.serNombre}}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Por favor seleccione el servicio que solicitan</div>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <label for="txtCosto" class="fw-bold" style="color: black;">Costo del servicio
+                    solicitado:</label>
+                <input type="text" name="txtCosto" id="txtCosto" style="height: 35px; width: 100%;" readonly>
+                <div class="invalid-feedback">Por favor seleccione el costo del servicio que solicitan</div>
+            </div>
+        </div>
+        <div class="form-group row mt-2 ">
+            <div class="mb-3 col-lg-12">
+                <label for="txtObservaciones" class="fw-bold" style="color: black;">Descripción:</label>
+                <textarea name="txtObservaciones" id="txtObservaciones" class="form-control" cols="30"
+                    rows="5"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn" style="background-color: black; color:white;">Anexar servicio
+                prestado</button>
+        </div>
+    </form>
+</div>
+
+<hr class="text-secondary fw-bold" style="margin-top: -8%;">
+<h3 class="text-center fw-bold" style="color: black;">Detalle Servicios Prestados</h3>
+<div id="vistaTablaMateriales w-75 table-responsive" style="margin: 0 auto;">
+    <table class="table table-bordered table-stripped">
+        <thead>
+            <tr class="bg-secondary text-white text-center">
+                <th style="background-color: black;">Cliente</th>
+                <th style="background-color: black;">Vehiculo</th>
+                <th style="background-color: black;">Empleado</th>
+                <th style="background-color: black;">Estado</th>
+                <th style="background-color: black;">Servicio</th>
+                <th style="background-color: black;">Costo</th>
+                <th style="background-color: black; width: 0%;">Observaciones</th>
+            </tr>
+        </thead>
+        <tbody id="tblDetalleSP">
+        </tbody>
+    </table>
+</div>
+<div class="text-center">
+    <button class="btn mt-5" id="btnRegistrarDetalleServcioP"
+        style="background-color: black; color:white; margin: 0%  auto;">Finalizar
+        Registro</button>
+</div>
+<br>
+<br>
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Registro Servicio Prestado',
+        text: '{{mensaje}}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaRegistrarServiciosP/"
+        }
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Registro Servicio Prestado',
+        text: '{{mensaje}}',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    })
+</script>
+{% endif %}
+{% endif %}
+
+<script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            "use strict";
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll(".needs-validation");
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach((form) => {
+                form.addEventListener(
+                    "submit",
+                    (event) => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add("was-validated");
+                    },
+                    false
+                );
+            });
+        })();
+</script>
+{%endblock %}
+{% block piePagina %}
+{% include "piePagina.html" %}
+{%endblock %}

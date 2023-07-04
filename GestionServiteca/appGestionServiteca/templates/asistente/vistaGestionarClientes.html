@@ -1,52 +1,113 @@
 {% extends "index.html" %}
 {% block encabezado %}
-    {% include "encabezado.html" %}
+{% include "encabezado.html" %}
 {%endblock %}
 {% block menu %}
-    {% include "asistente/menu.html" %}
+{% include "asistente/menu.html" %}
 {%endblock %}
 {% block contenido %}
 <br>
-<h3 class="text-center fw-bold">GESTIONAR CLIENTES</h3>
+<h3 class="text-center fw-bold" style="color: black;">GESTIONAR CLIENTES</h3>
 
-<div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
-    <a href="/vistaRegistrarCliente/"><button class="btn btn-secondary">Agregar</button></a>
+<div class="w-105 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
+    <a href="/vistaRegistrarCliente/"><button class="btn"
+            style="background-color: black; color:white;">Agregar</button></a>
     <br>
     <br>
     <table id="tblClientes" class="table table-bordered table-hover">
         <thead>
-            <tr class="text-center bg-dark text-white">
-                <th>Identificacion</th>
-                <th>Nombre Completo</th>
-                <th>Correo</th>
-                <th>Numero de celular</th>
-                <th>Direccion</th>
-                <th>Acción</th>
+            <tr class="text-center text-white">
+                <th style="background-color:black ;">Identificacion</th>
+                <th style="background-color:black ;">Nombre Completo</th>
+                <th style="background-color:black ;">Correo</th>
+                <th style="background-color:black ;">Numero de celular</th>
+                <th style="background-color:black ;">Direccion</th>
+                <th style="background-color:black ;">Acción</th>
             </tr>
         </thead>
         <tbody>
             {% for cliente in clientes %}
-                <tr>
-                    <td>{{cliente.cliPersona.perIdentificacion}}</td>
-                    <td>{{cliente.cliPersona.perNombres}} {{cliente.cliPersona.perAapellidos}}</td>
-                    <td>{{cliente.cliPersona.perCorreo}}</td>
-                    <td>{{cliente.cliPersona.perNumeroCelular}}</td>
-                    <td>{{cliente.cliDireccion}}</td>
-                    <td class="text-center">
+            <tr>
+                <td>{{cliente.cliPersona.perIdentificacion}}</td>
+                <td>{{cliente.cliPersona.perNombres}} {{cliente.cliPersona.perAapellidos}}</td>
+                <td>{{cliente.cliPersona.perCorreo}}</td>
+                <td>{{cliente.cliPersona.perNumeroCelular}}</td>
+                <td>{{cliente.cliDireccion}}</td>
+                <td class="text-center">
+                    <a  id="btnAbrirModalActualizarCliente" data-bs-toggle="modal" data-bs-target="#ActualizarCl">
                         <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 2rem;"></i>
-                    </td>
-                </tr>
+                    </a>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-
-
-
+<!-- The Modal -->
+<div class="modal" id="ActualizarCl">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header tituloModal">
+                <h4 class="modal-title">Actualizar Cliente</h4>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form  action="/ActualizarC/">
+                    <div class="form-group row">
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificacion:</label>
+                            <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
+                                placeholder="Identificacion del cliente" required>
+                            <div class="invalid-feedback">Por favor ingrese la identificacion del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
+                            <input type="text" name="txtNombres" class="form-control" id="txtNombres"
+                                placeholder="Nombres del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese el nombre del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos</label>
+                            <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
+                                placeholder="Apellidos del cliente" required>
+                            <div class="invalid-feedback">Por favor ingrese el apellido del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
+                            <input type="text" name="txtCorreo" class="form-control" id="txtCorreo" placeholder="Correo del cliente"
+                                required>
+                            <div class="invalid-feedback">Por favor ingrese el correo electronico del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtDirreccion" class="fw-bold" style="color: black;">Direccion:</label>
+                            <input type="text" name="txtDireccion" class="form-control" id="txtDireccion"
+                                placeholder="Direccion del cliente" required>
+                            <div class="invalid-feedback">Por favor ingrese la direccion del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Numero telefonico:</label>
+                            <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
+                                placeholder="Numero telefonico del cliente" required />
+                            <div class="invalid-feedback">Por favor ingrese el numero telefonico del cliente</div>
+                        </div>  
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btnAgregarMaterialDetalle" data-bs-dismiss="modal">Actualizar</button>
+                <a href="/vistaGestionarClientes/"><button type="button"
+                    class="btn btn-danger mx-2">Cancelar</button></a>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
-    cargarDataTable($("#tblClientes"),"LISTADO CLIENTES",5);
+    cargarDataTable($("#tblClientes"), "LISTADO CLIENTES", 5);
 </script>
 {%endblock %}
 {% block piePagina %}
-    {% include "piePagina.html" %}
+{% include "piePagina.html" %}
 {%endblock %}

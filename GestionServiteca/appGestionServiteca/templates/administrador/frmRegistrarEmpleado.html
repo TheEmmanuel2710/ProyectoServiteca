@@ -15,19 +15,19 @@
         <br>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
-                <label for="txtIdentificacion" class="fw-bold">Identificacion:</label>
+                <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificacion:</label>
                 <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
                     placeholder="Identificacion del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese la identificacion del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtNombres" class="fw-bold">Nombres:</label>
+                <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
                 <input type="text" name="txtNombres" class="form-control" id="txtNombres"
                     placeholder="Nombres del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese los nombres del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtApellidos" class="fw-bold">Apellidos:</label>
+                <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos:</label>
                 <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
                     placeholder="Nombre del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese los apellidos del empleado</div>
@@ -35,19 +35,19 @@
         </div>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
-                <label for="txtCargo" class="fw-bold">Cargo:</label>
+                <label for="txtCargo" class="fw-bold" style="color: black;">Cargo:</label>
                 <input type="text" name="txtCargo" class="form-control" id="txtCargo" placeholder="Cargo del empleado"
                     required>
                 <div class="invalid-feedback">Por favor ingrese el cargo del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtSueldo" class="fw-bold">Sueldo:</label>
+                <label for="txtSueldo" class="fw-bold" style="color: black;">Sueldo:</label>
                 <input type="number" class="form-control" id="txtSueldo" name="txtSueldo"
                     placeholder="Sueldo del empleado" required />
                 <div class="invalid-feedback">Por favor ingrese el sueldo del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="cbEstado" class="fw-bold">Estado del Empleado:</label>
+                <label for="cbEstado" class="fw-bold" style="color: black;">Estado del Empleado:</label>
                 <select name="cbEstado" id="cbEstado" class="form-select" required>
                     <option value="">Seleccione</option>
                     {% for estado in estadoEmpl %}
@@ -57,13 +57,13 @@
                 <div class="invalid-feedback">Por favor eliga el estado del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtCorreo" class="fw-bold">Correo Electrónico:</label>
+                <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
                 <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
                     placeholder="Correo del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese el correo electronico del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtNumeroC" class="fw-bold">Numero telefonico:</label>
+                <label for="txtNumeroC" class="fw-bold" style="color: black;">Numero telefonico:</label>
                 <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
                     placeholder="Numero telefonico del empleado" required />
                 <div class="invalid-feedback">Por favor ingrese el numero telefonico del empleado</div>
@@ -71,7 +71,7 @@
         </div>
         <br>
         <div class="d-flex justify-content-center">
-            <button type="submit" class="btn btn-secondary">Registrar</button>
+            <button type="submit" class="btn" style="color: white; background-color: black;"> Registrar</button>
             <a href="/vistaGestionarEmpleados/"><button type="button" class="btn btn-danger mx-2">Cancelar</button></a>
         </div>
     </form>
@@ -88,7 +88,7 @@
         confirmButtonText: 'Aceptar'
     }).then((result) => {
         if (result.isConfirmed) {
-            location.href = "/vistaRegistrarEmpleados/"
+            location.href = "/vistaGestionarEmpleados/"
         }
     });
 </script>
@@ -102,7 +102,7 @@
         confirmButtonText: 'Aceptar'
     }).then((result) => {
         if (result.isConfirmed) {
-            document.getElementById('cbEstado').value = "{{empleado.estado}}"
+            document.getElementById('cbEstado').value = "{{estado.1}}"
         }
     })
 </script>

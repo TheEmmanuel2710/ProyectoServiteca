@@ -1,11 +1,51 @@
 {% extends "index.html" %}
 {% block menu %}
-    {% include "menu.html" %}
+{% include "menu.html" %}
 {%endblock %}
 {% block contenido %}
-    <h3 class="text-center mt-3" style="color: orange;">SISTEMA DE SERVITECA</h3>
-    <p class="text-center mt-3" style="color: orange;">Nuestra sistema  Ofrece....................</p>
+<br>
+<br>
+<br>
+<br>
+<div class="title-cards">
+  <h2>Servicios que Ofrecemos</h2>
+</div>
+<div class="container-card">
+
+  <div class="card">
+    <figure>
+      <img src="../media/Car1.jpg" alt="">
+    </figure>
+    <div class="contenido-card">
+      <h3>Sincronización</h3>
+      <p>En la danza perfecta del tiempo y la armonía, la sincronización cuida la vida de tu motor.</p>
+      <button id="btn-card">Serviteca Opita</button>
+    </div>
+  </div>
+  <div class="card">
+    <figure>
+      <img src="../media/Car2.jpg" alt="">
+    </figure>
+    <div class="contenido-card">
+      <h3>Cambio De Aceite</h3>
+      <p>El secreto para un motor saludable está en un cambio de aceite oportuno.</p>
+      <button id="btn-card">Serviteca Opita</button>
+    </div>
+  </div>
+  <div class="card">
+    <figure>
+      <img src="../media/Car3.jpg" alt="">
+    </figure>
+    <div class="contenido-card">
+      <h3>Alineación Y Balanceo</h3>
+      <p>Encuentra el equilibrio perfecto en cada camino, alinea y balancea tus ruedas hacia la seguridad y el control.
+      </p>
+      <button id="btn-card"> Serviteca Opita</button>
+    </div>
+  </div>
+</div>
+
 {%endblock %}
 {% block piePagina %}
-    {% include "piePagina.html" %}
+{% include "piePagina.html" %}
 {%endblock %}

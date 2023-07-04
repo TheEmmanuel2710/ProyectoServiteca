@@ -15,13 +15,13 @@
         <br>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
-                <label for="txtPlaca" class="fw-bold">Placa:</label>
+                <label for="txtPlaca" class="fw-bold" style="color: black;">Placa:</label>
                 <input type="text" name="txtPlaca" class="form-control" id="txtIdentificacion"
                     placeholder="Placa del vehiculo" required>
                 <div class="invalid-feedback">Por favor ingrese la placa del vehiculo</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="cbMarca" class="fw-bold">Marca:</label>
+                <label for="cbMarca" class="fw-bold" style="color: black;">Marca:</label>
                 <select name="cbMarca" id="cbMarca" class="form-select" required>
                     <option value="">Seleccione</option>
                     {% for marca in tipoMar %}
@@ -31,13 +31,13 @@
                 <div class="invalid-feedback">Por favor ingrese la marca del vehiculo</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtModelo" class="fw-bold">Modelo</label>
+                <label for="txtModelo" class="fw-bold" style="color: black;">Modelo</label>
                 <input type="text" name="txtModelo" class="form-control" id="txtModelo"
                     placeholder="Modelo del vehiculo" required>
                 <div class="invalid-feedback">Por favor ingrese el modelo del vehiculo</div>
             </div>
             <div class="mb-3 col-lg-6" style="margin: 0% auto;">
-                <label for="cbTipoV" class="fw-bold">Tipo de Vehiculo:</label>
+                <label for="cbTipoV" class="fw-bold" style="color: black;">Tipo de Vehiculo:</label>
                 <select name="cbTipoV" id="cbTipoV" class="form-select" required>
                     <option value="">Seleccione</option>
                     {% for tipo in tipoVeh %}
@@ -48,7 +48,8 @@
             </div>
             <br>
             <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-secondary">Registrar</button>
+                <button type="submit" class="btn"
+                    style="color: white; background-color: black;">Registrar</button>
                 <a href="/vistaGestionarVehiculos/"><button type="button"
                         class="btn btn-danger mx-2">Cancelar</button></a>
             </div>
@@ -57,7 +58,7 @@
 </div>
 
 {% if mensaje %}
-    {% if estado %}
+{% if estado %}
 <script>
     Swal.fire({
         title: 'Registro Vehiculos',
@@ -67,7 +68,7 @@
         confirmButtonText: 'Aceptar'
     }).then((result) => {
         if (result.isConfirmed) {
-            location.href = "/vistaRegistrarVehiculos/"
+            location.href = "/vistaGestionarVehiculos/"
         }
     });
 </script>

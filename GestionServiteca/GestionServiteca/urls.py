@@ -26,6 +26,7 @@ urlpatterns = [
     path('inicioAdministrador/',views.inicioAdministrador),
     path('inicioAsistente/',views.inicioAsistente),
     path('inicioTecnico/',views.inicioTecnico),
+    path('inicioCliente/',views.inicioCliente),
     path('registrarUsuario/',views.registrarUsuario),
     path('vistaGestionarUsuarios/',views.vistaGestionarUsuarios),
     path('vistaGestionarEmpleados/',views.vistaGestionarEmpleados),
@@ -38,8 +39,13 @@ urlpatterns = [
     path('vistaGestionarVehiculos/',views.vistaGestionarVehiculos),
     path('vistaRegistrarVehiculo/',views.vistaRegistrarVehiculos),
     path('registrarVehiculo/',views.registrarVehiculo),
-    path('vistaLogin/',views.vistaLogin),
+    path('vistaRegistrarServiciosP/',views.vistaRegistrarServiciosPrestados),
+    path('vistaGestionarFacturas/',views.vistaGestionarFacturas),
+    path('vistaGestionarSolicitudesV/',views.vistaGestionarSolicitudesV), 
+    path('vistaGestionarConsultasC/',views.vistaGestionarConsultasC), 
+    path('consultarC/',views.consultarCliente), 
     path('login/',views.login),
+    path('vistaLogin/',views.vistaLogin),
     path('salir/',views.salir),
 ]
 if settings.DEBUG:

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils import timezone
 
 
+
 tipoUsuario = [
     ('Tecnico','Tecnico'),('Asistente', 'Asistente'),('Administrativo','Administrativo'),
 ]
@@ -29,7 +30,8 @@ estadoServicioPrestado=[
 tiposMarcas=[
     ('Toyota','Toyota'),('Nissan','Nissan'),('Mazda','Mazda'),('Hyundai','Hyundai'),
     ('Chevrolet','Chevrolet'),('BMW','BMW'),('Suzuki','Suzuki'),('Ford','Ford'),
-    ('Mercedes-Benz','Mercedes-Benz'),('Audi','Audi'),('Renault','Renault')
+    ('Mercedes-Benz','Mercedes-Benz'),('Audi','Audi'),('Renault','Renault'),
+    ('Kia','Kia'),('Honda','Honda'),('Jeep','Jeep'),('Volkswagen','Volkswagen')
 ]
 
 class User(AbstractUser):
@@ -86,12 +88,13 @@ class ServicioPrestado(models.Model):
     serpCli=models.ForeignKey(Cliente,on_delete=models.PROTECT,db_comment="Hace relación al cliente FK")  
     serpVehi=models.ForeignKey(Vehiculo,on_delete=models.PROTECT,db_comment="Hace relación al vehiculo FK")  
     serpEmp=models.ForeignKey(Empleado,on_delete=models.PROTECT,db_comment="Hace relación al empleado FK")  
+    serpServicio=models.ForeignKey(Servicio,on_delete=models.PROTECT,db_comment="Hace relación al servicio FK")
     serpEstado=models.CharField(max_length=10,choices=estadoServicioPrestado,db_comment="Estado del Servicio Prestado")
     serpNovedad=models.TextField(null=True,db_comment="Novedad acerca del servicio prestado realizado")
     serpFechaServicio=models.DateTimeField(default=timezone.now(),db_comment="Fecha y Hora ultima actualizacion del servicio prestado")
     
     def __str__(self):
-        return f"{self.serpCli} {self.serpVehi} {self.serpEmp}"
+        return f"{self.serpCli} {self.serpVehi} {self.serpEmp} {self.serpServicio}"
 
 class DetalleServicio(models.Model):
     detNovedad=models.TextField(null=True,db_comment="Novedad acerca del detalle del servicio prestado")
