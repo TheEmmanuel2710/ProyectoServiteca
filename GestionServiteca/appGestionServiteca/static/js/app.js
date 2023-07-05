@@ -6,17 +6,8 @@ $(function () {
         posServicio = servicios.findIndex(servicio => servicio.id == $("#cbServicio").val());
         costoServicio = servicios[posServicio].costo;
         $("#txtCosto").val("$" + costoServicio);
-    })
-    $("#btn-Consultar").click(function () {
-        $("#tblServiciosSolicitados").removeAttr('disabled');
-        $("#tblHistorialC").removeAttr('disabled');
     });
 })
-
-function Iniciar() {
-    document.getElementById("tblServiciosSolicitados").style.display = "block";
-    document.getElementById("tblHistorialC").style.display = "block";
-}
 
 function mostrarImagen(evento) {
     const archivos = evento.target.files

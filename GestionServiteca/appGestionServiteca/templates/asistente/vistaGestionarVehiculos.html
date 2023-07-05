@@ -7,6 +7,9 @@
 {%endblock %}
 {% block contenido %}
 <br>
+<br>
+<br>
+<br>
 <h3 class="text-center fw-bold">GESTIONAR VEHICULOS</h3>
 <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
     <a href="/vistaRegistrarVehiculo/"><button class="btn"
@@ -31,7 +34,7 @@
                 <td class="text-center">{{vehiculo.vehTipo}}</td>
                 <td class="text-center">{{vehiculo.vehModelo}}</td>
                 <td class="text-center">
-                    <a  id="btnAbrirModalActualizarVehiculo" data-bs-toggle="modal" data-bs-target="#ActualizarVeh">
+                    <a id="btnAbrirModalActualizarVehiculo" data-bs-toggle="modal" data-bs-target="#ActualizarVeh">
                         <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 2rem;"></i>
                     </a>
                 </td>
@@ -51,7 +54,7 @@
             </div>
             <!-- Modal body -->
             <div class="modal-body">
-                <form  action="/ActualizarV/">
+                <form action="/ActualizarV/">
                     <div class="form-group row">
                         <div class="mb-3 col-lg-4">
                             <label for="txtPlaca" class="fw-bold" style="color: black;">Placa:</label>
@@ -85,13 +88,15 @@
                             </select>
                             <div class="invalid-feedback">Por favor ingrese el tipo del vehiculo</div>
                         </div>
+                    </div>
                 </form>
             </div>
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="btnAgregarMaterialDetalle" data-bs-dismiss="modal">Actualizar</button>
+                <button class="btn btn-secondary" id="btnAgregarMaterialDetalle"
+                    data-bs-dismiss="modal">Actualizar</button>
                 <a href="/vistaGestionarVehiculos/"><button type="button"
-                    class="btn btn-danger mx-2">Cancelar</button></a>
+                        class="btn btn-danger mx-2">Cancelar</button></a>
             </div>
         </div>
     </div>

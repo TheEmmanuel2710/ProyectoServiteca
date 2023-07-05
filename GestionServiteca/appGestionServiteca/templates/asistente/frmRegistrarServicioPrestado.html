@@ -10,6 +10,9 @@
 
 <script src="{%static '../static/js/servicioP.js' %}"></script>
 <br>
+<br>
+<br>
+<br>
 {% for material in materiales %}
 <script> cargarMateriales("{{material.id}}", "{{material.matElemento.eleCodigo}}", "{{material.matElemento.eleNombre}}");</script>
 {% endfor %}

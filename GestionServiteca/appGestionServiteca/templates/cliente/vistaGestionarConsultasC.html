@@ -6,8 +6,7 @@
 <br>
 <br>
 <br>
-<form action="/consultarC/" method="post" enctype="multipart/form-data"
-class="needs-validation w-75" novalidate>
+<form action="/consultarC/" method="post" enctype="multipart/form-data" class="needs-validation w-75" novalidate>
     {% csrf_token%}
     <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificacion:</label>
     <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
@@ -68,6 +67,31 @@ class="needs-validation w-75" novalidate>
 </div>
 <br>
 <br>
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Consulta Cliente',
+        text: '{{ mensaje }}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then(() => {
+        mostrarTablas();
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Consulta Cliente',
+        text: '{{ mensaje }}',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    });
+</script>
+{% endif %}
+{% endif %}
 <script>
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (() => {
@@ -92,30 +116,12 @@ class="needs-validation w-75" novalidate>
             );
         });
     })();
+   
+    function mostrarTablas() {
+        document.getElementById("tblServiciosSolicitados").style.display = "table";
+        document.getElementById("tblHistorialC").style.display = "table";
+    }
 </script>
-{% if mensaje %}
-{% if estado %}
-<script>    
-    Swal.fire({
-        title: 'Consulta Cliente',
-        text: '{{mensaje}}',
-        icon: 'info',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-    })
-</script>
-{% else %}
-<script>
-    Swal.fire({
-        title: 'Consulta Cliente',
-        text: '{{mensaje}}',
-        icon: 'info',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-    })
-</script>
-{% endif %}
-{% endif %}
 {%endblock %}
 {% block piePagina %}
 {% include "piePagina.html" %}

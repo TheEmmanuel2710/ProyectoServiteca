@@ -347,18 +347,24 @@ def consultarCliente(request):
         if id:
             persona = Persona.objects.get(perIdentificacion=id)
             mensaje = "Cliente consultado de manera exitosa"
+            estado = True
         else:
             mensaje = "Por favor, ingrese una identificación"
             persona = None
+            estado = False
     except Persona.DoesNotExist:
         mensaje = "No se encontró un cliente con esa identificación"
         persona = None
+        estado = False
     except Exception as error:
         mensaje = f"Problemas --> {error}"
         persona = None
+        estado = False
 
     retorno = {
         "mensaje": mensaje,
         "persona": persona,
+        "estado": estado,
     }
     return render(request, "cliente/vistaGestionarConsultasC.html", retorno)
+
