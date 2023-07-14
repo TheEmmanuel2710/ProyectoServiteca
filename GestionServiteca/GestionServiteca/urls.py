@@ -40,6 +40,7 @@ urlpatterns = [
     path('vistaRegistrarVehiculo/',views.vistaRegistrarVehiculos),
     path('registrarVehiculo/',views.registrarVehiculo),
     path('vistaRegistrarServiciosP/',views.vistaRegistrarServiciosPrestados),
+    path('registrarServicioPrestado/',views.registrarServicioPrestado),
     path('vistaGestionarFacturas/',views.vistaGestionarFacturas),
     path('vistaGestionarSolicitudesV/',views.vistaGestionarSolicitudesV), 
     path('vistaGestionarConsultasC/',views.vistaGestionarConsultasC), 

@@ -13,12 +13,8 @@
 <br>
 <br>
 <br>
-{% for material in materiales %}
-<script> cargarMateriales("{{material.id}}", "{{material.matElemento.eleCodigo}}", "{{material.matElemento.eleNombre}}");</script>
-{% endfor %}
-
-{% for unidad in unidadesMedida %}
-<script> cargarUnidadesMedida("{{unidad.id}}", "{{unidad.uniNombre}}");</script>
+{% for serviP in servicioPrestados %}
+<script> cargarServiciosPrestados("{{serviP.serpCli}}", "{{serviP.serpVeh}}", "{{serviP.serpEmp}}","{{serviP.serpServicio}}");</script>
 {% endfor %}
 {% for servicio in servicios %}
 <script>
@@ -27,7 +23,7 @@
 {% endfor%}
 <h3 class="text-center fw-bold">REGISTRAR SERVICIOS PRESTADOS </h3>
 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
-    <form id="frmRegistrarServicioPrestado" action="//" method="post" enctype="multipart/form-data"
+    <form action="" id="frmDatosGenerales" enctype="multipart/form-data"
         class="needs-validation w-75" novalidate>
         {% csrf_token%}
         <div class="form-group row">
@@ -103,7 +99,7 @@
             </div>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn" style="background-color: black; color:white;">Anexar servicio
+            <button type="button"  id="btnAgregarServicioPDetalle" class="btn" style="background-color: black; color:white;">Anexar servicio
                 prestado</button>
         </div>
     </form>
@@ -129,7 +125,7 @@
     </table>
 </div>
 <div class="text-center">
-    <button class="btn mt-5" id="btnRegistrarDetalleServcioP"
+    <button class="btn mt-5" id="btnRegistrarDetalleServicioP"
         style="background-color: black; color:white; margin: 0%  auto;">Finalizar
         Registro</button>
 </div>

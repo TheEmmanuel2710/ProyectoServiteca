@@ -1,5 +1,4 @@
 let serviciosPrestados = []
-let unidadesMedida = []
 let DetalleServiciosPrestados = []
 
 $(function () {
@@ -8,13 +7,10 @@ $(function () {
             'X-CSRFToken': getCookie('csrftoken')
         }
     })
-    $("#btnAgregarMaterialDetalle").click(function() {
-        agregarMaterialDetalle();
+    $("#btnAgregarServicioPDetalle").click(function() {
+        agregarServiciopDetalle();
     })
-    $("#entradaMaterial").click(function() {
-        vistaEntradaMaterial();
-    })
-    $("#btnRegistrarDetalle").click(function() {
+    $("#btnRegistrarDetalleServicioP").click(function() {
         registroDetalleEntrada();
     })
 })
@@ -54,10 +50,10 @@ function registroDetalleEntrada() {
         "observaciones":$("#txtObservaciones").val(),
         "fechaHora": $("#txtFechaEntrega").val(),
 
-        "detalle": JSON.stringify(entradaserviciosPrestados),
+        "detalle": JSON.stringify(DetalleServiciosPrestados),
     };
     $.ajax({
-        url: "/registrarEntradaMaterial/",
+        url: "/registrarServicioPrestado/",
         data: datos,
         type: 'post',
         dataType: 'json',
@@ -69,7 +65,7 @@ function registroDetalleEntrada() {
                 DetalleServiciosPrestados.length = 0;
                 mostrarDatosTabla();
             }
-            Swal.fire("Registro de serviciosPrestados", resultado.mensaje, "success");
+            Swal.fire("Registro de Servcios Prestados", resultado.mensaje, "success");
         }
     })
 }
@@ -77,19 +73,19 @@ function registroDetalleEntrada() {
  * Agrega cada material al arreglo de entredaserviciosPrestados,
  * primero valida que no se haya agregado previamente
  */
-function agregarMaterialDetalle() {
+function agregarServiciopDetalle() {
     //Averigua si ya se ha agregado el material
-    const m = entradaserviciosPrestados.find(material => material.idMaterial == $("#cbMaterial").val());
+    const m = DetalleServiciosPrestados.find(material => material.idMaterial == $("#cbServicio").val());
     if (m == null) {
         const material = {
-            "idMaterial": $("#cbMaterial").val(),
+            "idServicio": $("#cbServicio").val(),
             "cantidad": $("#txtCantidad").val(),
             "precio": $("#txtPrecio").val(),
             "idUnidadMedida": $("#cbUnidadMedida").val(),
             "estado": $("#cbEstado").val(),
         }
-        entradaserviciosPrestados.push(material);
-        frmEntradaMaterial.reset();
+        DetalleServiciosPrestados.push(material);
+        frmDatosGenerales.reset();
         mostrarDatosTabla();
     } else {
         Swal.fire("Entrada serviciosPrestados",
@@ -99,7 +95,7 @@ function agregarMaterialDetalle() {
 
 function mostrarDatosTabla() {
     datos = "";
-    entradaserviciosPrestados.forEach(entrada => {
+    DetalleServiciosPrestados.forEach(entrada => {
         posM = serviciosPrestados.findIndex(material => material.idMaterial == entrada.idMaterial);
         posU = unidadesMedida.findIndex(unidad => unidad.id == entrada.idUnidadMedida);
         datos += "<tr>";
@@ -116,33 +112,18 @@ function mostrarDatosTabla() {
 }
 
 /**
- * Obtiene los serviciosPrestados registrados en el
- * sistema con los datos necesarios.Los recibe
- * de la vista  y los almacenes en un arreglo
- * @param {*} idMaterial 
- * @param {*} codigo 
- * @param {*} nombre 
+ * funcion que obtiene los datos de la vista y los guarda en un arreglo
+ * @param {*} idCliente 
+ * @param {*} idVehiculo 
+ * @param {*} idEmpleado 
+ * @param {*} idServicio 
  */
-function cargarserviciosPrestados(idMaterial,codigo,nombre) {
-    const material={
-        "idMaterial":idMaterial,
-        "codigo":codigo,
-        "nombre":nombre,
+function cargarServiciosPrestados(idCliente,idVehiculo,idEmpleado,idServicio) {
+    const servicioP={
+        "idCliente":idCliente,
+        "idVehiculo":idVehiculo,
+        "idEmpleado":idEmpleado,
+        "idServicio":idServicio,
     }
-    serviciosPrestados.push(material);  
-}
-
-
-/**
- * Obtiene las unidades de medida y los almacena
- * en un arreglo    
- * @param {*} id 
- * @param {*} nombre 
- */
-function cargarUnidadesMedida(id,nombre) {
-    const unidadMedida={
-        "id":id,
-        "nombre":nombre,
-    }
-    unidadesMedida.push(unidadMedida);  
+    serviciosPrestados.push(servicioP);  
 }

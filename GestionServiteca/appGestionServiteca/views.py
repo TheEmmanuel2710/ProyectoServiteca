@@ -12,6 +12,7 @@ import json
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 import threading
+from django.http import JsonResponse
 from smtplib import SMTPException
 
 
@@ -318,12 +319,55 @@ def vistaRegistrarServiciosPrestados(request):
         clientes=Cliente.objects.all()
         empleados=Empleado.objects.all()
         servicios=Servicio.objects.all()
-        retorno = {"empleados":empleados,"servicios":servicios,"vehiculos":vehiculos,"clientes":clientes,"estadoSP":estadoServicioPrestado,"user":request.user}
+        servicioPrestados=ServicioPrestado.objects.all()
+        retorno = {"empleados":empleados,"servicios":servicios,"serviciosPrestados":servicioPrestados,"vehiculos":vehiculos,"clientes":clientes,"estadoSP":estadoServicioPrestado,"user":request.user}
         return render(request,"asistente/frmRegistrarServicioPrestado.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "menu.html",{"mensaje":mensaje})
     
+def registrarServicioPrestado(request):
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                estado = False
+                idCliente = int(request.POST['cliente'])
+                idVehiculo = int(request.POST['vehiculo'])
+                idEmpleado = int(request.POST['empleado'])
+                estado = request.POST['estado']
+                fechaHora = request.POST.get('fechaHora', None)
+                idServicio = int(request.POST['servicioS'])
+                observaciones = request.POST['observaciones']
+                cliente = Cliente.objects.get(pk=idCliente)
+                vehiculo = Vehiculo.objects.get(pk=idVehiculo)
+                empleado = Empleado.objects.get(pk=idEmpleado)
+                servicio = Servicio.objects.get(pk=idServicio)
+                servicioprestado = ServicioPrestado(serpCli=cliente, serpVehi=vehiculo, serpEmp=empleado, serpServicio=servicio,
+                                                    serpEstado=estado, serpObservaciones=observaciones, serpFechaServicio=fechaHora)
+                servicioprestado.save()
+                
+                detalleServicios = json.loads(request.POST['detalle'])
+                sumaCostos = 0
+                
+                for detalle in detalleServicios:
+                    idServicio = int(detalle['idServicio'])
+                    costo = int(request.POST['costo'])  # Obtener el costo del servicio
+                    
+                    servicio = Servicio.objects.get(id=idServicio, costo=costo)
+                    sumaCostos += costo
+                    detalleServicioPrestado = DetalleServicioPrestado(detNovedad=observaciones, detMonto=sumaCostos, detServicio=servicio,
+                                                                      detServicioPrestado=servicioprestado)
+                    detalleServicioPrestado.save()
+                
+                estado = True
+                mensaje = "Se ha registrado el servicio prestado correctamente"
+        except Error as error:
+            transaction.rollback()
+            mensaje = str(error)
+        
+        retorno = {"estado": estado, "mensaje": mensaje}
+        return JsonResponse(retorno)
+        
 def vistaGestionarFacturas(request):
     if request.user.is_authenticated:
         return render(request,"asistente/vistaGestionarFacturas.html")
@@ -367,4 +411,3 @@ def consultarCliente(request):
         "estado": estado,
     }
     return render(request, "cliente/vistaGestionarConsultasC.html", retorno)
-
