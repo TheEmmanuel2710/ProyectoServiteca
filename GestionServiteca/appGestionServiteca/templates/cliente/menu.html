@@ -6,18 +6,12 @@
   <div class="container-fluid">
     <div class="select-menu" >
       <div class="select-btn" title="Opciones">
-        {% if user.userFoto != "" and user.userFoto != "False" %}
-        <img src="../media/{{user.userFoto}}" alt="Foto Usuario" style="width:60px;" class="rounded-pill">
-        {% else %}
-        <img src="https://png.pngtree.com/png-vector/20190710/ourlarge/pngtree-user-vector-avatar-png-image_1541962.jpg"
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqHqp6jU2xRAbHRG56GUxyNR_nortjMpX0Nw&usqp=CAU"
           alt="No foto" style="width:60px;" class="rounded-pill">
-        {% endif %}
       </div>
       <ul class="options">
-          <li class="option" style="color: white;">
-            {{user.email}} 
-          </li>
-          
+         
+ 
          <li class="option">
           <button onclick="cliente()" class="btn btn-outline-danger"  title="Inicio" id="btn-1" >Inicio Cliente</button>
          </li>

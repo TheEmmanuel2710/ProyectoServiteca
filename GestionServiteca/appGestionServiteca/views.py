@@ -28,7 +28,7 @@ def inicioAdministrador(request):
         return render(request,"administrador/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def inicioAsistente(request):
     if request.user.is_authenticated:
@@ -36,7 +36,7 @@ def inicioAsistente(request):
         return render(request,"asistente/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def inicioTecnico(request):
     if request.user.is_authenticated:
@@ -44,15 +44,11 @@ def inicioTecnico(request):
         return render(request,"tecnico/inicio.html", datosSesion)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def inicioCliente(request):
-    if request.user.is_authenticated:
-        datosSesion={"user": request.user}
-        return render(request,"cliente/inicio.html", datosSesion)
-    else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+    return render(request,"cliente/inicio.html")
+        
     
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
@@ -61,7 +57,7 @@ def vistaRegistrarUsuario(request):
         return render(request, "administrador/frmRegistrarUsuario.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def vistaGestionarUsuarios(request):
     if request.user.is_authenticated:
@@ -70,7 +66,7 @@ def vistaGestionarUsuarios(request):
         return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def registrarUsuario(request):
     try:
@@ -127,7 +123,7 @@ def vistaGestionarClientes(request):
         return render(request,"asistente/vistaGestionarClientes.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "incio.html",{"mensaje":mensaje})
 
 def vistaRegistrarClientes(request):
     if request.user.is_authenticated:
@@ -135,7 +131,7 @@ def vistaRegistrarClientes(request):
         return render(request,"asistente/frmRegistrarCliente.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def registrarCliente(request):
     estado=False
@@ -166,7 +162,7 @@ def vistaGestionarVehiculos(request):
         return render(request,"asistente/vistaGestionarVehiculos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def vistaRegistrarVehiculos(request):
     if request.user.is_authenticated:
@@ -174,7 +170,7 @@ def vistaRegistrarVehiculos(request):
         return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def registrarVehiculo(request):
     estado=False
@@ -218,7 +214,7 @@ def vistaGestionarEmpleados(request):
         return render(request,"administrador/vistaGestionarEmpleados.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def vistaRegistrarEmpleados(request):
     if request.user.is_authenticated:
@@ -226,7 +222,7 @@ def vistaRegistrarEmpleados(request):
         return render(request,"administrador/frmRegistrarEmpleado.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def registrarEmpleado(request):
     estado=False
@@ -324,7 +320,7 @@ def vistaRegistrarServiciosPrestados(request):
         return render(request,"asistente/frmRegistrarServicioPrestado.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
     
 def registrarServicioPrestado(request):
     if request.method == 'POST':
@@ -373,14 +369,14 @@ def vistaGestionarFacturas(request):
         return render(request,"asistente/vistaGestionarFacturas.html")
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
     
 def vistaGestionarSolicitudesV(request):
     if request.user.is_authenticated:
         return render(request,"tecnico/vistaGestionarSolicitudesVehiculos.html")
     else:
         mensaje="Debe iniciar sesión"
-        return render(request, "menu.html",{"mensaje":mensaje})
+        return render(request, "inicio.html",{"mensaje":mensaje})
 
 def vistaGestionarConsultasC(request):
     return render(request,"cliente/vistaGestionarConsultasC.html")
