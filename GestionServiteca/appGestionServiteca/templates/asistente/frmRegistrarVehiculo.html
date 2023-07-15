@@ -17,13 +17,13 @@
         <h3 class="text-center fw-bold">REGISTRAR VEHICULO</h3>
         <br>
         <div class="form-group row">
-            <div class="mb-3 col-lg-4">
+            <div class="mb-3 col-lg-6">
                 <label for="txtPlaca" class="fw-bold" style="color: black;">Placa:</label>
                 <input type="text" name="txtPlaca" class="form-control" id="txtIdentificacion"
                     placeholder="Placa del vehiculo" required>
                 <div class="invalid-feedback">Por favor ingrese la placa del vehiculo</div>
             </div>
-            <div class="mb-3 col-lg-4">
+            <div class="mb-3 col-lg-6">
                 <label for="cbMarca" class="fw-bold" style="color: black;">Marca:</label>
                 <select name="cbMarca" id="cbMarca" class="form-select" required>
                     <option value="">Seleccione</option>
@@ -33,7 +33,9 @@
                 </select>
                 <div class="invalid-feedback">Por favor ingrese la marca del vehiculo</div>
             </div>
-            <div class="mb-3 col-lg-4">
+        </div>
+        <div class="form-group row">
+            <div class="mb-3 col-lg-6">
                 <label for="txtModelo" class="fw-bold" style="color: black;">Modelo</label>
                 <input type="text" name="txtModelo" class="form-control" id="txtModelo"
                     placeholder="Modelo del vehiculo" required>
@@ -49,14 +51,13 @@
                 </select>
                 <div class="invalid-feedback">Por favor ingrese el tipo del vehiculo</div>
             </div>
-            <br>
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn"
-                    style="color: white; background-color: black;">Registrar</button>
-                <a href="/vistaGestionarVehiculos/"><button type="button"
-                        class="btn btn-danger mx-2">Cancelar</button></a>
-            </div>
         </div>
+        <br>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn" style="color: white; background-color: black;">Registrar</button>
+            <a href="/vistaGestionarVehiculos/"><button type="button" class="btn btn-danger mx-2">Cancelar</button></a>
+        </div>
+
     </form>
 </div>
 
