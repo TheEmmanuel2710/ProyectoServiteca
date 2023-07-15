@@ -141,5 +141,5 @@ GOOGLE_RECAPTCHA_SECRET_KEY = '6LeiD-0lAAAAALAoKv-9Fw6utFpGw5NOA6devrnU'
 EMAIL_HOST="smtp.gmail.com"
 EMAIL_PORT=587
 EMAIL_HOST_USER="theemmanuelwtg@gmail.com" 
-EMAIL_HOST_PASSWORD='xqgdhjhbhwqfvddo' 
+EMAIL_HOST_PASSWORD='pxorkhggutqhyppq' 
 EMAIL_USE_TLS=True

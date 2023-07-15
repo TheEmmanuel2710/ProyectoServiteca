@@ -48,6 +48,7 @@ urlpatterns = [
     path('login/',views.login),
     path('vistaLogin/',views.vistaLogin),
     path('salir/',views.salir),
+    
 ]
 if settings.DEBUG:
     urlpatterns += static (settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
