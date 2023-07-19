@@ -1,8 +1,8 @@
 <header>
-  <img src="../media/Logo.png" alt="Logo" style="width: 200px; height: 80px;">
+  <img src="../media/Logo.png"  alt="Logo" style="width: 200px; height: 80px;">
   <nav class="navigation">
     <a href="/">Home</a>
-    <button class="btnLogin-popup">Login</button>
+    <button class="btnLogin-popup" id="colorFondo">Login</button>
   </nav>
 </header>
 
@@ -43,34 +43,21 @@
 </div>
 </div>
 {% if mensaje %}
-{% if estado %}
-<script>
-    Swal.fire({
-        title: 'Sistema  Serviteca',
-        text: '{{mensaje}}',
-        icon: 'success',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-        }
-    });
-</script>
-{% else %}
 <script>
     Swal.fire({
         title: 'Sistema Serviteca',
         text: '{{mensaje}}',
-        icon: 'warning',
+        icon: 'info',
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'Aceptar'
     }).then((result) => {
         if (result.isConfirmed) {
+          window.location.href="/";
         }
-    })
+    });
 </script>
 {% endif %}
-{% endif %}
+
 
 <script>
   const passwordInput = document.getElementById('txtPassword');
@@ -83,4 +70,6 @@
       passwordInput.type = 'password';
     }
   });
+
+ 
 </script>
