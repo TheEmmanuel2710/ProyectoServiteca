@@ -79,7 +79,7 @@ class Servicio(models.Model):
     serNombre=models.CharField(max_length=45,unique=True,db_comment="Nombre del servicio")
     serCosto=models.IntegerField(db_comment="Costo del servicio")
     serFechaInicial=models.DateTimeField(auto_now_add=True,db_comment="Fecha y Hora del servicio")
-    serFechaFinal=models.DateTimeField(default=timezone.now(),db_comment="Fecha y Hora ultima actualizacion del servicio")
+    serFechaFinal=models.DateTimeField(auto_now_add=True,db_comment="Fecha y Hora ultima actualizacion del servicio")
     
     def __str__(self):
         return f"{self.serNombre}" 
@@ -91,7 +91,7 @@ class ServicioPrestado(models.Model):
     serpServicio=models.ForeignKey(Servicio,on_delete=models.PROTECT,db_comment="Hace relación al servicio FK")
     serpEstado=models.CharField(max_length=10,choices=estadoServicioPrestado,db_comment="Estado del Servicio Prestado")
     serpObservaciones=models.TextField(null=True,db_comment="Novedad acerca del servicio prestado realizado")
-    serpFechaServicio=models.DateTimeField(default=timezone.now(),db_comment="Fecha y Hora ultima actualizacion del servicio prestado")
+    serpFechaServicio=models.DateTimeField(auto_now_add=True,db_comment="Fecha y Hora ultima actualizacion del servicio prestado")
     
     def __str__(self):
         return f"{self.serpCli} {self.serpVehi} {self.serpEmp} {self.serpServicio}"
