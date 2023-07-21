@@ -16,3 +16,4 @@ function tecnico() {
 function cliente() {
     window.location.href = "/inicioCliente/"
 }
+

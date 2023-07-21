@@ -6,6 +6,8 @@
 <br>
 <br>
 <br>
+{% load static %}
+<script src="{% static '../static/js/inactividad.js' %}"></script>
 <form action="/consultarC/" method="post" enctype="multipart/form-data" class="needs-validation w-75" novalidate>
     {% csrf_token%}
     <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificacion:</label>
