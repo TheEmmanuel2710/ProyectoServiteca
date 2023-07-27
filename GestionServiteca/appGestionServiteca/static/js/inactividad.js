@@ -1,15 +1,15 @@
-let inactivityTime = 0;
-const sessionTimeout = 2; // 3 minutos = 180 segundos
-let isLoggedOut = false; // Variable para controlar si ya se mostró el mensaje
+let tiempoInactividad = 0;
+const tiempoSesionInactiva = 180; // 3 minutos = 180 segundos
+let sesionCerrada = false; // Variable para controlar si ya se mostró el mensaje
 
-function resetTimer() {
-    inactivityTime = 0;
+function reiniciarTemporizador() {
+    tiempoInactividad = 0;
 }
 
-function checkInactivity() {
-    inactivityTime++;
+function verificarInactividad() {
+    tiempoInactividad++;
 
-    if (inactivityTime >= sessionTimeout && !isLoggedOut) {
+    if (tiempoInactividad >= tiempoSesionInactiva && !sesionCerrada) {
         Swal.fire({
             title: 'Sistema Serviteca',
             text: 'Inactividad detectada, cerrando sesión.',
@@ -22,15 +22,18 @@ function checkInactivity() {
             }
         });
 
-        isLoggedOut = true; // Marca la variable como verdadera para que no se muestre el mensaje nuevamente
+        sesionCerrada = true; // Marca la variable como verdadera para que no se muestre el mensaje nuevamente
         // Aquí puedes agregar la lógica para cerrar la sesión si es necesario.
     }
 }
 
 window.onload = function() {
-    document.onmousemove = resetTimer;
-    document.onkeypress = resetTimer;
-    document.addEventListener("click", resetTimer);
+    document.onmousemove = reiniciarTemporizador;
+    document.onkeypress = reiniciarTemporizador;
+    document.addEventListener("click", reiniciarTemporizador);
+
+    // Agregamos la detección del movimiento del mouse
+    document.addEventListener("mousemove", reiniciarTemporizador);
 };
 
-setInterval(checkInactivity, 1000);
+setInterval(verificarInactividad, 1000);

@@ -43,13 +43,10 @@ function getCookie(name) {
  */
 function registroDetalleEntrada() {
     var datos = {
-        "codigoFactura": $("#txtFactura").val(),
-        "entregadoPor": $("#txtEntregadoPor").val(),
-        "proveedor": $("#cbProveedor").val(),
-        "recibidoPor": $("#cbRecibidoPor").val(),
+        "cliente": $("#cbCliente").val(),
+        "vehiculo": $("#cbVehiculo").val(),
         "observaciones":$("#txtObservaciones").val(),
-        "fechaHora": $("#txtFechaEntrega").val(),
-
+        "fechaHora": $("#txtFechaHoraSP").val(),
         "detalle": JSON.stringify(DetalleServiciosPrestados),
     };
     $.ajax({

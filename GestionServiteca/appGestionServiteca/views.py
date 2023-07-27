@@ -106,7 +106,7 @@ def registrarUsuario(request):
                 <br><b>Username: </b> {user.username}\
                 <br><b>Password: </b> {passwordGenerado}\
                 <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
-                http://gestioninventario.sena.edu.co.'
+                http://ServitecaOpita.com'
             thread = threading.Thread(target=enviarCorreo, args=(asunto,mensaje, user.email) )
             thread.start()
             return redirect("/vistaGestionarUsuarios/", retorno)
