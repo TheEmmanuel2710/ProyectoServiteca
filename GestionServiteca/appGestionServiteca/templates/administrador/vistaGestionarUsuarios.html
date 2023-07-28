@@ -34,11 +34,11 @@
                 <td>{{usuario.first_name}} {{usuario.last_name}}</td>
                 <td>{{usuario.email}}</td>
                 <td>{{usuario.userTipo}}</td>
-                {% if usuario.userFoto != False %}
+                {% if usuario.userFoto != "False" %}
                 <td><img src="../media/{{usuario.userFoto}}" alt="Foto Usuario" style="width:60px;" class="rounded-pill">
                 </td>
                 {% else %}
-                <td><img src="https://png.pngtree.com/png-vector/20190710/ourlarge/pngtree-user-vector-avatar-png-image_1541962.jpg"
+                <td><img src="https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280.jpg"
                         alt="No foto" style="width:60px;" class="rounded-pill"></td>
                 {% endif %}
                 <td class="text-center">

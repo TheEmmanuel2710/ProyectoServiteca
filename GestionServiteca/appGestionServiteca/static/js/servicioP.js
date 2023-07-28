@@ -1,18 +1,27 @@
 let serviciosPrestados = []
 let DetalleServiciosPrestados = []
+let servicios = []
+let clientes = []
+let vehiculos = []
+let empleados = []
 
 $(function () {
     $.ajaxSetup({
         headers: {
             'X-CSRFToken': getCookie('csrftoken')
         }
-    })
-    $("#btnAgregarServicioPDetalle").click(function() {
-        agregarServiciopDetalle();
-    })
-    $("#btnRegistrarDetalleServicioP").click(function() {
-        registroDetalleEntrada();
-    })
+    });
+    $("#btnAgregarDatosGenerales").click(function () {
+        agregarDatosG();
+    });
+    $("#btnAgregarDetalleServicioP").click(function () {
+        agregarServiciospDetalle();
+    });
+    $("#cbServicio").change(function () {
+        posServicio = servicios.findIndex(servicio => servicio.id == $("#cbServicio").val());
+        costoServicio = servicios[posServicio].costo;
+        $("#txtCosto").val("$" + costoServicio);
+    });
 })
 
 /**
@@ -41,11 +50,11 @@ function getCookie(name) {
  * Realiza la peticion ajax para registrar
  * la entrada de serviciosPrestados 
  */
-function registroDetalleEntrada() {
+function agregarDatosG() {
     var datos = {
         "cliente": $("#cbCliente").val(),
         "vehiculo": $("#cbVehiculo").val(),
-        "observaciones":$("#txtObservaciones").val(),
+        "observaciones": $("#txtObservaciones").val(),
         "fechaHora": $("#txtFechaHoraSP").val(),
         "detalle": JSON.stringify(DetalleServiciosPrestados),
     };
@@ -67,60 +76,83 @@ function registroDetalleEntrada() {
     })
 }
 /**
- * Agrega cada material al arreglo de entredaserviciosPrestados,
+ * Agrega cada servicio al arreglo de DetalleServiciosPrestados,
  * primero valida que no se haya agregado previamente
  */
-function agregarServiciopDetalle() {
-    //Averigua si ya se ha agregado el material
-    const m = DetalleServiciosPrestados.find(material => material.idMaterial == $("#cbServicio").val());
-    if (m == null) {
-        const material = {
-            "idServicio": $("#cbServicio").val(),
-            "cantidad": $("#txtCantidad").val(),
-            "precio": $("#txtPrecio").val(),
-            "idUnidadMedida": $("#cbUnidadMedida").val(),
+function agregarServiciospDetalle() {
+    //Averigua si ya se ha agregado el servicio
+    const d = DetalleServiciosPrestados.find(servicio => servicio.idServicio == $("#cbServicio").val());
+    if (d == null) {
+        const servi = {
+            "empleado": $("#cbEmpleado").val(),
             "estado": $("#cbEstado").val(),
+            "idServicio": $("#cbServicio").val(),
+            "costo": $("#txtCosto").val(),
         }
-        DetalleServiciosPrestados.push(material);
+        DetalleServiciosPrestados.push(servi);
         frmDatosGenerales.reset();
         mostrarDatosTabla();
     } else {
-        Swal.fire("Entrada serviciosPrestados",
-            "El material seleccionado ya se ha agregado en el detalle", "info");
+        Swal.fire("Sistema Serviteca",
+            "El Servicio seleccionado ya se ha agregado en el detalle.", "info");
     }
 }
 
 function mostrarDatosTabla() {
     datos = "";
-    DetalleServiciosPrestados.forEach(entrada => {
-        posM = serviciosPrestados.findIndex(material => material.idMaterial == entrada.idMaterial);
-        posU = unidadesMedida.findIndex(unidad => unidad.id == entrada.idUnidadMedida);
+    DetalleServiciosPrestados.forEach(detail => {
+        posC = clientes.findIndex(cliente => cliente.id == detail.idCliente);
+        posV = vehiculos.findIndex(vehiculo => vehiculo.id == detail.idVehiculo);
+        posE = empleados.findIndex(empleado => empleado.id == detail.idEmpleado);
+        posS = servicios.findIndex(servicio => servicio.id == detail.idServicio);
         datos += "<tr>";
-        datos += "<td class='text-center'>" + serviciosPrestados[posM].codigo + "</td>";
-        datos += "<td>" + serviciosPrestados[posM].nombre + "</td>";
-        datos += "<td class='text-center'>" + entrada.cantidad + "</td>";
-        datos += "<td class='text-end'>" + entrada.precio + ".00" + "</td>";
-        datos += "<td>" + unidadesMedida[posU].nombre + "</td>";
-        datos += "<td class='text-center'>" + entrada.estado + "</td>";
+        datos += "<td class='text-center' style='whidth:69%;'>" + clientes[posC].nombre + "</td>";
+        datos += "<td class='text-center'>" + vehiculos[posV].placa + "</td>";
+        datos += "<td class='text-center'>" + empleados[posE].nombre + "</td>";
+        datos += "<td class='text-center'>" + "Melo" + "</td>";
+        datos += "<td class='text-center'>" + servicios[posS].nombre + "</td>";
+        datos += "<td class='text-center'>" + "$" + servicios[posS].costo + "</td>";
+        datos += "<td class='text-center'>" + "Hoy" + "</td>";
+        datos += "<td class='text-center'>" + "La buena hp" + "</td>";
         datos += "</tr>";
     });
-    //Agregar a la tabla con id datosTablaserviciosPrestados
-    tblDetalleSP.innerHTML=datos;
+    //Agregar a la tabla con id tblDetalleSP
+    tblDetalleSP.innerHTML = datos;
 }
 
 /**
- * funcion que obtiene los datos de la vista y los guarda en un arreglo
- * @param {*} idCliente 
- * @param {*} idVehiculo 
- * @param {*} idEmpleado 
- * @param {*} idServicio 
+ * Funcion que obtiene los datos de la lista y los guarda en un arreglo
+ * @param {*} id 
+ * @param {*} nombre 
  */
-function cargarServiciosPrestados(idCliente,idVehiculo,idEmpleado,idServicio) {
-    const servicioP={
-        "idCliente":idCliente,
-        "idVehiculo":idVehiculo,
-        "idEmpleado":idEmpleado,
-        "idServicio":idServicio,
+function cargarClientes(nombre) {
+    const cliente = {
+        nombre: nombre,
     }
-    serviciosPrestados.push(servicioP);  
+    clientes.push(cliente);
+}
+
+
+function cargarVehiculos(placa) {
+    const vehiculo = {
+        placa: placa
+    }
+    vehiculos.push(vehiculo);
+}
+
+function cargarEmpleados(nombre) {
+    const empleado = {
+        nombre: nombre,
+    }
+    empleados.push(empleado);
+}
+
+function cargarServicios(id, nombre, costo) {
+    const servicio = {
+        id: id,
+        nombre: nombre,
+        costo: costo
+    }
+
+    servicios.push(servicio);
 }

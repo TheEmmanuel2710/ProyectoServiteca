@@ -332,7 +332,7 @@ def registrarServicioPrestado(request):
                 idEmpleado = int(request.POST['empleado'])
                 estado = request.POST['estado']
                 fechaHora = request.POST.get('fechaHora', None)
-                idServicio = int(request.POST['servicioS'])
+                idServicio = int(request.POST['servicio'])
                 observaciones = request.POST['observaciones']
                 cliente = Cliente.objects.get(pk=idCliente)
                 vehiculo = Vehiculo.objects.get(pk=idVehiculo)
@@ -348,10 +348,9 @@ def registrarServicioPrestado(request):
                 for detalle in detalleServicios:
                     idServicio = int(detalle['idServicio'])
                     costo = int(request.POST['costo'])  # Obtener el costo del servicio
-                    
                     servicio = Servicio.objects.get(id=idServicio, costo=costo)
                     sumaCostos += costo
-                    detalleServicioPrestado = DetalleServicioPrestado(detNovedad=observaciones, detMonto=sumaCostos, detServicio=servicio,
+                    detalleServicioPrestado = DetalleServicioPrestado(detMonto=sumaCostos, detServicio=servicio,
                                                                       detServicioPrestado=servicioprestado)
                     detalleServicioPrestado.save()
                 

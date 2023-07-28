@@ -1,12 +1,5 @@
-servicios = []
 $(function () {
     $("#fileFoto").on("change", mostrarImagen);
-
-    $("#cbServicio").change(function () {
-        posServicio = servicios.findIndex(servicio => servicio.id == $("#cbServicio").val());
-        costoServicio = servicios[posServicio].costo;
-        $("#txtCosto").val("$" + costoServicio);
-    });
 })
 
 function mostrarImagen(evento) {
@@ -30,15 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-function cargarServicios(id, nombre, costo) {
-    const servicio = {
-        id: id,
-        nombre: nombre,
-        costo: costo
-    }
 
-    servicios.push(servicio);
-}
 
   
   

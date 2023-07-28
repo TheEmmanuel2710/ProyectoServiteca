@@ -96,7 +96,6 @@ class ServicioPrestado(models.Model):
         return f"{self.serpCli} {self.serpVehi} {self.serpEmp} {self.serpServicio}"
 
 class DetalleServicioPrestado(models.Model):
-    detNovedad=models.TextField(null=True,db_comment="Novedad acerca del detalle del servicio prestado")
     detMonto=models.IntegerField(db_comment="Monto del los servicios prestados solicitados")
     detServicio=models.ForeignKey(Servicio,on_delete=models.PROTECT,db_comment="Hace relación al servicio FK")
     detServicioPrestado=models.ForeignKey(ServicioPrestado,on_delete=models.PROTECT,db_comment="Hace relación al servicio FK")
