@@ -106,7 +106,7 @@ function mostrarDatosTabla() {
         posE = empleados.findIndex(empleado => empleado.id == detail.idEmpleado);
         posS = servicios.findIndex(servicio => servicio.id == detail.idServicio);
         datos += "<tr>";
-        datos += "<td class='text-center' style='whidth:69%;'>" + clientes[posC].nombre + "</td>";
+        datos += "<td class='text-center'>" + clientes[posC].nombre + "</td>";
         datos += "<td class='text-center'>" + vehiculos[posV].placa + "</td>";
         datos += "<td class='text-center'>" + empleados[posE].nombre + "</td>";
         datos += "<td class='text-center'>" + "Melo" + "</td>";
