@@ -14,15 +14,15 @@
 <br>
 <br>
 {% for cliente in clientes %}
-<script> cargarClientes('{{cliente.cliPersona.perNombres}}');</script>
+<script> cargarClientes('{{cliente.id}}','{{cliente.cliPersona.perNombres}}');</script>
 {% endfor %}
 
 {% for vehiculo in vehiculos %}
-<script> cargarVehiculos('{{vehiculo.vehPlaca}}');</script>
+<script> cargarVehiculos('{{vehiculo.id}}','{{vehiculo.vehPlaca}}');</script>
 {% endfor %}
 
 {% for empleado in empleados %}
-<script> cargarEmpleados('{{empleado.empPersona.perNombres}}');</script>
+<script> cargarEmpleados('{{empleado.id}}','{{ empleado.empPersona.perNombres}}');</script>
 {% endfor %}
 
 {% for servicio in servicios %}
@@ -75,8 +75,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#modalSerivcioP"
-                    id="btnAgregarDatosGenerales" class="btn" style="background-color: black; color:white;">Anexar
+                <button type="button" data-bs-toggle="modal" data-bs-target="#modalSerivcioP" class="btn" style="background-color: black; color:white;">Anexar
                     servicio
                     prestado</button>
             </div>

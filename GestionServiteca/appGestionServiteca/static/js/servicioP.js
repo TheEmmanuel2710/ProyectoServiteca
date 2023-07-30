@@ -11,9 +11,6 @@ $(function () {
             'X-CSRFToken': getCookie('csrftoken')
         }
     });
-    $("#btnAgregarDatosGenerales").click(function () {
-        agregarDatosG();
-    });
     $("#btnAgregarDetalleServicioP").click(function () {
         agregarServiciospDetalle();
     });
@@ -46,35 +43,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-/**
- * Realiza la peticion ajax para registrar
- * la entrada de serviciosPrestados 
- */
-function agregarDatosG() {
-    var datos = {
-        "cliente": $("#cbCliente").val(),
-        "vehiculo": $("#cbVehiculo").val(),
-        "observaciones": $("#txtObservaciones").val(),
-        "fechaHora": $("#txtFechaHoraSP").val(),
-        "detalle": JSON.stringify(DetalleServiciosPrestados),
-    };
-    $.ajax({
-        url: "/registrarServicioPrestado/",
-        data: datos,
-        type: 'post',
-        dataType: 'json',
-        cache: false,
-        success: function (resultado) {
-            console.log(resultado);
-            if (resultado.estado) {
-                frmDatosGenerales.reset();
-                DetalleServiciosPrestados.length = 0;
-                mostrarDatosTabla();
-            }
-            Swal.fire("Registro de Servcios Prestados", resultado.mensaje, "success");
-        }
-    })
-}
+
 /**
  * Agrega cada servicio al arreglo de DetalleServiciosPrestados,
  * primero valida que no se haya agregado previamente
@@ -84,9 +53,14 @@ function agregarServiciospDetalle() {
     const d = DetalleServiciosPrestados.find(servicio => servicio.idServicio == $("#cbServicio").val());
     if (d == null) {
         const servi = {
+            "cliente": $("#cbCliente").val(),
+            "vehiculo": $("#cbVehiculo").val(),
+            "observaciones": $("#txtObservaciones").val(),
+            "fechaHora": $("#txtFechaHoraSP").val(),
             "empleado": $("#cbEmpleado").val(),
             "estado": $("#cbEstado").val(),
             "idServicio": $("#cbServicio").val(),
+            "servicio":$('#cbServicio option:selected').html(),
             "costo": $("#txtCosto").val(),
         }
         DetalleServiciosPrestados.push(servi);
@@ -106,14 +80,14 @@ function mostrarDatosTabla() {
         posE = empleados.findIndex(empleado => empleado.id == detail.idEmpleado);
         posS = servicios.findIndex(servicio => servicio.id == detail.idServicio);
         datos += "<tr>";
-        datos += "<td class='text-center'>" + clientes[posC].nombre + "</td>";
-        datos += "<td class='text-center'>" + vehiculos[posV].placa + "</td>";
-        datos += "<td class='text-center'>" + empleados[posE].nombre + "</td>";
-        datos += "<td class='text-center'>" + "Melo" + "</td>";
-        datos += "<td class='text-center'>" + servicios[posS].nombre + "</td>";
-        datos += "<td class='text-center'>" + "$" + servicios[posS].costo + "</td>";
-        datos += "<td class='text-center'>" + "Hoy" + "</td>";
-        datos += "<td class='text-center'>" + "La buena hp" + "</td>";
+        datos += "<td class='text-center'>" + detail.cliente+ "</td>";
+        datos += "<td class='text-center'>" + detail.vehiculo + "</td>";
+        datos += "<td class='text-center'>" + detail.empleado + "</td>";
+        datos += "<td class='text-center'>" + detail.estado + "</td>";
+        datos += "<td class='text-center'>" + detail.servicio + "</td>";
+        datos += "<td class='text-center'>" + detail.costo + "</td>";
+        datos += "<td class='text-center'>" + detail.fechaHora + "</td>";
+        datos += "<td class='text-center'>" + detail.observaciones + "</td>";
         datos += "</tr>";
     });
     //Agregar a la tabla con id tblDetalleSP
@@ -125,24 +99,27 @@ function mostrarDatosTabla() {
  * @param {*} id 
  * @param {*} nombre 
  */
-function cargarClientes(nombre) {
+function cargarClientes(idCliente, nombre) {
     const cliente = {
-        nombre: nombre,
+        idCliente: idCliente,
+        nombre: nombre
     }
     clientes.push(cliente);
 }
 
 
-function cargarVehiculos(placa) {
+function cargarVehiculos(idVehiculo, placa) {
     const vehiculo = {
+        idVehiculo: idVehiculo,
         placa: placa
     }
     vehiculos.push(vehiculo);
 }
 
-function cargarEmpleados(nombre) {
+function cargarEmpleados(idEmpleado, nombre) {
     const empleado = {
-        nombre: nombre,
+        idEmpleado: idEmpleado,
+        nombre: nombre
     }
     empleados.push(empleado);
 }

@@ -86,9 +86,6 @@ class Servicio(models.Model):
 class ServicioPrestado(models.Model):
     serpCli=models.ForeignKey(Cliente,on_delete=models.PROTECT,db_comment="Hace relación al cliente FK")  
     serpVehi=models.ForeignKey(Vehiculo,on_delete=models.PROTECT,db_comment="Hace relación al vehiculo FK")  
-    serpEmp=models.ForeignKey(Empleado,on_delete=models.PROTECT,db_comment="Hace relación al empleado FK")  
-    serpServicio=models.ForeignKey(Servicio,on_delete=models.PROTECT,db_comment="Hace relación al servicio FK")
-    serpEstado=models.CharField(max_length=10,choices=estadoServicioPrestado,db_comment="Estado del Servicio Prestado")
     serpObservaciones=models.TextField(null=True,db_comment="Novedad acerca del servicio prestado realizado")
     serpFechaServicio=models.DateTimeField(auto_now_add=True,db_comment="Fecha y Hora ultima actualizacion del servicio prestado")
     
@@ -96,10 +93,9 @@ class ServicioPrestado(models.Model):
         return f"{self.serpCli} {self.serpVehi} {self.serpEmp} {self.serpServicio}"
 
 class DetalleServicioPrestado(models.Model):
-    detMonto=models.IntegerField(db_comment="Monto del los servicios prestados solicitados")
     detServicio=models.ForeignKey(Servicio,on_delete=models.PROTECT,db_comment="Hace relación al servicio FK")
     detServicioPrestado=models.ForeignKey(ServicioPrestado,on_delete=models.PROTECT,db_comment="Hace relación al servicio FK")
-    
+    serpEmp=models.ForeignKey(Empleado,on_delete=models.PROTECT,db_comment="Hace relación al empleado FK")  
     def __str__(self):
         return f"{self.detServicio} {self.detServicioPrestado}" 
     

@@ -308,6 +308,8 @@ def enviarCorreo (asunto=None, mensaje=None, destinatario=None):
         correo.send(fail_silently=True)
     except SMTPException as error: 
         print(error)
+       
+       
 
 def vistaRegistrarServiciosPrestados(request):
     if request.user.is_authenticated:
