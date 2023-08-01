@@ -90,7 +90,7 @@ class ServicioPrestado(models.Model):
     serpFechaServicio=models.DateTimeField(auto_now_add=True,db_comment="Fecha y Hora ultima actualizacion del servicio prestado")
     
     def __str__(self):
-        return f"{self.serpCli} {self.serpVehi} {self.serpEmp} {self.serpServicio}"
+        return f"{self.serpCli} {self.serpVehi}"
 
 class DetalleServicioPrestado(models.Model):
     detServicio=models.ForeignKey(Servicio,on_delete=models.PROTECT,db_comment="Hace relación al servicio FK")

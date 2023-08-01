@@ -18,10 +18,23 @@
     <div class="text-center fw-bold">Gestionar Solicitudes</div>
   </div>
 </div>
-{%endblock %}
 
+<script>
+  const mensaje = "{{ mensaje }}";
+  if (mensaje === "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url.") {
+      Swal.fire({
+          icon: 'info',
+          title: 'Sistema Serviteca',
+          text: mensaje,
+          confirmButtonText: 'Aceptar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/inicioTecnico/"
+        }
+    });
+  }
+</script>
+{%endblock %}
 {% block piePagina %}
 {% include "piePagina.html" %}
 {%endblock %}
-
-

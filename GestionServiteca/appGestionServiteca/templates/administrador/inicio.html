@@ -34,6 +34,22 @@
     <div class="text-center fw-bold">Gestionar Empleados</div>
   </div>
 </div>
+<script>
+  const mensaje = "{{ mensaje }}";
+
+  if (mensaje === "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url.") {
+    Swal.fire({
+      icon: 'info',
+      title: 'Sistema Serviteca',
+      text: mensaje,
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+          location.href = "/inicioAdministrador/"
+      }
+  });
+  }
+</script>
 {%endblock %}
 {% block piePagina %}
 {% include "piePagina.html" %}

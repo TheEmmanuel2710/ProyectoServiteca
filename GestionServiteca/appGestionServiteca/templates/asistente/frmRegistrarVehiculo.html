@@ -21,7 +21,7 @@
         <div class="form-group row">
             <div class="mb-3 col-lg-6">
                 <label for="txtPlaca" class="fw-bold" style="color: black;">Placa:</label>
-                <input type="text" name="txtPlaca" class="form-control" id="txtIdentificacion"
+                <input type="text" name="txtPlaca" class="form-control" id="txtPlaca"
                     placeholder="Placa del vehiculo" required>
                 <div class="invalid-feedback">Por favor ingrese la placa del vehiculo</div>
             </div>
@@ -88,7 +88,7 @@
         confirmButtonText: 'Aceptar'
     }).then((result) => {
         if (result.isConfirmed) {
-            location.href = ""
+            location.href = "/vistaRegistrarVehiculo/"
         }
     });
 </script>

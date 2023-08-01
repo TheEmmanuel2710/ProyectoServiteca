@@ -46,8 +46,8 @@
                     <td>{{ empleado.empSueldo }}</td>
                     <td>{{ empleado.empEstado }}</td>
                     <td class="text-center">
-                        <a id="btnAbrirModalActualizarEmpleado" data-bs-toggle="modal" data-bs-target="#ActualizarEmpl">
-                            <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 2rem;"></i>
+                        <a onclick="abrirModalActualizarEmpleado({{empleado.empPersona.id}})">
+                            <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
                         </a>
                     </td>
                 </tr>
@@ -141,6 +141,34 @@
             </div>
         </div>
     </div>
+    <script>
+        function abrirModalActualizarEmpleado(id) {
+            // Funcion AJAX para obtener los datos del cliente por ID
+            $.ajax({
+                url: `/consultarE/${id}/`, //URL para obtener los datos del cliente por ID
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    // Rellenar el formulario de la modal con los datos obtenidos
+                    $("#txtIdentificacion").val(data.empleado.empPersona.perIdentificacion);
+                    $("#txtNombres").val(data.empleado.empPersona.perNombres);
+                    $("#txtApellidos").val(data.empleado.empPersona.perApellidos);
+                    $("#txtCorreo").val(data.empleado.empPersona.perCorreo);
+                    $("#txtNumeroC").val(data.empleado.empPersona.perNumeroCelular);
+                    $("#txtCargo").val(data.empleado.empCargo);
+                    $("#txtSueldo").val(data.empleado.empSueldo);
+                    $("#cbEstado").val(data.empleado.empEstado);
+    
+                    // Abrir la modal
+                    $('#ActualizarEmpl').modal('show');
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert("Hubo un error al cargar los datos del empleado.");
+                }
+            });
+        }
+    </script>
     <script>
         cargarDataTable($("#tblEmpleados"), "LISTADO DE EMPLEADOS", 7);
     </script>

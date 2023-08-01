@@ -15,7 +15,6 @@ import threading
 from django.http import JsonResponse
 from smtplib import SMTPException
 
-
 # Create your views here.
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -24,49 +23,80 @@ def inicio(request):
 
 def inicioAdministrador(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
-        return render(request,"administrador/inicio.html", datosSesion)
+        if request.user.groups.filter(name='Administrador').exists():
+            datosSesion = {"user": request.user}
+            return render(request, "administrador/inicio.html", datosSesion)
+        elif request.user.groups.filter(name='Asistente').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def inicioAsistente(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
-        return render(request,"asistente/inicio.html", datosSesion)
+        if request.user.groups.filter(name='Asistente').exists():
+            datosSesion = {"user": request.user}
+            return render(request, "asistente/inicio.html", datosSesion)
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def inicioTecnico(request):
     if request.user.is_authenticated:
-        datosSesion={"user": request.user}
-        return render(request,"tecnico/inicio.html", datosSesion)
+        if request.user.groups.filter(name='Tecnico').exists():
+            datosSesion = {"user": request.user}
+            return render(request, "tecnico/inicio.html", datosSesion)
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Asistente').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "asistente/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
-
-def inicioCliente(request):
-    return render(request,"cliente/inicio.html")
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
         
-    
 def vistaRegistrarUsuario(request):
     if request.user.is_authenticated:
-        roles = Group.objects.all()
-        retorno = {"roles":roles,"tipoUsuario":tipoUsuario,"user":request.user}
-        return render(request, "administrador/frmRegistrarUsuario.html",retorno)
+        if request.user.groups.filter(name='Administrador').exists():
+            roles = Group.objects.all()
+            retorno = {"roles":roles,"tipoUsuario":tipoUsuario,"user":request.user}
+            return render(request, "administrador/frmRegistrarUsuario.html",retorno)
+        elif request.user.groups.filter(name='Asistente').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def vistaGestionarUsuarios(request):
     if request.user.is_authenticated:
-        usuarios=User.objects.all()
-        retorno = {"usuarios":usuarios,"user":request.user}
-        return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
+        if request.user.groups.filter(name='Administrador').exists():
+            usuarios=User.objects.all()
+            retorno = {"usuarios":usuarios,"user":request.user}
+            return render(request,"administrador/vistaGestionarUsuarios.html",retorno)
+        elif request.user.groups.filter(name='Asistente').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def registrarUsuario(request):
     try:
@@ -106,7 +136,7 @@ def registrarUsuario(request):
                 <br><b>Username: </b> {user.username}\
                 <br><b>Password: </b> {passwordGenerado}\
                 <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
-                http://ServitecaOpita.com'
+                http://serviteca.pythonanywhere.com'
             thread = threading.Thread(target=enviarCorreo, args=(asunto,mensaje, user.email) )
             thread.start()
             return redirect("/vistaGestionarUsuarios/", retorno)
@@ -118,20 +148,34 @@ def registrarUsuario(request):
 
 def vistaGestionarClientes(request):
     if request.user.is_authenticated:
-        clientes=Cliente.objects.all()
-        retorno = {"clientes":clientes,"user":request.user}
-        return render(request,"asistente/vistaGestionarClientes.html",retorno)
+        if request.user.groups.filter(name='Asistente').exists():
+            clientes=Cliente.objects.all()
+            retorno = {"clientes":clientes,"user":request.user}
+            return render(request,"asistente/vistaGestionarClientes.html",retorno)
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "incio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def vistaRegistrarClientes(request):
     if request.user.is_authenticated:
-        retorno = {"user":request.user}
-        return render(request,"asistente/frmRegistrarCliente.html",retorno)
+        if request.user.groups.filter(name='Asistente').exists():
+            retorno = {"user":request.user}
+            return render(request,"asistente/frmRegistrarCliente.html",retorno)
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def registrarCliente(request):
     estado=False
@@ -155,22 +199,59 @@ def registrarCliente(request):
     retorno = {"mensaje":mensaje,"estado":estado}
     return render(request,"asistente/frmRegistrarCliente.html",retorno)
 
+def consultarCliente(request, id):
+    try:
+        cliente = Cliente.objects.get(cliPersona_id=id)  # Buscar cliente por ID de Persona
+        persona = cliente.cliPersona
+        datos_cliente = {
+            "id": cliente.id,
+            "cliPersona": {
+                "perIdentificacion": persona.perIdentificacion,
+                "perNombres": persona.perNombres,
+                "perApellidos": persona.perApellidos,
+                "perCorreo": persona.perCorreo,
+                "perNumeroCelular": persona.perNumeroCelular,
+            },
+            "cliDireccion": cliente.cliDireccion,
+        }
+        return JsonResponse({"cliente": datos_cliente})
+    except Cliente.DoesNotExist:
+        return JsonResponse({"error": "Cliente no encontrado"}, status=404)
+    except Persona.DoesNotExist:
+        return JsonResponse({"error": "Persona no encontrada"}, status=404)
+    except Exception as error:
+        return JsonResponse({"error": str(error)}, status=500)
+
 def vistaGestionarVehiculos(request):
     if request.user.is_authenticated:
-        vehiculos=Vehiculo.objects.all()
-        retorno = {"vehiculos":vehiculos,"tipoVeh":tipoVehiculo,"tipoMar":tiposMarcas,"user":request.user}
-        return render(request,"asistente/vistaGestionarVehiculos.html",retorno)
+        if request.user.groups.filter(name='Asistente').exists():
+            vehiculos=Vehiculo.objects.all()
+            retorno = {"vehiculos":vehiculos,"tipoVeh":tipoVehiculo,"tipoMar":tiposMarcas,"user":request.user}
+            return render(request,"asistente/vistaGestionarVehiculos.html",retorno)
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def vistaRegistrarVehiculos(request):
     if request.user.is_authenticated:
-        retorno = {"user":request.user,"tipoVeh":tipoVehiculo,"tipoMar":tiposMarcas}
-        return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
+        if request.user.groups.filter(name='Asistente').exists():
+            retorno = {"user":request.user,"tipoVeh":tipoVehiculo,"tipoMar":tiposMarcas}
+            return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def registrarVehiculo(request):
     estado=False
@@ -190,6 +271,23 @@ def registrarVehiculo(request):
     retorno = {"mensaje":mensaje,"estado":estado}
     return render(request,"asistente/frmRegistrarVehiculo.html",retorno)
 
+def consultarVehiculo(request, id):
+    try:
+        vehiculo = Vehiculo.objects.get(id=id)  # Buscar vehiculo por su id
+        datos_vehiculo = {
+            "id": vehiculo.id,
+            "vehPlaca":vehiculo.vehPlaca,
+            "vehMarca":vehiculo.vehMarca,
+            "vehModelo":vehiculo.vehModelo,
+            "vehTipo":vehiculo.vehTipo
+        }
+
+        return JsonResponse({"vehiculo": datos_vehiculo})
+    except Vehiculo.DoesNotExist:
+        return JsonResponse({"error": "Vehiculo no encontrado"}, status=404)
+    except Exception as error:
+        return JsonResponse({"error": str(error)}, status=500)
+
 def generarPassword():
     """
     Genera un password de longitud de 10 que incluye letras mayusculas
@@ -206,23 +304,36 @@ def generarPassword():
         password +=''.join(random.choice(caracteres))
     return password
 
-
 def vistaGestionarEmpleados(request):
     if request.user.is_authenticated:
-        empleados=Empleado.objects.all()
-        retorno = {"empleados":empleados,"estadoEmpl":estadoEmpleados,"user":request.user}
-        return render(request,"administrador/vistaGestionarEmpleados.html",retorno)
+        if request.user.groups.filter(name='Administrador').exists():
+            empleados=Empleado.objects.all()
+            retorno = {"empleados":empleados,"estadoEmpl":estadoEmpleados,"user":request.user}
+            return render(request,"administrador/vistaGestionarEmpleados.html",retorno)
+        elif request.user.groups.filter(name='Asistente').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def vistaRegistrarEmpleados(request):
     if request.user.is_authenticated:
-        retorno = {"user":request.user,"estadoEmpl":estadoEmpleados}
-        return render(request,"administrador/frmRegistrarEmpleado.html",retorno)
+        if request.user.groups.filter(name='Administrador').exists():
+           retorno = {"user":request.user,"estadoEmpl":estadoEmpleados}
+           return render(request,"administrador/frmRegistrarEmpleado.html",retorno)
+        elif request.user.groups.filter(name='Asistente').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
 
 def registrarEmpleado(request):
     estado=False
@@ -247,7 +358,32 @@ def registrarEmpleado(request):
         mensaje= f"{error}"
     retorno = {"mensaje":mensaje,"estado":estado}
     return render(request,"administrador/frmRegistrarEmpleado.html",retorno)    
-    
+
+def consultarEmpleado(request, id):
+    try:
+        empleado = Empleado.objects.get(empPersona_id=id)  # Buscar empleado por ID de Persona
+        persona = empleado.empPersona
+
+        datos_empleado = {
+            "id": empleado.id,
+            "empPersona": {
+                "perIdentificacion": persona.perIdentificacion,
+                "perNombres": persona.perNombres,
+                "perApellidos": persona.perApellidos,
+                "perCorreo": persona.perCorreo,
+                "perNumeroCelular": persona.perNumeroCelular,
+            },
+            "empCargo": empleado.empCargo,
+            "empSueldo": empleado.empSueldo,
+            "empEstado": empleado.empEstado,
+        }
+        return JsonResponse({"empleado": datos_empleado})
+    except Empleado.DoesNotExist:
+        return JsonResponse({"error": "Empleado no encontrado"}, status=404)
+    except Persona.DoesNotExist:
+        return JsonResponse({"error": "Persona no encontrada"}, status=404)
+    except Exception as error:
+        return JsonResponse({"error": str(error)}, status=500)
 
 def vistaLogin(request):
     return render(request,"menu.html")
@@ -309,20 +445,25 @@ def enviarCorreo (asunto=None, mensaje=None, destinatario=None):
     except SMTPException as error: 
         print(error)
        
-       
-
 def vistaRegistrarServiciosPrestados(request):
     if request.user.is_authenticated:
-        vehiculos=Vehiculo.objects.all()
-        clientes=Cliente.objects.all()
-        empleados=Empleado.objects.all()
-        servicios=Servicio.objects.all()
-        servicioPrestados=ServicioPrestado.objects.all()
-        retorno = {"empleados":empleados,"servicios":servicios,"serviciosPrestados":servicioPrestados,"vehiculos":vehiculos,"clientes":clientes,"estadoSP":estadoServicioPrestado,"user":request.user}
-        return render(request,"asistente/frmRegistrarServicioPrestado.html",retorno)
+        if request.user.groups.filter(name='Asistente').exists():
+           vehiculos=Vehiculo.objects.all()
+           clientes=Cliente.objects.all()
+           empleados=Empleado.objects.all()
+           servicios=Servicio.objects.all()
+           servicioPrestados=ServicioPrestado.objects.all()
+           retorno = {"empleados":empleados,"servicios":servicios,"serviciosPrestados":servicioPrestados,"vehiculos":vehiculos,"clientes":clientes,"estadoSP":estadoServicioPrestado,"user":request.user}
+           return render(request,"asistente/frmRegistrarServicioPrestado.html",retorno)
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
     
 def registrarServicioPrestado(request):
     if request.method == 'POST':
@@ -367,22 +508,33 @@ def registrarServicioPrestado(request):
         
 def vistaGestionarFacturas(request):
     if request.user.is_authenticated:
-        return render(request,"asistente/vistaGestionarFacturas.html")
+        if request.user.groups.filter(name='Asistente').exists():
+           return render(request,"asistente/vistaGestionarFacturas.html")
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Tecnico').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
     
 def vistaGestionarSolicitudesV(request):
     if request.user.is_authenticated:
-        return render(request,"tecnico/vistaGestionarSolicitudesVehiculos.html")
+        if request.user.groups.filter(name='Tecnico').exists():
+            return render(request,"tecnico/vistaGestionarSolicitudesVehiculos.html")
+        elif request.user.groups.filter(name='Administrador').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+        elif request.user.groups.filter(name='Asistente').exists():
+            mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+            return render(request, "asistente/inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe iniciar sesión"
-        return render(request, "inicio.html",{"mensaje":mensaje})
-
-def vistaGestionarConsultasC(request):
-    return render(request,"cliente/vistaGestionarConsultasC.html")
+        mensaje = "Debe iniciar sesión"
+        return render(request, "inicio.html", {"mensaje": mensaje})
     
-def consultarCliente(request):
+def existeCliente(request):
     try:
         id = request.POST["txtIdentificacion"]
         if id:

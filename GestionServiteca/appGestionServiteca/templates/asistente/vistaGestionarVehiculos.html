@@ -35,8 +35,8 @@
                 <td class="text-center">{{vehiculo.vehTipo}}</td>
                 <td class="text-center">{{vehiculo.vehModelo}}</td>
                 <td class="text-center">
-                    <a id="btnAbrirModalActualizarVehiculo" data-bs-toggle="modal" data-bs-target="#ActualizarVeh">
-                        <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 2rem;"></i>
+                    <a onclick="abrirModalActualizarVehiculo({{vehiculo.id}})">
+                        <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
                     </a>
                 </td>
             </tr>
@@ -59,7 +59,7 @@
                     <div class="form-group row">
                         <div class="mb-3 col-lg-4">
                             <label for="txtPlaca" class="fw-bold" style="color: black;">Placa:</label>
-                            <input type="text" name="txtPlaca" class="form-control" id="txtIdentificacion"
+                            <input type="text" name="txtPlaca" class="form-control" id="txtPlaca"
                                 placeholder="Placa del vehiculo" required>
                             <div class="invalid-feedback">Por favor ingrese la placa del vehiculo</div>
                         </div>
@@ -102,6 +102,29 @@
         </div>
     </div>
 </div>
+<script>
+    function abrirModalActualizarVehiculo(id) {
+        // Funcion AJAX para obtener los datos del vehiculo por ID
+        $.ajax({
+            url: `/consultarV/${id}/`, //URL para obtener los datos del vehiculo por ID
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // Rellenar el formulario de la modal con los datos obtenidos
+                $("#txtPlaca").val(data.vehiculo.vehPlaca);
+                $("#cbMarca").val(data.vehiculo.vehMarca);
+                $("#txtModelo").val(data.vehiculo.vehModelo);
+                $("#cbTipoV").val(data.vehiculo.vehTipo);
+                // Abrir la modal
+                $('#ActualizarVeh').modal('show');
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Hubo un error al cargar los datos del vehiculo.");
+            }
+        });
+    }
+</script>
 <script>
     cargarDataTable($("#tblVehiculos"), "LISTADO VEHICULOS", 4);
 </script>
