@@ -560,3 +560,36 @@ def existeCliente(request):
         "estado": estado,
     }
     return render(request, "cliente/vistaGestionarConsultasC.html", retorno)
+
+def actualizarVehiculo(request):
+    estado = False
+    mensaje = ""
+    try:
+        idVehiculo_str = request.POST.get("idVehiculo")
+        if idVehiculo_str is not None and idVehiculo_str.isdigit():
+            idVehiculo = int(idVehiculo_str)
+            placa = request.POST.get("txtPlaca")
+            marca = request.POST.get("cbMarca")
+            modelo = request.POST.get("txtModelo")
+            tipoV = request.POST.get("cbTipoV")
+
+            vehiculo = Vehiculo.objects.get(id=idVehiculo)
+            with transaction.atomic():
+                vehiculo.vehPlaca = placa
+                vehiculo.vehMarca = marca
+                vehiculo.vehModelo = modelo
+                vehiculo.vehTipo = tipoV
+                vehiculo.save()
+
+            estado = True
+            mensaje = "Vehiculo actualizado correctamente"
+        else:
+            mensaje = "El idVehiculo no es un valor numérico válido"
+    except Vehiculo.DoesNotExist:
+        mensaje = "El vehiculo no existe"
+    except Exception as error:
+        transaction.rollback()
+        mensaje = str(error)
+    vehiculos=Vehiculo.objects.all()
+    retorno = {"mensaje": mensaje, "vehiculos": vehiculos, "tipoVeh": tipoVehiculo, "tipoMar": tiposMarcas, "estado": estado}
+    return render(request,"asistente/vistaGestionarVehiculos.html",retorno)

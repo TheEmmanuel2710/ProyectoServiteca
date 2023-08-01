@@ -44,21 +44,16 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
-    
+
     <title>Servi-Opita</title>
 </head>
 
-<body >
+<body>
     <div class="container-fluid">
-      
-            {% block menu %}
-            {% endblock %}
-      
-        
-            {% block contenido %}
-            
-            {% endblock %}
-     
+        {% block menu %}
+        {% endblock %}
+        {% block contenido %}
+        {% endblock %}
         <footer class="row fixed-bottom" id="footer">
             {% block piePagina %}
             {% endblock %}
