@@ -59,7 +59,7 @@ class Cliente(models.Model):
 class Vehiculo(models.Model):
     vehPlaca=models.CharField(max_length=6,unique=True,db_comment="Placa del vehiculo")
     vehMarca=models.CharField(max_length=13,choices=tiposMarcas,db_comment="Marca del vehiculo")
-    vehModelo=models.CharField(max_length=15,null=True,db_comment="Modelo del vehiculo")
+    vehModelo=models.IntegerField(db_comment="Modelo del vehiculo")
     vehTipo=models.CharField(max_length=9,choices=tipoVehiculo,db_comment="Tipo de vehiculo")
     
     def __str__(self):

@@ -14,6 +14,8 @@ from django.template.loader import get_template
 import threading
 from django.http import JsonResponse
 from smtplib import SMTPException
+from rest_framework import generics
+from appGestionServiteca.serializers import PersonaSerializer,ClienteSerializer
 
 # Create your views here.
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
@@ -593,3 +595,56 @@ def actualizarVehiculo(request):
     vehiculos=Vehiculo.objects.all()
     retorno = {"mensaje": mensaje, "vehiculos": vehiculos, "tipoVeh": tipoVehiculo, "tipoMar": tiposMarcas, "estado": estado}
     return render(request,"asistente/vistaGestionarVehiculos.html",retorno)
+
+def actualizarCliente(request):
+    estado = False
+    mensaje = ""
+    try:
+        idCliente_str = request.POST.get("idCliente")
+        if idCliente_str is not None and idCliente_str.isdigit():
+            idCliente = int(idCliente_str)
+            identificacion = request.POST.get("txtIdentificacion")
+            nombres = request.POST.get("txtNombres")
+            apellidos = request.POST.get("txtApellidos")
+            correo = request.POST.get("txtCorreo")
+            direccion = request.POST.get("txtDireccion")
+            numero = request.POST.get("txtNumeroC")
+
+            cliente = Cliente.objects.get(id=idCliente)
+            with transaction.atomic():
+                cliente.cliPersona.perIdentificacion = identificacion
+                cliente.cliPersona.perNombres = nombres
+                cliente.cliPersona.perApellidos = apellidos
+                cliente.cliPersona.perCorreo = correo
+                cliente.cliPersona.perNumeroCelular = numero
+                cliente.cliDireccion = direccion
+                cliente.save()
+
+            estado = True
+            mensaje = "Cliente actualizado correctamente"
+        else:
+            mensaje = "El idCliente no es un valor numérico válido"
+    except Cliente.DoesNotExist:
+        mensaje = "El cliente no existe"
+    except Exception as error:
+        transaction.rollback()
+        mensaje = str(error)
+    cliente=Cliente.objects.all()
+    retorno = {"mensaje": mensaje,"estado": estado,"clientes":cliente}
+    return render(request,"asistente/vistaGestionarClientes.html",retorno)
+
+class PersonaList(generics.ListCreateAPIView):
+    queryset=Persona.objects.all()
+    serializer_class=PersonaSerializer
+
+class PersonaDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Persona.objects.all()
+    serializer_class=PersonaSerializer
+
+class ClienteList(generics.ListCreateAPIView):
+    queryset=Cliente.objects.all()
+    serializer_class=ClienteSerializer
+
+class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Cliente.objects.all()
+    serializer_class=ClienteSerializer
