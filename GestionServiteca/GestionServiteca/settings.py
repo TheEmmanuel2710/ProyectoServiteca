@@ -144,7 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'appGestionServiteca.User'
 
 #recaptcha
-GOOGLE_RECAPTCHA_SECRET_KEY = '6LeiD-0lAAAAALAoKv-9Fw6utFpGw5NOA6devrnU'
+GOOGLE_RECAPTCHA_SECRET_KEY = '6LevdIonAAAAAFkDaO3PDkt3J0-dWGSAHGJEDMZE'
 
 #variables configuración correo
 EMAIL_HOST="smtp.gmail.com"
