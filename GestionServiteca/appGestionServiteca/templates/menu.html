@@ -1,7 +1,7 @@
 {% load static %}
 <script src="{% static '../static/css/app.css' %}"></script>
 <header>
-  <img src="../media/Logo.png" id="logo" alt="Logo" >
+  <img src="../media/Logo.png" id="logo" alt="Logo">
   <nav class="navigation">
     <a href="/">Home</a>
     <button class="btnLogin-popup" id="colorFondo">Login</button>
@@ -9,7 +9,7 @@
 </header>
 
 <div style="position: sticky; z-index: 9999; display: grid; place-items: center;" id="login">
-  <div class="wrapper" id="wrp" style="margin: 0% auto; z-index: 2000;  top: 100px; ">
+  <div class="wrapper" id="wrp" style="margin: 5% auto; z-index: 2000; top: 70px; max-width: 300px;">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <span class="icon-close"><ion-icon name="close-outline"></ion-icon></span>
 
@@ -61,7 +61,6 @@
 </script>
 {% endif %}
 
-
 <script>
   const passwordInput = document.getElementById('txtPassword');
   const rememberMeCheckbox = document.getElementById('mostarPassword');
@@ -73,6 +72,4 @@
       passwordInput.type = 'password';
     }
   });
-
-
 </script>
