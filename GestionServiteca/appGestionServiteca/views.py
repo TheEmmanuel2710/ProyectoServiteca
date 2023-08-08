@@ -203,7 +203,7 @@ def registrarCliente(request):
 
 def consultarCliente(request, id):
     try:
-        cliente = Cliente.objects.get(cliPersona_id=id)  # Buscar cliente por ID de Persona
+        cliente = Cliente.objects.get(pk=int(id))  # Buscar cliente por ID de Persona
         persona = cliente.cliPersona
         datos_cliente = {
             "id": cliente.id,
@@ -610,14 +610,18 @@ def actualizarCliente(request):
             direccion = request.POST.get("txtDireccion")
             numero = request.POST.get("txtNumeroC")
 
-            cliente = Cliente.objects.get(id=idCliente)
+            cliente = Cliente.objects.get(pk=idCliente)
+            persona = cliente.cliPersona
+            print(persona)
             with transaction.atomic():
-                cliente.cliPersona.perIdentificacion = identificacion
-                cliente.cliPersona.perNombres = nombres
-                cliente.cliPersona.perApellidos = apellidos
-                cliente.cliPersona.perCorreo = correo
-                cliente.cliPersona.perNumeroCelular = numero
+                persona.perIdentificacion = identificacion
+                persona.perNombres = nombres
+                persona.perApellidos = apellidos
+                persona.perCorreo = correo
+                persona.perNumeroCelular = numero
                 cliente.cliDireccion = direccion
+                persona.save()
+                
                 cliente.save()
 
             estado = True
@@ -631,6 +635,8 @@ def actualizarCliente(request):
         mensaje = str(error)
     cliente=Cliente.objects.all()
     retorno = {"mensaje": mensaje,"estado": estado,"clientes":cliente}
+    print(retorno)
+    
     return render(request,"asistente/vistaGestionarClientes.html",retorno)
 
 class PersonaList(generics.ListCreateAPIView):
@@ -639,6 +645,7 @@ class PersonaList(generics.ListCreateAPIView):
 
 class PersonaDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset=Persona.objects.all()
+    lookup_field='perIdentificacion'
     serializer_class=PersonaSerializer
 
 class ClienteList(generics.ListCreateAPIView):
