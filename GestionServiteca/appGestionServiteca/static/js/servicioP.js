@@ -49,18 +49,31 @@ function getCookie(name) {
  * primero valida que no se haya agregado previamente
  */
 function agregarServiciospDetalle() {
-    //Averigua si ya se ha agregado el servicio
-    const d = DetalleServiciosPrestados.find(servicio => servicio.idServicio == $("#cbServicio").val());
+    const cliente = $("#cbCliente").val();
+    const vehiculo = $("#cbVehiculo").val();
+    const observaciones = $("#txtObservaciones").val();
+    const fechaHora = $("#txtFechaHoraSP").val();
+    const empleado = $("#cbEmpleado").val();
+    const estado = $("#cbEstado").val();
+    const idServicio = $("#cbServicio").val();
+
+    if (!cliente || !vehiculo || !observaciones || !fechaHora || !empleado || !estado || !idServicio) {
+        Swal.fire("Sistema Serviteca",
+            "Por favor, completa todos los campos antes de agregar el servicio.", "error");
+        return;
+    }
+
+    const d = DetalleServiciosPrestados.find(servicio => servicio.idServicio == idServicio);
     if (d == null) {
         const servi = {
-            "cliente": $("#cbCliente").val(),
-            "vehiculo": $("#cbVehiculo").val(),
-            "observaciones": $("#txtObservaciones").val(),
-            "fechaHora": $("#txtFechaHoraSP").val(),
-            "empleado": $("#cbEmpleado").val(),
-            "estado": $("#cbEstado").val(),
-            "idServicio": $("#cbServicio").val(),
-            "servicio":$('#cbServicio option:selected').html(),
+            "cliente": cliente,
+            "vehiculo": vehiculo,
+            "observaciones": observaciones,
+            "fechaHora": fechaHora,
+            "empleado": empleado,
+            "estado": estado,
+            "idServicio": idServicio,
+            "servicio": $('#cbServicio option:selected').html(),
             "costo": $("#txtCosto").val(),
         }
         DetalleServiciosPrestados.push(servi);
@@ -68,7 +81,7 @@ function agregarServiciospDetalle() {
         mostrarDatosTabla();
     } else {
         Swal.fire("Sistema Serviteca",
-            "El Servicio seleccionado ya se ha agregado en el detalle.", "info");
+            "El Servicio seleccionado ya se ha agregado en el detalle.", "error");
     }
 }
 

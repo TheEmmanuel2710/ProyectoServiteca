@@ -207,12 +207,12 @@
     Swal.fire({
         title: 'Registro Servicio Prestado',
         text: '{{mensaje}}',
-        icon: 'warning',
+        icon: 'error',
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'Aceptar'
     }).then((result) => {
         if (result.isConfirmed) {
-            location.href = ""
+            location.href = "/vistaRegistrarServiciosP/"
         }
     });
 </script>

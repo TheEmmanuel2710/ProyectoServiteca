@@ -30,7 +30,9 @@ tiposMarcas=[
     ('Toyota','Toyota'),('Nissan','Nissan'),('Mazda','Mazda'),('Hyundai','Hyundai'),
     ('Chevrolet','Chevrolet'),('BMW','BMW'),('Suzuki','Suzuki'),('Ford','Ford'),
     ('Mercedes-Benz','Mercedes-Benz'),('Audi','Audi'),('Renault','Renault'),
-    ('Kia','Kia'),('Honda','Honda'),('Jeep','Jeep'),('Volkswagen','Volkswagen')
+    ('Kia','Kia'),('Honda','Honda'),('Jeep','Jeep'),('Volkswagen','Volkswagen'),
+    ('Ssangyong','Ssangyong'),('Fiat','Fiat'),('Lexus','Lexus'),('Citroën','Citroën'),
+    ('Jac','Jac'),('Mitsubishi','Mitsubishi')
 ]
 
 class User(AbstractUser):
@@ -43,14 +45,14 @@ class User(AbstractUser):
         return f"{self.username}"
         
 class Persona(models.Model):
-    perIdentificacion = models.CharField(max_length=15,unique=True,db_comment="Identificacion de la persona")
-    perNombres = models.CharField(max_length=55,db_comment="Nombres de la persona")
-    perApellidos = models.CharField(max_length=55,db_comment="Apellidos de la persona")
-    perCorreo  = models.CharField(max_length=55,unique=True,db_comment="Correo de la persona")
-    perNumeroCelular = models.CharField(max_length=55,unique=True,db_comment="Numero de celular de la persona")   
+    perIdentificacion = models.CharField(max_length=10,unique=True,db_comment="Identificacion de la persona")
+    perNombres = models.CharField(max_length=70,db_comment="Nombres de la persona")
+    perApellidos = models.CharField(max_length=70,db_comment="Apellidos de la persona")
+    perCorreo  = models.CharField(max_length=70,unique=True,db_comment="Correo de la persona")
+    perNumeroCelular = models.CharField(max_length=10,unique=True,db_comment="Numero de celular de la persona")   
 
 class Cliente(models.Model):
-    cliDireccion  = models.CharField(max_length=55,unique=False,null=True,db_comment="Direccion del cliente")
+    cliDireccion  = models.CharField(max_length=70,null=True,db_comment="Direccion del cliente")
     cliPersona=models.ForeignKey(Persona,on_delete=models.PROTECT,db_comment="Hace relación a la persona FK")
     
     def __str__(self):
@@ -58,7 +60,7 @@ class Cliente(models.Model):
 
 class Vehiculo(models.Model):
     vehPlaca=models.CharField(max_length=6,unique=True,db_comment="Placa del vehiculo")
-    vehMarca=models.CharField(max_length=13,choices=tiposMarcas,db_comment="Marca del vehiculo")
+    vehMarca=models.CharField(max_length=27,choices=tiposMarcas,db_comment="Marca del vehiculo")
     vehModelo=models.IntegerField(db_comment="Modelo del vehiculo")
     vehTipo=models.CharField(max_length=9,choices=tipoVehiculo,db_comment="Tipo de vehiculo")
     
@@ -75,7 +77,7 @@ class Empleado(models.Model):
         return f"{self.empPersona}" 
 
 class Servicio(models.Model):
-    serNombre=models.CharField(max_length=45,unique=True,db_comment="Nombre del servicio")
+    serNombre=models.CharField(max_length=50,unique=True,db_comment="Nombre del servicio")
     serCosto=models.IntegerField(db_comment="Costo del servicio")
     serFechaInicial=models.DateTimeField(auto_now_add=True,db_comment="Fecha y Hora del servicio")
     serFechaFinal=models.DateTimeField(auto_now_add=True,db_comment="Fecha y Hora ultima actualizacion del servicio")

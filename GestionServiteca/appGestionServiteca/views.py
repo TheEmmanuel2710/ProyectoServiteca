@@ -1,7 +1,7 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from appGestionServiteca.models import *
 from django.contrib.auth.models import Group
-from django.db import Error,transaction
+from django.db import transaction
 import random
 import string
 from django.contrib.auth import authenticate
@@ -407,7 +407,7 @@ def registrarEmpleado(request):
 
 def consultarEmpleado(request, id):
     try:
-        empleado = Empleado.objects.get(empPersona_id=id)  # Buscar empleado por ID de Persona
+        empleado = Empleado.objects.get(pk=int(id))  # Buscar empleado por ID de Persona
         persona = empleado.empPersona
 
         datos_empleado = {
@@ -739,6 +739,250 @@ def actualizarCliente(request):
     
     return render(request, "asistente/vistaGestionarClientes.html", retorno)
 
+
+def actualizarEmpleado(request):
+    estado = False
+    mensaje = ""
+    
+    try:
+        idEmpleado = int(request.POST.get("idEmpleado"))
+        identificacion = request.POST.get("txtIdentificacion")
+        nombres = request.POST.get("txtNombres")
+        apellidos = request.POST.get("txtApellidos")
+        cargo = request.POST.get("txtCargo")
+        sueldo = request.POST.get("txtSueldo")
+        estadoE = request.POST.get("cbEstado")
+        correo = request.POST.get("txtCorreo")
+        numero = request.POST.get("txtNumeroC")
+        
+        with transaction.atomic():
+            empleado = Empleado.objects.select_for_update().get(pk=idEmpleado)
+            persona = empleado.empPersona
+            
+            # Verificar si la nueva identificación, correo o número de celular ya existen en otros empleados
+            if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
+                mensaje = "La identificación ya está registrada en otro empleado"
+            elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
+                mensaje = "El correo electrónico ya está registrado en otro empleado"
+            elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
+                mensaje = "El número de celular ya está registrado en otro empleado"
+            else:
+                persona.perIdentificacion = identificacion
+                persona.perNombres = nombres
+                persona.perApellidos = apellidos
+                persona.perCorreo = correo
+                persona.perNumeroCelular = numero
+                persona.save()
+                
+                empleado.empCargo = cargo
+                empleado.empSueldo = sueldo
+                empleado.empEstado = estadoE
+                empleado.save()
+                estado = True
+                mensaje = "Empleado actualizado correctamente"
+    except Empleado.DoesNotExist:
+        mensaje = "El Empleado no existe"
+    except Exception as error:
+        transaction.rollback()
+        mensaje = str(error)
+    
+    empleados = Empleado.objects.all()
+    retorno = {
+        "mensaje": mensaje,
+        "estado": estado,
+        "empleados": empleados,
+    }
+    
+    return render(request, "administrador/vistaGestionarEmpleados.html", retorno)
+
+
+def vistaEdicionPerfilAsistente(request):
+    user = request.user
+    if user.groups.filter(name='Asistente').exists():
+        roles = Group.objects.all()
+        return render(request, "asistente/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario":tipoUsuario, "user": user})
+        
+
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+
+    if user.groups.filter(name='Administrador').exists():
+        return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+
+    if user.groups.filter(name='Tecnico').exists():
+        return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
+
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    
+
+
+def vistaEdicionPerfilAdministrador(request):
+    user = request.user
+    if user.groups.filter(name='Administrador').exists():
+        roles = Group.objects.all()
+        return render(request, "administrador/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario":tipoUsuario, "user": user})
+        
+
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+
+    if user.groups.filter(name='Asistente').exists():
+        return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+
+    if user.groups.filter(name='Tecnico').exists():
+        return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
+
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    
+    
+def vistaEdicionPerfilTecnico(request):
+    user = request.user
+    if user.groups.filter(name='Tecnico').exists():
+        roles = Group.objects.all()
+        return render(request, "tecnico/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario":tipoUsuario, "user": user})
+        
+
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+
+    if user.groups.filter(name='Administrador').exists():
+        return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+
+    if user.groups.filter(name='Asistente').exists():
+        return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+
+    
+def actualizarUsuarioAdmin(request):
+    estado = False
+    mensaje = ""
+    try:
+        nombres = request.POST.get('txtNombres')
+        apellidos = request.POST.get('txtApellidos')
+        correo = request.POST.get('txtCorreo')
+        nueva_imagen = request.FILES.get('fileFoto')
+        with transaction.atomic():
+            if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
+                mensaje= "El correo electrónico ya está en uso por otro usuario."
+            else:
+                usuario = request.user
+                usuario.first_name = nombres
+                usuario.last_name = apellidos
+                usuario.email = correo
+                if nueva_imagen:
+                    usuario.userFoto = nueva_imagen
+                usuario.save()
+                estado = True
+                mensaje = "Usuario actualizado correctamente"
+    except Exception as error:
+            transaction.rollback()
+            mensaje = str(error)
+    retorno = {
+        "mensaje": mensaje,
+        "estado": estado,
+    }
+    return render(request, "administrador/frmEdicionPerfil.html", retorno)
+
+
+def actualizarUsuarioAsistente(request):
+    estado = False
+    mensaje = ""
+    try:
+        nombres = request.POST.get('txtNombres')
+        apellidos = request.POST.get('txtApellidos')
+        correo = request.POST.get('txtCorreo')
+        nueva_imagen = request.FILES.get('fileFoto')
+        with transaction.atomic():
+            if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
+                mensaje= "El correo electrónico ya está en uso por otro usuario."
+            else:
+                usuario = request.user
+                usuario.first_name = nombres
+                usuario.last_name = apellidos
+                usuario.email = correo
+                if nueva_imagen:
+                    usuario.userFoto = nueva_imagen
+                usuario.save()
+                estado = True
+                mensaje = "Usuario actualizado correctamente"
+    except Exception as error:
+            transaction.rollback()
+            mensaje = str(error)
+    retorno = {
+        "mensaje": mensaje,
+        "estado": estado,
+    }
+    return render(request, "administrador/frmEdicionPerfil.html", retorno)
+
+
+def actualizarUsuarioTecnico(request):
+    estado = False
+    mensaje = ""
+    try:
+        nombres = request.POST.get('txtNombres')
+        apellidos = request.POST.get('txtApellidos')
+        correo = request.POST.get('txtCorreo')
+        nueva_imagen = request.FILES.get('fileFoto')
+        with transaction.atomic():
+            if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
+                mensaje= "El correo electrónico ya está en uso por otro usuario."
+            else:
+                usuario = request.user
+                usuario.first_name = nombres
+                usuario.last_name = apellidos
+                usuario.email = correo
+                if nueva_imagen:
+                    usuario.userFoto = nueva_imagen
+                usuario.save()
+                estado = True
+                mensaje = "Usuario actualizado correctamente"
+    except Exception as error:
+            transaction.rollback()
+            mensaje = str(error)
+    retorno = {
+        "mensaje": mensaje,
+        "estado": estado,
+    }
+    return render(request, "administrador/frmEdicionPerfil.html", retorno)
+
+
+def deshabilitarUsuario(request, user_id):
+    try:
+        usuario = User.objects.get(pk=user_id)
+        usuario.is_active = False
+        usuario.save()
+
+        usuarios = User.objects.all()
+
+        table_html = ""
+        for usuario in usuarios:
+            table_html += f"<tr>...</tr>"
+
+        return JsonResponse({
+            'success': True,
+            'tableHtml': table_html,
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+def habilitarUsuario(request, user_id):
+    try:
+        user = get_object_or_404(User, pk=user_id)
+        user.is_active = True
+        user.save()
+        mensaje = f"Usuario {user.username} habilitado correctamente."
+        estado = True
+    except User.DoesNotExist:
+        mensaje = "Usuario no encontrado."
+        estado = False
+    except Exception as error:
+        mensaje = str(error)
+        estado = False
+    
+    return JsonResponse({
+        "mensaje": mensaje,
+        "estado": estado
+    })
+  
 
 class PersonaList(generics.ListCreateAPIView):
     queryset=Persona.objects.all()

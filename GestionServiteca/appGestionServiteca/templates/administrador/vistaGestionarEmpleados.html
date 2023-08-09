@@ -1,179 +1,212 @@
 {% extends "index.html" %}
 
 {% block encabezado %}
-    {% include "encabezado.html" %}
+{% include "encabezado.html" %}
 {% endblock %}
 
 {% block menu %}
-    {% include "administrador/menu.html" %}
+{% include "administrador/menu.html" %}
 {% endblock %}
 
 {% block contenido %}
-    <br>
-    <br>
-    <br>
-    {% load static %}
-    <script src="{% static '../static/js/inactividad.js' %}"></script>
-    <h3 class="text-center fw-bold">GESTIONAR EMPLEADOS</h3>
+<br>
+<br>
+<br>
+{% load static %}
+<script src="{% static '../static/js/inactividad.js' %}"></script>
+<h3 class="text-center fw-bold">GESTIONAR EMPLEADOS</h3>
 
-    <div class="table-responsive" style="margin-bottom: 5rem;">
-        <a href="/vistaRegistrarEmpleados/">
-            <button class="btn" style="background-color: black; color: white;">Agregar</button>
-        </a>
-        <br>
-        <br>
-        <table id="tblEmpleados" class="table table-bordered table-hover">
-            <thead>
-                <tr class="text-center bg-dark text-white">
-                    <th style="background-color: black;">Identificación</th>
-                    <th style="background-color: black;">Nombre Completo</th>
-                    <th style="background-color: black;">Correo</th>
-                    <th style="background-color: black;">Numero Celular</th>
-                    <th style="background-color: black;">Cargo</th>
-                    <th style="background-color: black;">Sueldo</th>
-                    <th style="background-color: black;">Estado</th>
-                    <th style="background-color: black;">Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for empleado in empleados %}
-                <tr>
-                    <td>{{ empleado.empPersona.perIdentificacion }}</td>
-                    <td>{{ empleado.empPersona.perNombres }} {{ empleado.empPersona.perApellidos }}</td>
-                    <td>{{ empleado.empPersona.perCorreo }}</td>
-                    <td>{{ empleado.empPersona.perNumeroCelular }}</td>
-                    <td>{{ empleado.empCargo }}</td>
-                    <td>{{ empleado.empSueldo }}</td>
-                    <td>{{ empleado.empEstado }}</td>
-                    <td class="text-center">
-                        <a onclick="abrirModalActualizarEmpleado('{{empleado.empPersona.id}}')">
-                            <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
+<div class="table-responsive" style="margin-bottom: 5rem;">
+    <a href="/vistaRegistrarEmpleados/">
+        <button class="btn" style="background-color: black; color: white;">Agregar</button>
+    </a>
+    <br>
+    <br>
+    <table id="tblEmpleados" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center bg-dark text-white">
+                <th style="background-color: black;">Identificación</th>
+                <th style="background-color: black;">Nombre Completo</th>
+                <th style="background-color: black;">Correo</th>
+                <th style="background-color: black;">Numero Celular</th>
+                <th style="background-color: black;">Cargo</th>
+                <th style="background-color: black;">Sueldo</th>
+                <th style="background-color: black;">Estado</th>
+                <th style="background-color: black;">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for empleado in empleados %}
+            <tr>
+                <td>{{ empleado.empPersona.perIdentificacion }}</td>
+                <td>{{ empleado.empPersona.perNombres }} {{ empleado.empPersona.perApellidos }}</td>
+                <td>{{ empleado.empPersona.perCorreo }}</td>
+                <td>{{ empleado.empPersona.perNumeroCelular }}</td>
+                <td>{{ empleado.empCargo }}</td>
+                <td>{{ empleado.empSueldo }}</td>
+                <td>{{ empleado.empEstado }}</td>
+                <td class="text-center">
+                    <a onclick="abrirModalActualizarEmpleado('{{empleado.id}}')">
+                        <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- The Modal -->
+<div class="modal" id="ActualizarEmpl" style="margin-top: 4%;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header tituloModal">
+                <h4 class="modal-title">Actualizar Empleado</h4>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form action="/ActualizarEmp/" method="post" enctype="multipart/form-data" class="needs-validation"
+                    novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="idEmpleado" id="idEmpleado" value="">
+                    <div class="form-group row">
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación:</label>
+                            <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
+                                placeholder="Identificación del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese la identificación del empleado</div>
+                        </div>
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
+                            <input type="text" name="txtNombres" class="form-control" id="txtNombres"
+                                placeholder="Nombres del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese los nombres del empleado</div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos:</label>
+                            <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
+                                placeholder="Nombre del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese los apellidos del empleado</div>
+                        </div>
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtCargo" class="fw-bold" style="color: black;">Cargo:</label>
+                            <input type="text" name="txtCargo" class="form-control" id="txtCargo"
+                                placeholder="Cargo del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese el cargo del empleado</div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtSueldo" class="fw-bold" style="color: black;">Sueldo:</label>
+                            <input type="number" class="form-control" id="txtSueldo" name="txtSueldo"
+                                placeholder="Sueldo del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese el sueldo del empleado</div>
+                        </div>
+                        <div class="mb-3 col-lg-6">
+                            <label for="cbEstado" class="fw-bold" style="color: black;">Estado del Empleado:</label>
+                            <select name="cbEstado" id="cbEstado" class="form-select" required>
+                                <option value="">Seleccione</option>
+                                {% for estado in estadoEmpl %}
+                                <option value="{{ estado.0 }}">{{ estado.1 }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Por favor elija el estado del empleado</div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
+                            <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
+                                placeholder="Correo del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese el correo electrónico del empleado</div>
+                        </div>
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Número telefónico:</label>
+                            <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
+                                placeholder="# telefónico del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese el número telefónico del empleado</div>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
+                        <a href="/vistaGestionarEmpleados/">
+                            <button type="button" class="btn btn-danger mx-2">Cancelar</button>
                         </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <!-- The Modal -->
-    <div class="modal" id="ActualizarEmpl" style="margin-top: 4%;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header tituloModal">
-                    <h4 class="modal-title">Actualizar Empleado</h4>
-                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
-                </div>
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <form action="/ActualizarEmp/" method="post" enctype="multipart/form-data"
-                        class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        <div class="form-group row">
-                            <div class="mb-3 col-lg-6">
-                                <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación:</label>
-                                <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
-                                    placeholder="Identificación del empleado" required>
-                                <div class="invalid-feedback">Por favor ingrese la identificación del empleado</div>
-                            </div>
-                            <div class="mb-3 col-lg-6">
-                                <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
-                                <input type="text" name="txtNombres" class="form-control" id="txtNombres"
-                                    placeholder="Nombres del empleado" required>
-                                <div class="invalid-feedback">Por favor ingrese los nombres del empleado</div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="mb-3 col-lg-6">
-                                <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos:</label>
-                                <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
-                                    placeholder="Nombre del empleado" required>
-                                <div class="invalid-feedback">Por favor ingrese los apellidos del empleado</div>
-                            </div>
-                            <div class="mb-3 col-lg-6">
-                                <label for="txtCargo" class="fw-bold" style="color: black;">Cargo:</label>
-                                <input type="text" name="txtCargo" class="form-control" id="txtCargo"
-                                    placeholder="Cargo del empleado" required>
-                                <div class="invalid-feedback">Por favor ingrese el cargo del empleado</div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="mb-3 col-lg-6">
-                                <label for="txtSueldo" class="fw-bold" style="color: black;">Sueldo:</label>
-                                <input type="number" class="form-control" id="txtSueldo" name="txtSueldo"
-                                    placeholder="Sueldo del empleado" required>
-                                <div class="invalid-feedback">Por favor ingrese el sueldo del empleado</div>
-                            </div>
-                            <div class="mb-3 col-lg-6">
-                                <label for="cbEstado" class="fw-bold" style="color: black;">Estado del Empleado:</label>
-                                <select name="cbEstado" id="cbEstado" class="form-select" required>
-                                    <option value="">Seleccione</option>
-                                    {% for estado in estadoEmpl %}
-                                    <option value="{{ estado.0 }}">{{ estado.1 }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="invalid-feedback">Por favor elija el estado del empleado</div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="mb-3 col-lg-6">
-                                <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
-                                <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
-                                    placeholder="Correo del empleado" required>
-                                <div class="invalid-feedback">Por favor ingrese el correo electrónico del empleado</div>
-                            </div>
-                            <div class="mb-3 col-lg-6">
-                                <label for="txtNumeroC" class="fw-bold" style="color: black;">Número telefónico:</label>
-                                <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                                    placeholder="# telefónico del empleado" required>
-                                <div class="invalid-feedback">Por favor ingrese el número telefónico del empleado</div>
-                            </div>
-                        </div>
-                        <!-- Modal footer -->
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
-                            <a href="/vistaGestionarEmpleados/">
-                                <button type="button" class="btn btn-danger mx-2">Cancelar</button>
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <script>
-        function abrirModalActualizarEmpleado(id) {
-            // Funcion AJAX para obtener los datos del cliente por ID
-            $.ajax({
-                url: `/consultarE/${id}/`, //URL para obtener los datos del cliente por ID
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    // Rellenar el formulario de la modal con los datos obtenidos
-                    $("#txtIdentificacion").val(data.empleado.empPersona.perIdentificacion);
-                    $("#txtNombres").val(data.empleado.empPersona.perNombres);
-                    $("#txtApellidos").val(data.empleado.empPersona.perApellidos);
-                    $("#txtCorreo").val(data.empleado.empPersona.perCorreo);
-                    $("#txtNumeroC").val(data.empleado.empPersona.perNumeroCelular);
-                    $("#txtCargo").val(data.empleado.empCargo);
-                    $("#txtSueldo").val(data.empleado.empSueldo);
-                    $("#cbEstado").val(data.empleado.empEstado);
-    
-                    // Abrir la modal
-                    $('#ActualizarEmpl').modal('show');
-                },
-                error: function (error) {
-                    console.log(error);
-                    alert("Hubo un error al cargar los datos del empleado.");
-                }
-            });
+</div>
+<script>
+    function abrirModalActualizarEmpleado(id) {
+        // Funcion AJAX para obtener los datos del cliente por ID
+        $.ajax({
+            url: "/consultarE/" + id, //URL para obtener los datos del cliente por ID
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // Rellenar el formulario de la modal con los datos obtenidos
+                $("#txtIdentificacion").val(data.empleado.empPersona.perIdentificacion);
+                $("#txtNombres").val(data.empleado.empPersona.perNombres);
+                $("#txtApellidos").val(data.empleado.empPersona.perApellidos);
+                $("#txtCorreo").val(data.empleado.empPersona.perCorreo);
+                $("#txtNumeroC").val(data.empleado.empPersona.perNumeroCelular);
+                $("#txtCargo").val(data.empleado.empCargo);
+                $("#txtSueldo").val(data.empleado.empSueldo);
+                $("#cbEstado").val(data.empleado.empEstado);
+                $("#idEmpleado").val(id);
+
+                // Abrir la modal
+                $('#ActualizarEmpl').modal('show');
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Hubo un error al cargar los datos del empleado.");
+            }
+        });
+    }
+</script>
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Sistema Serviteca',
+        text: '{{mensaje}}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaGestionarEmpleados/"
         }
-    </script>
-    <script>
-        cargarDataTable($("#tblEmpleados"), "LISTADO DE EMPLEADOS", 7);
-    </script>
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Sistema Serviteca',
+        text: '{{mensaje}}',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaGestionarEmpleados/"
+        }
+    });
+</script>
+{% endif %}
+{% endif %}
+<script>
+    cargarDataTable($("#tblEmpleados"), "LISTADO DE EMPLEADOS", 7);
+</script>
 {% endblock %}
 
 {% block piePagina %}
-    {% include "piePagina.html" %}
+{% include "piePagina.html" %}
 {% endblock %}
