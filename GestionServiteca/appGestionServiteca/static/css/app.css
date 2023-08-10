@@ -8,8 +8,8 @@
     }
 
     #logo{
-        width: 200px;
-        height: 80px;
+        width: 160px;
+        height: 60px;
     }
 
     #footer {
@@ -640,20 +640,33 @@
 
         .container-body {
             flex-direction: column;
+            
         }
 
         .column1,
         .column2 {
             flex-basis: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            
         }
-
+        .column3{
+         
+            display: grid;
+            place-items: center;
+            margin-left: -80px;
+        }
+     
+        .container-footer-all{
+            display: grid;
+            place-items: center;
+        }
         .copyright {
-            margin-right: 50%;
+            margin-right: 20%;
+            
         }
 
        #logo{
-        width: 150px;
+        width: 120px;
         height: 50px;
         margin-left: -80px;
        }
@@ -664,13 +677,14 @@
             color: #fff;
             text-decoration: none;
             font-weight: 500;
-            margin-right: -120px;
+            margin-left: -20px;
+         
     
         }
 
         .navigation .btnLogin-popup {
             width: 130px;
-            height: 50px;
+            height: 45px;
             background: transparent;
             border: 2px solid #ff0000;
             outline: none;
@@ -679,8 +693,7 @@
             font-size: 1.1em;
             color: #fff;
             font-weight: 500;
-            margin-left: 130px;
-            margin-right: 150px;
+            margin-right: -95px;
             transition: .5s;
         }
         
@@ -691,12 +704,20 @@
         }
 
 
-        .row,
-        .row2 {
+        .row{
             flex-wrap: wrap;
             align-items: center;
+            display: grid;
+            place-items: center;
+          
+        }
+        .row2{
+            display: grid;
+            place-items: center;
         }
 
+        
+      
         #footer {
             flex-direction: column;
             align-items: flex-start;
@@ -714,9 +735,48 @@
         }
 
         #Contactenos {
-            margin-left: 20%;
+            margin-left: 160px;
         }
     }
+
+
+
+    @media only screen and (min-width:414px) and (max-width:540px) {
+        #logo{
+            width: 120px;
+            height: 50px;
+            margin-left: -80px;
+           }
+    
+            .navigation a {
+                position: relative;
+                font-size: 1.1em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 500;
+                margin-right: -120px;
+        
+            }
+    
+            .navigation .btnLogin-popup {
+                width: 130px;
+                height: 50px;
+                background: transparent;
+                border: 2px solid #ff0000;
+                outline: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1.1em;
+                color: #fff;
+                font-weight: 500;
+                margin-left: 160px;
+                margin-right:-90px;
+                transition: .5s;
+            }
+
+    }
+
+
 
     /*Fin-Cards*/
 
@@ -788,4 +848,290 @@
         color: white;
 
     }
+
+
+    @media only screen and (min-width:768px)  {
+
+        #logo{
+            width: 160px;
+            height: 70px;
+            margin-left: -80px;
+           }
+    
+            .navigation a {
+                position: relative;
+                font-size: 1.5em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 500;
+                margin-right: -120px;
+        
+            }
+    
+            .navigation .btnLogin-popup {
+                width: 170px;
+                height: 60px;
+                background: transparent;
+                border: 2px solid #ff0000;
+                outline: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1.5em;
+                color: #fff;
+                font-weight: 500;
+                margin-left: 160px;
+                margin-right:-90px;
+                transition: .5s;
+            }
+
+    }
    
+
+    @media only screen and (min-width:820px) {
+
+        #logo{
+            width: 160px;
+            height: 70px;
+            margin-left: -80px;
+           }
+    
+            .navigation a {
+                position: relative;
+                font-size: 1.5em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 500;
+                margin-right: -120px;
+        
+            }
+    
+            .navigation .btnLogin-popup {
+                width: 170px;
+                height: 60px;
+                background: transparent;
+                border: 2px solid #ff0000;
+                outline: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1.5em;
+                color: #fff;
+                font-weight: 500;
+                margin-left: 160px;
+                margin-right:-90px;
+                transition: .5s;
+            }
+
+    }
+
+
+
+    @media only screen and (min-width:1024px)  {
+
+        #logo{
+            width: 150px;
+            height: 60px;
+            margin-left: -80px;
+           }
+    
+            .navigation a {
+                position: relative;
+                font-size: 1.2em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 500;
+                margin-right: -120px;
+        
+            }
+
+            .wrapper {
+                width: 350px;
+                height: 465px;
+            }
+    
+            .navigation .btnLogin-popup {
+                width: 160px;
+                height: 50px;
+                background: transparent;
+                border: 2px solid #ff0000;
+                outline: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1.2em;
+                color: #fff;
+                font-weight: 500;
+                margin-left: 160px;
+                margin-right:-90px;
+                transition: .5s;
+            }
+
+    }
+    
+
+
+
+
+
+    @media only screen and (min-width: 1080px) {
+        .wrapper {
+            height: 468px;
+        }
+
+        #logo{
+            width: 160px;
+            height: 70px;
+            margin-left: -80px;
+           }
+    
+            .navigation a {
+                position: relative;
+                font-size: 1.2em;
+                color: #fff;
+                text-decoration: none;
+                font-weight: 500;
+                margin-right: -120px;
+        
+            }
+
+            
+    
+            .navigation .btnLogin-popup {
+                width: 160px;
+                height: 55px;
+                background: transparent;
+                border: 2px solid #ff0000;
+                outline: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1.2em;
+                color: #fff;
+                font-weight: 500;
+                margin-left: 160px;
+                margin-right:-90px;
+                transition: .5s;
+            }
+    }
+
+
+    
+    @media only screen and (min-width: 1920px) {
+        .wrapper {
+            width: 400px;
+            height: 500px;
+        }
+    }
+ 
+
+ 
+
+    @media only screen and (min-width:541px) and (max-width:635px) {
+        .container-card {
+            flex-wrap: wrap;
+        }
+
+        .card {
+            margin: 15px;
+        }
+
+        .container-body {
+            flex-direction: column;
+        }
+
+        .column1,
+        .column2{
+        
+            flex-basis: 100%;
+            margin-bottom:10px;
+            display: grid;
+            place-items: center;
+            
+        }
+
+        .column3{
+            margin-left: 30px;
+        }
+        .redes{
+            margin-left: 10px;
+        }
+
+        .container-footer-all{
+            display: grid;
+            place-items: center;
+        }
+
+        .copyright {
+            margin-right: 10%;
+        }
+
+       #logo{
+        width: 120px;
+        height: 50px;
+        margin-left: -80px;
+       }
+
+        .navigation a {
+            position: relative;
+            font-size: 1.1em;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: -20px;
+         
+    
+        }
+
+        .navigation .btnLogin-popup {
+            width: 130px;
+            height: 45px;
+            background: transparent;
+            border: 2px solid #ff0000;
+            outline: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            color: #fff;
+            font-weight: 500;
+            margin-right: -95px;
+            transition: .5s;
+        }
+        
+        
+        .wrapper {
+            width: 350px;
+            height: 500px;
+        }
+
+
+        
+
+        #footer {
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            margin-top: -20px;
+            display: grid;
+            place-items: center;
+
+        }
+
+        .container-footer-all {
+            padding: 20px;
+            display: grid;
+            place-items: center;
+        }
+
+        .row2 {
+         display: grid;
+         place-items: center;
+         margin-left: 20px;
+        }
+
+    
+
+        #Contactenos {
+           margin-left: 50px;
+            display: grid;
+            place-items: center;
+        }
+    }
+
+

@@ -16,7 +16,8 @@ from django.http import JsonResponse
 from smtplib import SMTPException
 from rest_framework import generics
 from appGestionServiteca.serializers import PersonaSerializer,ClienteSerializer
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -220,7 +221,7 @@ def registrarCliente(request):
             mensaje = "Cliente Agregado Correctamente"
     except Exception as error:
         transaction.rollback()
-        mensaje = str(error)
+        mensaje = "Error al registrar cliente: Datos duplicados."
     
     retorno = {"mensaje": mensaje, "estado": estado, "user": request.user}
     return render(request, "asistente/frmRegistrarCliente.html", retorno)
@@ -299,7 +300,7 @@ def registrarVehiculo(request):
             mensaje = "Vehiculo Agregado Correctamente"
     except Exception as error:
         transaction.rollback()
-        mensaje = str(error)
+        mensaje = "Error al registrar vehiculo: Datos duplicados."
     
     retorno = {"mensaje": mensaje, "estado": estado, "user": request.user}
     return render(request, "asistente/frmRegistrarVehiculo.html", retorno)
@@ -399,7 +400,7 @@ def registrarEmpleado(request):
             mensaje = "Empleado Agregado Correctamente"
     except Exception as error:
         transaction.rollback()
-        mensaje = str(error)
+        mensaje = "Error al registrar empleado: Datos duplicados."
 
     retorno = {"mensaje": mensaje, "estado": estado}
     return render(request, "administrador/frmRegistrarEmpleado.html", retorno)
@@ -659,7 +660,6 @@ def actualizarVehiculo(request):
         with transaction.atomic():
             vehiculo = Vehiculo.objects.select_for_update().get(pk=idVehiculo)
             
-            # Verifica si la placa ya existe en otro vehículo
             if Vehiculo.objects.filter(vehPlaca=placa).exclude(pk=idVehiculo).exists():
                 mensaje = "La placa ya está en uso por otro vehículo"
             else:
@@ -705,7 +705,6 @@ def actualizarCliente(request):
             cliente = Cliente.objects.select_for_update().get(pk=idCliente)
             persona = cliente.cliPersona
             
-            # Verificar si la nueva identificación, correo o número de celular ya existen en otros clientes
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
                 mensaje = "La identificación ya está registrada en otro cliente"
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
@@ -759,7 +758,6 @@ def actualizarEmpleado(request):
             empleado = Empleado.objects.select_for_update().get(pk=idEmpleado)
             persona = empleado.empPersona
             
-            # Verificar si la nueva identificación, correo o número de celular ya existen en otros empleados
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
                 mensaje = "La identificación ya está registrada en otro empleado"
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
@@ -910,7 +908,7 @@ def actualizarUsuarioAsistente(request):
         "mensaje": mensaje,
         "estado": estado,
     }
-    return render(request, "administrador/frmEdicionPerfil.html", retorno)
+    return render(request, "asistente/frmEdicionPerfil.html", retorno)
 
 
 def actualizarUsuarioTecnico(request):
@@ -941,7 +939,7 @@ def actualizarUsuarioTecnico(request):
         "mensaje": mensaje,
         "estado": estado,
     }
-    return render(request, "administrador/frmEdicionPerfil.html", retorno)
+    return render(request, "tecnico/frmEdicionPerfil.html", retorno)
 
 
 def deshabilitarUsuario(request, user_id):
@@ -1003,3 +1001,27 @@ class ClienteList(generics.ListCreateAPIView):
 class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
+    
+
+def mostrarGrafica(request):    
+    # Datos de ejemplo
+    categorias = ['A', 'B', 'C', 'D', 'E']
+    valores = [25, 50, 75, 100, 125]
+
+    # Crear la gráfica de barras
+    grafica=plt.bar(categorias, valores)
+
+    # Configurar los ejes y el título
+    grafica==plt.xlabel('Categorías')
+    grafica==plt.ylabel('Valores')
+    grafica==plt.title('Gráfica de Barras')
+
+    # Guardar la gráfica en un archivo HTML
+    grafica==plt.savefig('grafica_de_barras.png')
+
+    # Mostrar la gráfica
+    grafica=plt.show()
+    retorno={
+        "grafica":grafica
+    }
+    return render(request, "administrador/vistaGraficas.html", retorno)

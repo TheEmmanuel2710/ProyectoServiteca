@@ -58,7 +58,7 @@ function agregarServiciospDetalle() {
     const idServicio = $("#cbServicio").val();
 
     if (!cliente || !vehiculo || !observaciones || !fechaHora || !empleado || !estado || !idServicio) {
-        Swal.fire("Sistema Serviteca",
+        Swal.fire("Registro Servicio Prestado",
             "Por favor, completa todos los campos antes de agregar el servicio.", "error");
         return;
     }

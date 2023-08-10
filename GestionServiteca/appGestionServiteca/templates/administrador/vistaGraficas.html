@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+{% block encabezado %}
+{% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+{% include "administrador/menu.html" %}
+{%endblock %}
+{% block contenido %}
+{% load static%}    
+<h1>Gráfica de Barras</h1>
+<img src="../media/grafica_de_barras.png">
+{%endblock %}
+{% block piePagina %}
+{% include "piePagina.html" %}
+{%endblock %}

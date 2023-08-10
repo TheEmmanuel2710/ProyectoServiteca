@@ -39,11 +39,11 @@
         options = optionMenu.querySelectorAll(".option"),
         sBtn_text = optionMenu.querySelector(".sBtn-text");
     
-      // Agrega un event listener al documento para detectar clics en cualquier lugar
+      
       document.addEventListener("click", function(event) {
         const isInsideOptionMenu = optionMenu.contains(event.target);
     
-        // Si el clic no está dentro del menú, ocúltalo
+        
         if (!isInsideOptionMenu) {
           optionMenu.classList.remove("active");
         }
@@ -79,6 +79,9 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/vistaGestionarEmpleados/" style="color: white;">Gestionar Empleados</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/vistaGraficas/" style="color: white;">Graficas</a>
         </li>
 
       </ul>

@@ -23,7 +23,6 @@ function verificarInactividad() {
         });
 
         sesionCerrada = true; // Marca la variable como verdadera para que no se muestre el mensaje nuevamente
-        // Aquí puedes agregar la lógica para cerrar la sesión si es necesario.
     }
 }
 

@@ -13,9 +13,9 @@
 <script src="{% static '../static/js/inactividad.js' %}"></script>
 <h3 class="text-center fw-bold" style="color: black;">GESTIONAR USUARIOS</h3>
 
+<a href="/vistaRegistrarUsuario/"><button class="btn"
+        style="background-color: black; color: white; margin-left: 12.5%;">Agregar</button></a>
 <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
-    <a href="/vistaRegistrarUsuario/"><button class="btn"
-            style="background-color: black; color: white;">Agregar</button></a>
     <br>
     <br>
     <table id="tblPersonas" class="table table-bordered table-hover">
@@ -35,7 +35,7 @@
                 <td>{{usuario.email}}</td>
                 <td>{{usuario.userTipo}}</td>
                 {% if usuario.userFoto != "False" %}
-                <td><img src="../media/{{usuario.userFoto}}" alt="Foto Usuario" style="width:60px;"
+                <td><img src="../media/{{usuario.userFoto}}" alt="Foto Usuario" style="width:60px; height: 60px;"
                         class="rounded-pill">
                 </td>
                 {% else %}
