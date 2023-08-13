@@ -949,6 +949,10 @@ def actualizarUsuarioTecnico(request):
 def deshabilitarUsuario(request, user_id):
     try:
         usuario = User.objects.get(pk=user_id)
+
+        if usuario.is_superuser:
+            raise Exception("No se puede deshabilitar a un superusuario.")
+
         usuario.is_active = False
         usuario.save()
 
@@ -1008,25 +1012,20 @@ class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
     
 
 def mostrarGrafica1(request):
-    matplotlib.use('Agg')  # Configuración para usar el modo Agg de Matplotlib
+    matplotlib.use('Agg')
     
     
-    # Datos de ejemplo
     categorias = ['A', 'B', 'C', 'D', 'E']
     valores = [25, 50, 75, 100, 125]
-
-    # Crear la gráfica de barras
+    
     grafica = plt.bar(categorias, valores)
 
-    # Configurar los ejes y el título
     plt.xlabel('Categorías')
     plt.ylabel('Valores')
     plt.title('Gráfica de Barras')
 
-    # Ruta donde guardar la gráfica
     ruta_grafica = os.path.join('./media/graficas', 'grafica_de_barras.png')
     
-    # Guardar la gráfica en el archivo
     plt.savefig(ruta_grafica)
     
     generar_pdf()
@@ -1035,21 +1034,16 @@ def mostrarGrafica1(request):
     }
     return render(request, "administrador/vistaGraficas.html", retorno)
 
-
-
     
 class PDF(FPDF):
     def header(self):
-        # Imagen en la esquina superior izquierda
         self.image('./media/fotos/Toji.jpg', 10, 10, 25)
         
     def footer(self):
-        # Fecha de creación en la esquina inferior izquierda
         self.set_xy(10, -15)
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, 'Fecha de creación: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 0, 0, 'L')
         
-        # Texto en la esquina inferior derecha
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, 'El impulso que necesita tu vehículo', 0, 0, 'R')
   
@@ -1058,35 +1052,28 @@ def generar_pdf():
     pdf = PDF()
     pdf.add_page()
     
-    # Título centrado
     pdf.set_font("Arial", "B", 16)
     pdf.cell(0, 10, "Serviteca Opita", 0, 1, 'C')
     
-    # Espacio después de la imagen
     pdf.ln(30)
     
-    # Tabla centrada
     pdf.set_font("Arial", size=12)
     pdf.set_auto_page_break(auto=True, margin=15)
     col_width = pdf.w / 3.5
-    
-    # Encabezados de la tabla
+   
     pdf.cell(col_width, 10, "ID", 1)
     pdf.cell(col_width, 10, "Nombre", 1)
     pdf.cell(col_width, 10, "Apellido", 1)
     pdf.ln()
     
-    # Datos aleatorios en la tabla
     for _ in range(10):
         pdf.cell(col_width, 10, str(random.randint(1, 100)), 1)
         pdf.cell(col_width, 10, "Nombre" + str(random.randint(1, 100)), 1)
         pdf.cell(col_width, 10, "Apellido" + str(random.randint(1, 100)), 1)
         pdf.ln()
     
-    # Ruta donde guardar el PDF
     ruta_pdf = os.path.join('./media/pdf/', 'serviteca_opita.pdf')
     
-    # Guardar el PDF en el archivo
     pdf.output(ruta_pdf)
 
 

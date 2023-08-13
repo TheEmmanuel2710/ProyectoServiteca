@@ -1,37 +1,38 @@
 let tiempoInactividad = 0;
-const tiempoSesionInactiva = 180; // 3 minutos = 180 segundos
-let sesionCerrada = false; // Variable para controlar si ya se mostró el mensaje
+const tiempoSesionInactiva = 180;
+sesionCerrada = false; 
 
 function reiniciarTemporizador() {
     tiempoInactividad = 0;
 }
 
-function verificarInactividad() {
-    tiempoInactividad++;
-
-    if (tiempoInactividad >= tiempoSesionInactiva && !sesionCerrada) {
+function cerrarSesion() {
+    if (!sesionCerrada) {
+        sesionCerrada = true;
         Swal.fire({
             title: 'Sistema Serviteca',
             text: 'Inactividad detectada, cerrando sesión.',
             icon: 'info',
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Aceptar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                location.href = "/salir/";
-            }
+        }).then(() => {
+            location.href = "/salir/";
         });
-
-        sesionCerrada = true; // Marca la variable como verdadera para que no se muestre el mensaje nuevamente
     }
 }
 
-window.onload = function() {
+function verificarInactividad() {
+    tiempoInactividad++;
+
+    if (tiempoInactividad >= tiempoSesionInactiva) {
+        cerrarSesion();
+    }
+}
+
+window.onload = function () {
     document.onmousemove = reiniciarTemporizador;
     document.onkeypress = reiniciarTemporizador;
     document.addEventListener("click", reiniciarTemporizador);
-
-    // Agregamos la detección del movimiento del mouse
     document.addEventListener("mousemove", reiniciarTemporizador);
 };
 
