@@ -1075,5 +1075,3 @@ def generar_pdf():
     ruta_pdf = os.path.join('./media/pdf/', 'serviteca_opita.pdf')
     
     pdf.output(ruta_pdf)
-
-
