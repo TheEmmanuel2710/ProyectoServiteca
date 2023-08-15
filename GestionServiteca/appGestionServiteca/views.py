@@ -22,11 +22,26 @@ from fpdf import FPDF
 from datetime import datetime
 import os
 
+
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
 
+def redireccionar(request, cualquier_cosa):
+    mensaje2 = "URL NO ENCONTRADA"
+    if not request.user.is_authenticated:
+        return render(request,"inicio.html", {"mensaje2": mensaje2})
+    if request.user.groups.filter(name='Asistente').exists():
+        return render(request, "asistente/inicio.html", {"mensaje2": mensaje2})
+    elif request.user.groups.filter(name='Administrador').exists():
+         return render(request, "administrador/inicio.html", {"mensaje2": mensaje2})
+    elif request.user.groups.filter(name='Tecnico').exists():
+         return render(request, "tecnico/inicio.html", {"mensaje2": mensaje2})
+
+        
+
+
 def inicio(request):
-    return render(request,"inicio.html")
+    return render(request, 'inicio.html')
 
 
 def inicioAdministrador(request):
@@ -1075,3 +1090,4 @@ def generar_pdf():
     ruta_pdf = os.path.join('./media/pdf/', 'serviteca_opita.pdf')
     
     pdf.output(ruta_pdf)
+

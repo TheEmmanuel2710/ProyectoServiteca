@@ -43,7 +43,11 @@
     </div>
   </div>
 </div>
-
+{% if  mensaje2 %}
+<script>
+   alert("Nuestro sistema detecta que la url ingresada no es valida,redireccionado..");
+</script>
+{% endif %}
 {%endblock %}
 {% block piePagina %}
 {% include "piePagina.html" %}

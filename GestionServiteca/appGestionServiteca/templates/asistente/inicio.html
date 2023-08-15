@@ -37,7 +37,11 @@
     <div class="text-center fw-bold">Gestionar Servicios Prestados</div>
   </div>
 </div>
-
+{% if mensaje2 %}
+<script>
+   alert("Nuestro sistema detecta que la url no es valida,redireccionado..");
+</script>
+{% endif %}
 <script>
   const mensaje = "{{ mensaje }}";
   if (mensaje === "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url.") {

@@ -20,7 +20,6 @@ from appGestionServiteca import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('appGestionServiteca.urls')),
@@ -62,6 +61,7 @@ urlpatterns = [
     path('habilitar_usuario/<int:user_id>/', views.habilitarUsuario),
     path('deshabilitar_usuario/<int:user_id>/', views.deshabilitarUsuario),
     path('vistaGraficas/', views.mostrarGrafica1),
+    path('<str:cualquier_cosa>/', views.redireccionar),
     
 ]
 if settings.DEBUG:
