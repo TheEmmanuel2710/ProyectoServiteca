@@ -163,7 +163,7 @@ def registrarUsuario(request):
     
     except Exception as error:
         transaction.rollback()
-        mensaje = f"{error}"
+        mensaje = "Error al agregar usuario,datos duplicados."
     
     retorno = {"mensaje": mensaje}
     return render(request, "administrador/frmRegistrarUsuario.html", retorno)
@@ -534,10 +534,10 @@ def vistaRegistrarServiciosPrestados(request):
 
     
 def registrarServicioPrestado(request):
+    estado = False
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                estado = False
                 idCliente = int(request.POST['cliente'])
                 idVehiculo = int(request.POST['vehiculo'])
                 idEmpleado = int(request.POST['empleado'])

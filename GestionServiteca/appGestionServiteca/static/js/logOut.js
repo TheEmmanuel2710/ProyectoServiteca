@@ -13,7 +13,4 @@ function asistente() {
 function tecnico() {
     window.location.href = "/inicioTecnico/"
 }
-function cliente() {
-    window.location.href = "/inicioCliente/"
-}
 
