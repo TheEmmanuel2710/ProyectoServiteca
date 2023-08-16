@@ -26,8 +26,8 @@ import os
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
 
-def redireccionar(request, cualquier_cosa):
-    mensaje2 = "URL NO ENCONTRADA"
+def urlValidacion(request, texto):
+    mensaje2 = "Nuestro sistema detecta que la ulr ingresada no es valida,por favor verifique."
     if not request.user.is_authenticated:
         return render(request,"inicio.html", {"mensaje2": mensaje2})
     if request.user.groups.filter(name='Asistente').exists():
@@ -36,8 +36,6 @@ def redireccionar(request, cualquier_cosa):
          return render(request, "administrador/inicio.html", {"mensaje2": mensaje2})
     elif request.user.groups.filter(name='Tecnico').exists():
          return render(request, "tecnico/inicio.html", {"mensaje2": mensaje2})
-
-        
 
 
 def inicio(request):

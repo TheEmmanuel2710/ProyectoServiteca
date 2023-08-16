@@ -61,7 +61,7 @@ urlpatterns = [
     path('habilitar_usuario/<int:user_id>/', views.habilitarUsuario),
     path('deshabilitar_usuario/<int:user_id>/', views.deshabilitarUsuario),
     path('vistaGraficas/', views.mostrarGrafica1),
-    path('<str:cualquier_cosa>/', views.redireccionar),
+    path('<str:texto>/', views.urlValidacion),
     
 ]
 if settings.DEBUG:
