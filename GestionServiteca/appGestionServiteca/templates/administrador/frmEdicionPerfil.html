@@ -14,7 +14,8 @@
 <h1 class="text-center">Editar Datos Usuario</h1>
 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
 
-    <form action="/ActualizarUsuAd/" method="post" enctype="multipart/form-data">
+    <form action="/ActualizarUsuAd/" method="post" enctype="multipart/form-data" class="needs-validation"
+    novalidate>
         {% csrf_token %}
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
@@ -109,14 +110,12 @@
 {% endif %}
 
 <script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
     (() => {
         "use strict";
 
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
         const forms = document.querySelectorAll(".needs-validation");
 
-        // Loop over them and prevent submission
+
         Array.from(forms).forEach((form) => {
             form.addEventListener(
                 "submit",

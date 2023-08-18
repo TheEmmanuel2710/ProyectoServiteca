@@ -21,7 +21,7 @@ import matplotlib
 from fpdf import FPDF
 from datetime import datetime
 import os
-
+from django.http import HttpResponse
 
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -129,6 +129,7 @@ def vistaRegistrarUsuario(request):
 
 
 def registrarUsuario(request):
+    estado=False
     try:
         nombres = request.POST.get("txtNombres")
         apellidos = request.POST.get("txtApellidos")
@@ -156,8 +157,9 @@ def registrarUsuario(request):
             user.set_password(passwordGenerado)
             user.save()
             
-            mensaje = "Usuario Agregado Correctamente"
-            retorno = {"mensaje": mensaje}
+            mensaje1 = "Usuario Agregado Correctamente"
+            estado=True
+            
             
             # Enviar correo al usuario en un hilo separado
             asunto = 'Registro Sistema Serviteca'
@@ -168,17 +170,12 @@ def registrarUsuario(request):
                 <br><b>Password: </b> {passwordGenerado}\
                 <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
                 http://serviteca.pythonanywhere.com'
-            
             thread = threading.Thread(target=enviarCorreo, args=(asunto, mensaje, user.email))
             thread.start()
-            
-            return redirect("/vistaGestionarUsuarios/", retorno)
-    
     except Exception as error:
         transaction.rollback()
-        mensaje = "Error al agregar usuario,datos duplicados."
-    
-    retorno = {"mensaje": mensaje}
+        mensaje1 = "Error al agregar usuario,datos duplicados."
+    retorno = {"mensaje1": mensaje1,"estado":estado}
     return render(request, "administrador/frmRegistrarUsuario.html", retorno)
 
 
@@ -267,6 +264,7 @@ def consultarCliente(request, id):
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
     
+    
 def vistaGestionarVehiculos(request):
     user = request.user
 
@@ -284,6 +282,7 @@ def vistaGestionarVehiculos(request):
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
 
+
 def vistaRegistrarVehiculos(request):
     user = request.user
 
@@ -299,6 +298,7 @@ def vistaRegistrarVehiculos(request):
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+
 
 def registrarVehiculo(request):
     estado = False
@@ -320,6 +320,7 @@ def registrarVehiculo(request):
     
     retorno = {"mensaje": mensaje, "estado": estado, "user": request.user}
     return render(request, "asistente/frmRegistrarVehiculo.html", retorno)
+
 
 def consultarVehiculo(request, id):
     try:
@@ -604,6 +605,7 @@ def registrarServicioPrestado(request):
         retorno = {"estado": estado, "mensaje": mensaje}
         return JsonResponse(retorno)
         
+        
 def vistaGestionarFacturas(request):
     user = request.user
 
@@ -619,6 +621,7 @@ def vistaGestionarFacturas(request):
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    
     
 def vistaGestionarSolicitudesV(request):
     user = request.user
@@ -1037,12 +1040,12 @@ def mostrarGrafica1(request):
     plt.ylabel('Valores')
     plt.title('Gráfica de Barras')
 
-    ruta_grafica = os.path.join('./media/graficas', 'grafica_de_barras.png')
+    ruta_grafica = os.path.join(settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras.png')
     
     plt.savefig(ruta_grafica)
     
-    generar_pdf()
-    retorno = {
+    generar_pdf(request)
+    retorno = { 
         "ruta_grafica": ruta_grafica
     }
     return render(request, "administrador/vistaGraficas.html", retorno)
@@ -1061,31 +1064,52 @@ class PDF(FPDF):
         self.cell(0, 10, 'El impulso que necesita tu vehículo', 0, 0, 'R')
   
   
-def generar_pdf():
-    pdf = PDF()
-    pdf.add_page()
-    
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, "Serviteca Opita", 0, 1, 'C')
-    
-    pdf.ln(30)
-    
-    pdf.set_font("Arial", size=12)
-    pdf.set_auto_page_break(auto=True, margin=15)
-    col_width = pdf.w / 3.5
-   
-    pdf.cell(col_width, 10, "ID", 1)
-    pdf.cell(col_width, 10, "Nombre", 1)
-    pdf.cell(col_width, 10, "Apellido", 1)
-    pdf.ln()
-    
-    for _ in range(10):
-        pdf.cell(col_width, 10, str(random.randint(1, 100)), 1)
-        pdf.cell(col_width, 10, "Nombre" + str(random.randint(1, 100)), 1)
-        pdf.cell(col_width, 10, "Apellido" + str(random.randint(1, 100)), 1)
-        pdf.ln()
-    
-    ruta_pdf = os.path.join('./media/pdf/', 'serviteca_opita.pdf')
-    
-    pdf.output(ruta_pdf)
+def generar_pdf(request):
+    try:
 
+        pdf = PDF()
+        pdf.add_page()
+
+       
+        image_path = settings.MEDIA_ROOT + '/fotos/Toji.jpg'
+
+       
+        pdf.image(image_path, x=10, y=10, w=25)
+
+       
+        pdf.ln(20)  
+        pdf.set_font('Arial', 'B', 12)
+        pdf.cell(0, 10, 'Tabla de Valores Aleatorios', 0, 1, 'C')
+
+        pdf.set_font('Arial', '', 12)
+        column_widths = [40, 40, 40]  
+        row_height = 10 
+        num_rows = 5  
+        num_columns = 3  
+
+        pdf.cell(column_widths[0], row_height, 'Columna 1', border=1)
+        pdf.cell(column_widths[1], row_height, 'Columna 2', border=1)
+        pdf.cell(column_widths[2], row_height, 'Columna 3', border=1)
+        pdf.ln()
+
+        for _ in range(num_rows):
+            for _ in range(num_columns):
+                random_value = random.randint(1, 100)
+                pdf.cell(column_widths[_], row_height, str(random_value), border=1)
+            pdf.ln()
+
+        pdf_path = settings.MEDIA_ROOT + '/pdf/SERVITECA_OPITA.pdf'
+
+        pdf.output(pdf_path)
+
+        # PDF como respuesta HTTP 
+        # with open(pdf_path, 'rb') as pdf_file:
+        #     response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+        #     response['Content-Disposition'] = 'attachment; filename="nombre_del_archivo.pdf"'
+        #     return response
+
+        return HttpResponse("PDF generado y guardado correctamente.")
+    except Exception as e:
+        return HttpResponse("Error al generar el PDF: " + str(e))
+   
+   

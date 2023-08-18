@@ -32,7 +32,7 @@ tiposMarcas=[
     ('Mercedes-Benz','Mercedes-Benz'),('Audi','Audi'),('Renault','Renault'),
     ('Kia','Kia'),('Honda','Honda'),('Jeep','Jeep'),('Volkswagen','Volkswagen'),
     ('Ssangyong','Ssangyong'),('Fiat','Fiat'),('Lexus','Lexus'),('Citroën','Citroën'),
-    ('Jac','Jac'),('Mitsubishi','Mitsubishi')
+    ('Jac','Jac'),('Mitsubishi','Mitsubishi'),('Cadillac','Cadillac'),('Dodge','Dodge')
 ]
 
 class User(AbstractUser):

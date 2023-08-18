@@ -59,7 +59,8 @@
             </div>
             <!-- Modal body -->
             <div class="modal-body">
-                <form action="/ActualizarC/" method="post" enctype="multipart/form-data" class="was-validated border-1">
+                <form action="/ActualizarC/" method="post" enctype="multipart/form-data" class="needs-validation"
+                novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="idCliente" id="idCliente" value="">
                     <div class="form-group row">
@@ -88,21 +89,21 @@
                             <div class="invalid-feedback">Por favor ingrese el correo electronico del cliente</div>
                         </div>
                         <div class="mb-3 col-lg-4">
+                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Numero de celular:</label>
+                            <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
+                            placeholder="Numero telefonico del cliente" required />
+                            <div class="invalid-feedback">Por favor ingrese el numero telefonico del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
                             <label for="txtDirreccion" class="fw-bold" style="color: black;">Direccion:</label>
                             <input type="text" name="txtDireccion" class="form-control" id="txtDireccion"
                                 placeholder="Direccion del cliente" required>
                             <div class="invalid-feedback">Por favor ingrese la direccion del cliente</div>
                         </div>
-                        <div class="mb-3 col-lg-4">
-                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Numero telefonico:</label>
-                            <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                                placeholder="Numero telefonico del cliente" required />
-                            <div class="invalid-feedback">Por favor ingrese el numero telefonico del cliente</div>
-                        </div>
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" type="submit" data-bs-dismiss="modal">Actualizar</button>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
                         <a href="/vistaGestionarClientes/"><button type="button"
                                 class="btn btn-danger mx-2">Cancelar</button></a>
                     </div>
@@ -112,6 +113,28 @@
         </div>
     </div>
 </div>
+<script>
+    (() => {
+        "use strict";
+
+        const forms = document.querySelectorAll(".needs-validation");
+
+        Array.from(forms).forEach((form) => {
+            form.addEventListener(
+                "submit",
+                (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add("was-validated");
+                },
+                false
+            );
+        });
+    })();
+</script>
 <script>
     function abrirModalActualizarCliente(id) {
         // Funcion AJAX para obtener los datos del cliente por ID
@@ -129,7 +152,9 @@
                 $("#txtNumeroC").val(data.cliente.cliPersona.perNumeroCelular);
                 $("#idCliente").val(id);
 
-                // Abrir la modal
+                var form = $('#ActualizarCl').find('.needs-validation')[0];
+                form.classList.remove('was-validated');
+
                 $('#ActualizarCl').modal('show');
             },
             error: function (error) {
@@ -138,6 +163,14 @@
             }
         });
     }
+    $('#ActualizarCl').on('hide.bs.modal', function (event) {
+        var form = $(this).find('.needs-validation')[0];
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            form.classList.add('was-validated');
+        }
+    });
 </script>
 {% if mensaje %}
 {% if estado %}

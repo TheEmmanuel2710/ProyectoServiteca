@@ -92,6 +92,21 @@
                             <div class="invalid-feedback">Por favor ingrese los apellidos del empleado</div>
                         </div>
                         <div class="mb-3 col-lg-6">
+                            <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
+                            <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
+                                placeholder="Correo del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese el correo electrónico del empleado</div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Número telefónico:</label>
+                            <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
+                                placeholder="# telefónico del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese el número telefónico del empleado</div>
+                        </div>
+                        <div class="mb-3 col-lg-6">
                             <label for="txtCargo" class="fw-bold" style="color: black;">Cargo:</label>
                             <input type="text" name="txtCargo" class="form-control" id="txtCargo"
                                 placeholder="Cargo del empleado" required>
@@ -116,20 +131,6 @@
                             <div class="invalid-feedback">Por favor elija el estado del empleado</div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <div class="mb-3 col-lg-6">
-                            <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
-                            <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
-                                placeholder="Correo del empleado" required>
-                            <div class="invalid-feedback">Por favor ingrese el correo electrónico del empleado</div>
-                        </div>
-                        <div class="mb-3 col-lg-6">
-                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Número telefónico:</label>
-                            <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                                placeholder="# telefónico del empleado" required>
-                            <div class="invalid-feedback">Por favor ingrese el número telefónico del empleado</div>
-                        </div>
-                    </div>
                     <!-- Modal footer -->
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
@@ -142,6 +143,29 @@
         </div>
     </div>
 </div>
+<script>
+    (() => {
+        "use strict";
+
+        
+        const forms = document.querySelectorAll(".needs-validation");
+
+        Array.from(forms).forEach((form) => {
+            form.addEventListener(
+                "submit",
+                (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add("was-validated");
+                },
+                false
+            );
+        });
+    })();
+</script>
 <script>
     function abrirModalActualizarEmpleado(id) {
         // Funcion AJAX para obtener los datos del cliente por ID
@@ -161,7 +185,9 @@
                 $("#cbEstado").val(data.empleado.empEstado);
                 $("#idEmpleado").val(id);
 
-                // Abrir la modal
+                var form = $('#ActualizarEmpl').find('.needs-validation')[0];
+                form.classList.remove('was-validated');
+
                 $('#ActualizarEmpl').modal('show');
             },
             error: function (error) {
@@ -170,6 +196,15 @@
             }
         });
     }
+    $('#ActualizarEmpl').on('hide.bs.modal', function (event) {
+        var form = $(this).find('.needs-validation')[0];
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            form.classList.add('was-validated');
+        }
+    });
+
 </script>
 {% if mensaje %}
 {% if estado %}
