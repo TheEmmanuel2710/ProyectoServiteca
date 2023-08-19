@@ -22,6 +22,10 @@ from fpdf import FPDF
 from datetime import datetime
 import os
 from django.http import HttpResponse
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib import messages
 
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -163,7 +167,7 @@ def registrarUsuario(request):
             
             # Enviar correo al usuario en un hilo separado
             asunto = 'Registro Sistema Serviteca'
-            mensaje = f'Cordial saludo, <b>{user.first_name} {user.last_name}</b>, nos permitimos.\
+            mensaje = f'Cordial saludo, <b>{user.first_name} {user.last_name}</b>, nos permitimos\
                 informarle que usted ha sido registrado en el Sistema de ServitecaOpita.\
                 Nos permitimos enviarle las credenciales de Ingreso a nuestro sistema.<br>\
                 <br><b>Username: </b> {user.username}\
@@ -1105,11 +1109,71 @@ def generar_pdf(request):
         # PDF como respuesta HTTP 
         # with open(pdf_path, 'rb') as pdf_file:
         #     response = HttpResponse(pdf_file.read(), content_type='application/pdf')
-        #     response['Content-Disposition'] = 'attachment; filename="nombre_del_archivo.pdf"'
+        #     response['Content-Disposition'] = 'attachment; filename="SERVITECA OPITA.pdf"'
         #     return response
 
         return HttpResponse("PDF generado y guardado correctamente.")
     except Exception as e:
         return HttpResponse("Error al generar el PDF: " + str(e))
    
-   
+
+def vistaCorreoForgot(request):
+    return render(request,"vistaCorreoForgot.html")
+
+
+def registrarPeticionForgot(request):
+    if request.method == 'POST':
+        correo = request.POST.get('txtCorreo')
+        try:
+            usuario = User.objects.get(email=correo)
+            with transaction.atomic():
+                peticion = PeticionForgot(id_user=usuario)
+                peticion.save()
+                # Generar uidb64
+                uidb64 = urlsafe_base64_encode(force_bytes(usuario.pk))
+                # Generar el token
+                token = default_token_generator.make_token(usuario)
+                # Enviar correo al usuario en un hilo separado
+                asunto = 'Solicitud de Restablecimiento de Contraseña'
+                mensaje = f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña. Por favor, haga clic en el siguiente enlace para continuar con el proceso: http://127.0.0.1:8000/cambiarContrasena/{uidb64}/{token}/'
+                thread = threading.Thread(target=enviarCorreo, args=(asunto, mensaje, usuario.email))
+                thread.start()
+
+                mensaje = "Correo enviado exitosamente"
+                estado = True
+        except User.DoesNotExist:
+            mensaje = "El correo electrónico no está registrado"
+            estado = False
+
+        return render(request, "vistaCorreoForgot.html", {"mensaje": mensaje, "estado": estado})
+    else:
+        return render(request, "vistaCorreoForgot.html")
+    
+    
+def vistaCambiarContraseña(request):
+    return render(request,"cambiarContraseña.html")
+
+
+def cambiarContraseña(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            password = request.POST.get('new_password')
+            user.set_password(password)
+            user.save()
+            messages.success(request, 'Contraseña restablecida correctamente. Ahora puedes iniciar sesión con tu nueva contraseña.')
+
+            # Actualizar el estado de la petición de forgot a "inactiva"
+            PeticionForgot.objects.filter(id_user=user).update(estado='Inactiva')
+
+            return redirect('/')  # Redirige a la página de inicio de sesión
+        return render(request, 'cambiarContraseña.html', {'validlink': True})
+    else:
+        return render(request, 'cambiarContraseña.html', {'validlink': False})
+    
+    

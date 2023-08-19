@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,200&display=swap');
 
 * {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
 #logo {
@@ -46,15 +46,15 @@ font-family: 'Poppins', sans-serif;
 
 .column2 {
     max-width: 400px;
+
+
 }
 
-.redes {
-    display: flex;
-    justify-content: center;
-}
+
 
 .column2 h1 {
     font-size: 22px;
+
 }
 
 .row {
@@ -73,19 +73,54 @@ font-family: 'Poppins', sans-serif;
     color: #C7C7C7;
 }
 
+.container-body {
+    flex-direction: row;
+    /* Change to row for side-by-side layout */
+    justify-content: space-between;
+    /* Add space between columns */
+}
+
+.column1,
+.column2,
+.column3 {
+    flex-basis: calc(33.33% - 30px);
+    /* Divide space equally with some margin */
+    margin: 0 10px;
+    /* Add margin between columns */
+}
+
+.row2 {
+    margin-left: 0;
+    /* Adjust margin */
+}
+
+
+
 .column3 {
     max-width: 400px;
+    margin: 0;
+    /* Remove the margin to center-align the column */
+    text-align: center;
+}
+
+/* Adjust the social media icons alignment */
+.redes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
+    margin-right: 0;
+}
+
+.redes img {
+    margin: 0 5px;
+    /* Adjust spacing */
 }
 
 .column3 h1 {
     font-size: 22px;
 }
 
-.row2 {
-    margin-top: 20px;
-    display: flex;
-
-}
 
 .row2 img {
     width: 36px;
@@ -404,7 +439,7 @@ header {
 .wrapper {
     margin: 0% auto;
     position: fixed;
-    top: 100px;
+    top: 85px;
     width: 400px;
     height: 540px;
     background: white;
@@ -674,7 +709,8 @@ header {
 
     .wrapper {
         width: 350px;
-        height: 500px;
+        height: 505px;
+        
     }
 
 
@@ -684,7 +720,6 @@ header {
 
     .column1,
     .column2 {
-
         margin-bottom: 10px;
         display: grid;
         place-items: center;
@@ -707,17 +742,23 @@ header {
         place-items: center;
     }
 
+    .redes{
+        margin-right: 30px;
+    }
     .row2 {
-        margin-left: 17%;
+        margin-left: 0;
 
     }
 
     #Contactenos {
-        margin-left: 10%;
+        margin-left: 10px;
     }
 
-
-
+    .grecaptcha-badge {
+        transform: translate(0,10px);
+        
+        
+     }
 }
 
 
@@ -756,12 +797,13 @@ header {
     }
 
     .row2 {
-        margin-left: 22%;
+        margin-left: 0;
 
     }
+    
 
     #Contactenos {
-        margin-left: 10%;
+        margin-left: 10px;
     }
 
 }
@@ -875,15 +917,15 @@ header {
     }
 
     .column2 {
-        margin-right: 10%;
+        margin-right: 0;
     }
 
     #Contactenos {
-        margin-right: 10%;
+        margin-right: 0;
     }
 
     .row2 {
-        margin-right: 15%;
+        margin-right: 0;
     }
 }
 
@@ -925,15 +967,15 @@ header {
     }
 
     .column2 {
-        margin-right: 10%;
+        margin-right: 0;
     }
 
     #Contactenos {
-        margin-right: 10%;
+        margin-right: 0;
     }
 
     .row2 {
-        margin-right: 20%;
+        margin-right: 0;
     }
 }
 
@@ -959,7 +1001,7 @@ header {
 
     .wrapper {
         width: 350px;
-        height: 465px;
+        height: 500px;
     }
 
     .navigation .btnLogin-popup {
@@ -976,22 +1018,69 @@ header {
         margin-left: 160px;
         margin-right: -90px;
         transition: .5s;
-    } 
-
-    
-    .row2 {
-        margin-left: 22%;
-
     }
 
- 
+    .container-body {
+        flex-direction: row;
+        /* Change to row for side-by-side layout */
+        justify-content: space-between;
+        /* Add space between columns */
+    }
+
+    .column1,
+    .column2,
+    .column3 {
+        flex-basis: calc(33.33% - 20px);
+        /* Divide space equally with some margin */
+        margin: 0 10px;
+        /* Add margin between columns */
+    }
+
+    .row2 {
+        margin-left: 0;
+        /* Adjust margin */
+    }
+
+    /* Adjust footer columns for side-by-side layout */
+    .column1,
+    .column2 {
+        max-width: 320px;
+    }
+
+    .column3 {
+        max-width: 400px;
+        margin: 0;
+        /* Remove the margin to center-align the column */
+        text-align: center;
+    }
+
+    /* Adjust the social media icons alignment */
+    .redes {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+        margin-right: 20px;
+    }
+    #Social{
+        margin-left: 10px;
+    }
+
+    .redes img {
+        margin: 0 5px;
+        /* Adjust spacing */
+    }
+
+
+
 
 }
 
 
 @media only screen and (min-width: 1080px) {
     .wrapper {
-        height: 468px;
+        width: 350px;
+        height: 470px;
     }
 
     #logo {
@@ -1010,8 +1099,6 @@ header {
 
     }
 
-
-
     .navigation .btnLogin-popup {
         width: 160px;
         height: 55px;
@@ -1027,6 +1114,17 @@ header {
         margin-right: -90px;
         transition: .5s;
     }
+
+    .g-recaptcha {
+        margin-top: 0px;
+        animation: reverse;
+    }
+
+    .grecaptcha-badge {
+       transform: translate(0,20px);
+       
+       
+    }
 }
 
 
@@ -1035,6 +1133,8 @@ header {
         width: 400px;
         height: 500px;
     }
+
+
 }
 
 
@@ -1120,7 +1220,7 @@ header {
         height: 500px;
     }
 
-    
+
     #footer {
         flex-direction: column;
         align-items: center;
@@ -1171,10 +1271,11 @@ header {
         display: grid;
         place-items: center;
 
+
     }
 
     .column3 {
-        margin-left: 10%;
+        margin-left: 0;
     }
 
     #footer {
@@ -1196,14 +1297,13 @@ header {
     .row2 {
         display: grid;
         place-items: center;
-        margin-left: 20px;
+        margin-left: 0;
     }
 
 
 
     .redes {
-
-        margin-left: 25px;
+        margin-right: 40px;
     }
 
     #logo {
@@ -1238,6 +1338,9 @@ header {
         transition: .5s;
     }
 
+    #Contactenos{
+        margin-left: 20px;
+    }
 
 }
 
@@ -1267,6 +1370,7 @@ header {
         justify-content: space-between;
 
     }
+
     .column3 {
         margin-left: 10%;
     }
@@ -1288,7 +1392,7 @@ header {
     }
 
     .row2 {
-      
+
         margin-left: 20px;
     }
 

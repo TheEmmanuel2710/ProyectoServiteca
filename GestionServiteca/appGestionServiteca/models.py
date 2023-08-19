@@ -5,20 +5,23 @@ from django.conf import settings
 
 
 tipoUsuario = [
-    ('Tecnico','Tecnico'),('Asistente', 'Asistente'),('Administrativo','Administrativo'),
+    ('Tecnico','Tecnico'),('Asistente', 'Asistente'),('Administrativo','Administrativo')
+]
+estadoPeticionForgot = [
+    ('Activa','Activa'),('Inactiva', 'Inactiva')
 ]
 
 tipoVehiculo = [
-    ('Electrico','Electrico'),('Gasolina', 'Gasolina'),
+    ('Electrico','Electrico'),('Gasolina', 'Gasolina')
 ]
 tipoCodigo=[
     ('SVP','Servicio Prestado')
 ]
 estadoEmpleados = [
-    ('Activo','Activo'),('Inactivo', 'Inactivo'),
+    ('Activo','Activo'),('Inactivo', 'Inactivo')
 ]
 estadoFactura = [
-    ('Pagada','Pagada'),('No Pagada', 'No Pagada'),
+    ('Pagada','Pagada'),('No Pagada', 'No Pagada')
 ]
 
 estadoServicioPrestado=[
@@ -35,6 +38,7 @@ tiposMarcas=[
     ('Jac','Jac'),('Mitsubishi','Mitsubishi'),('Cadillac','Cadillac'),('Dodge','Dodge')
 ]
 
+
 class User(AbstractUser):
     userFoto = models.FileField(upload_to=f"fotos/", null=True, blank=True,db_comment="Foto del Usuario")
     userTipo = models.CharField(max_length=15,choices=tipoUsuario,db_comment="Nombre Tipo de usuario")
@@ -46,11 +50,16 @@ class User(AbstractUser):
         
 class Persona(models.Model):
     perIdentificacion = models.CharField(max_length=10,unique=True,db_comment="Identificacion de la persona")
-    perNombres = models.CharField(max_length=70,db_comment="Nombres de la persona")
-    perApellidos = models.CharField(max_length=70,db_comment="Apellidos de la persona")
+    perNombres = models.CharField(max_length=70,null=True,db_comment="Nombres de la persona")
+    perApellidos = models.CharField(max_length=70,null=True,db_comment="Apellidos de la persona")
     perCorreo  = models.CharField(max_length=70,unique=True,db_comment="Correo de la persona")
     perNumeroCelular = models.CharField(max_length=10,unique=True,db_comment="Numero de celular de la persona")   
-
+        
+class PeticionForgot(models.Model):
+    id_user=models.ForeignKey(User,on_delete=models.PROTECT,db_comment="Hace relación al usuario FK")
+    fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro de la peticion forgot")
+    estado=models.CharField(max_length=27,choices=estadoPeticionForgot,default='Activa',db_comment="Estado de la peticion forgot")
+    
 class Cliente(models.Model):
     cliDireccion  = models.CharField(max_length=70,null=True,db_comment="Direccion del cliente")
     cliPersona=models.ForeignKey(Persona,on_delete=models.PROTECT,db_comment="Hace relación a la persona FK")
@@ -61,7 +70,7 @@ class Cliente(models.Model):
 class Vehiculo(models.Model):
     vehPlaca=models.CharField(max_length=6,unique=True,db_comment="Placa del vehiculo")
     vehMarca=models.CharField(max_length=27,choices=tiposMarcas,db_comment="Marca del vehiculo")
-    vehModelo=models.IntegerField(db_comment="Modelo del vehiculo")
+    vehModelo=models.IntegerField(null=True,db_comment="Modelo del vehiculo")
     vehTipo=models.CharField(max_length=9,choices=tipoVehiculo,db_comment="Tipo de vehiculo")
     
     def __str__(self):
@@ -70,7 +79,7 @@ class Vehiculo(models.Model):
 class Empleado(models.Model):
     empCargo = models.CharField(max_length=30,unique=True,db_comment="Cargo del empleado")
     empSueldo = models.IntegerField(db_comment="Suelo del empleado")
-    empEstado=models.CharField(max_length=8,choices=estadoEmpleados,db_comment="Estado del empleado")
+    empEstado=models.CharField(max_length=8,null=True,choices=estadoEmpleados,db_comment="Estado del empleado")
     empPersona=models.ForeignKey(Persona,on_delete=models.PROTECT,db_comment="Hace relación a la persona FK")
     
     def __str__(self):

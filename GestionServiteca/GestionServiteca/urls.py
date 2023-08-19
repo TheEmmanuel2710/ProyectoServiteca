@@ -61,8 +61,13 @@ urlpatterns = [
     path('habilitar_usuario/<int:user_id>/', views.habilitarUsuario),
     path('deshabilitar_usuario/<int:user_id>/', views.deshabilitarUsuario),
     path('vistaGraficas/', views.mostrarGrafica1),
-    path('<str:texto>/', views.urlValidacion),
-    
+    path('vistaCorreoForgot/', views.vistaCorreoForgot),
+    path('registrarPeticionForgot/', views.registrarPeticionForgot),
+    path('vistaCambiarContraseña/', views.vistaCambiarContraseña),
+    path('cambiarContrasena/<str:uidb64>/<str:token>/', views.cambiarContraseña),
+    path('<str:texto>/', views.urlValidacion)
 ]
 if settings.DEBUG:
     urlpatterns += static (settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    
+    

@@ -42,26 +42,21 @@
                 <td><img src="https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280.jpg"
                         alt="No foto" style="width:60px;" class="rounded-pill"></td>
                 {% endif %}
-                <td>
-                    {% if usuario.is_active %}
-                    <a href="/habilitar_usuario/{{usuario.id}}" class="disabled-link"
-                        onclick="return confirmHabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
-                        <i class="bi bi-plus-circle" title="Habilitar" style="font-size: 2rem; color: gray;"></i>
-                    </a>
-                    <a href="/deshabilitar_usuario/{{usuario.id}}" class="enabled-link"
-                        onclick="return confirmDeshabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
-                        <i class="bi bi-dash-circle" title="Deshabilitar" style="font-size: 2rem; color: red;"></i>
-                    </a>
-                    {% else %}
+                <td> 
+                    <div style="display: grid; place-items: center;">
+                    {%if not usuario.is_active  %}
                     <a href="/habilitar_usuario/{{usuario.id}}" class="enabled-link"
-                        onclick="return confirmHabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
-                        <i class="bi bi-plus-circle" title="Habilitar" style="font-size: 2rem; color: green;"></i>
-                    </a>
-                    <a href="/deshabilitar_usuario/{{usuario.id}}" class="disabled-link"
-                        onclick="return confirmDeshabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
-                        <i class="bi bi-dash-circle" title="Deshabilitar" style="font-size: 2rem; color: gray;"></i>
-                    </a>
-                    {% endif %}
+                    onclick="return confirmHabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
+                    <i class="bi bi-plus-circle" title="Habilitar" style="font-size: 2rem; color: green;"></i>
+                </a>
+                {% endif %}
+                {%if  usuario.is_active  %}
+                <a href="/deshabilitar_usuario/{{usuario.id}}" class="enabled-link"
+                    onclick="return confirmDeshabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
+                    <i class="bi bi-dash-circle" title="Deshabilitar" style="font-size: 2rem; color: red; "></i>
+                </a>
+                {% endif %}
+            </div>
                 </td>
                 
             </tr>
