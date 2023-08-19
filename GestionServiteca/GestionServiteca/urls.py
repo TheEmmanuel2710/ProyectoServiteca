@@ -65,6 +65,7 @@ urlpatterns = [
     path('registrarPeticionForgot/', views.registrarPeticionForgot),
     path('vistaCambiarContraseña/', views.vistaCambiarContraseña),
     path('cambiarContrasena/<str:uidb64>/<str:token>/', views.cambiarContraseña),
+    path('mostrarMensaje/', views.mostrarMensaje),
     path('<str:texto>/', views.urlValidacion)
 ]
 if settings.DEBUG:

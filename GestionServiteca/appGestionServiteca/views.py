@@ -48,7 +48,7 @@ def inicio(request):
 
 def inicioAdministrador(request):
     if not request.user.is_authenticated:
-        mensaje = "Debe iniciar sesión"
+        mensaje = "Debe iniciar sesión."
         return render(request, "inicio.html", {"mensaje": mensaje})
 
     if request.user.groups.filter(name='Administrador').exists():
@@ -65,7 +65,7 @@ def inicioAdministrador(request):
 
 def inicioAsistente(request):
     if not request.user.is_authenticated:
-        mensaje = "Debe iniciar sesión"
+        mensaje = "Debe iniciar sesión."
         return render(request, "inicio.html", {"mensaje": mensaje})
 
     if request.user.groups.filter(name='Asistente').exists():
@@ -82,7 +82,7 @@ def inicioAsistente(request):
 
 def inicioTecnico(request):
     if not request.user.is_authenticated:
-        mensaje = "Debe iniciar sesión"
+        mensaje = "Debe iniciar sesión."
         return render(request, "inicio.html", {"mensaje": mensaje})
 
     if request.user.groups.filter(name='Tecnico').exists():
@@ -112,7 +112,7 @@ def vistaGestionarUsuarios(request):
     elif user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
     
        
 def vistaRegistrarUsuario(request):
@@ -129,7 +129,7 @@ def vistaRegistrarUsuario(request):
     elif request.user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def registrarUsuario(request):
@@ -161,7 +161,7 @@ def registrarUsuario(request):
             user.set_password(passwordGenerado)
             user.save()
             
-            mensaje1 = "Usuario Agregado Correctamente"
+            mensaje1 = "Usuario Agregado Correctamente."
             estado=True
             
             
@@ -198,7 +198,7 @@ def vistaGestionarClientes(request):
     elif request.user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def vistaRegistrarClientes(request):
@@ -215,7 +215,7 @@ def vistaRegistrarClientes(request):
     elif request.user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 def registrarCliente(request):
     estado = False
@@ -235,7 +235,7 @@ def registrarCliente(request):
             cliente.save()
             
             estado = True
-            mensaje = "Cliente Agregado Correctamente"
+            mensaje = "Cliente Agregado Correctamente."
     except Exception as error:
         transaction.rollback()
         mensaje = "Error al registrar cliente: Datos duplicados."
@@ -260,11 +260,11 @@ def consultarCliente(request, id):
         }
         return JsonResponse({"cliente": datos_cliente})
     except Cliente.DoesNotExist:
-        return JsonResponse({"error": "Cliente no encontrado"}, status=404)
+        return JsonResponse({"error": "Cliente no encontrado."}, status=404)
     except Persona.DoesNotExist:
-        return JsonResponse({"error": "Persona no encontrada"}, status=404)
+        return JsonResponse({"error": "Persona no encontrada."}, status=404)
     except ValueError:
-        return JsonResponse({"error": "ID inválido"}, status=400)
+        return JsonResponse({"error": "ID inválido."}, status=400)
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
     
@@ -284,7 +284,7 @@ def vistaGestionarVehiculos(request):
     elif user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def vistaRegistrarVehiculos(request):
@@ -301,7 +301,7 @@ def vistaRegistrarVehiculos(request):
     elif user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def registrarVehiculo(request):
@@ -317,7 +317,7 @@ def registrarVehiculo(request):
             vehiculo.save()
             
             estado = True
-            mensaje = "Vehiculo Agregado Correctamente"
+            mensaje = "Vehiculo Agregado Correctamente."
     except Exception as error:
         transaction.rollback()
         mensaje = "Error al registrar vehiculo: Datos duplicados."
@@ -338,9 +338,9 @@ def consultarVehiculo(request, id):
         }
         return JsonResponse({"vehiculo": datos_vehiculo})
     except Vehiculo.DoesNotExist:
-        return JsonResponse({"error": "Vehiculo no encontrado"}, status=404)
+        return JsonResponse({"error": "Vehiculo no encontrado."}, status=404)
     except ValueError:
-        return JsonResponse({"error": "ID inválido"}, status=400)
+        return JsonResponse({"error": "ID inválido."}, status=400)
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
 
@@ -378,7 +378,7 @@ def vistaGestionarEmpleados(request):
     if user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def vistaRegistrarEmpleados(request):
@@ -396,7 +396,7 @@ def vistaRegistrarEmpleados(request):
     if user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def registrarEmpleado(request):
@@ -418,7 +418,7 @@ def registrarEmpleado(request):
             empleado.save()
 
             estado = True
-            mensaje = "Empleado Agregado Correctamente"
+            mensaje = "Empleado Agregado Correctamente."
     except Exception as error:
         transaction.rollback()
         mensaje = "Error al registrar empleado: Datos duplicados."
@@ -447,11 +447,11 @@ def consultarEmpleado(request, id):
         }
         return JsonResponse({"empleado": datos_empleado})
     except Empleado.DoesNotExist:
-        return JsonResponse({"error": "Empleado no encontrado"}, status=404)
+        return JsonResponse({"error": "Empleado no encontrado."}, status=404)
     except Persona.DoesNotExist:
-        return JsonResponse({"error": "Persona no encontrada"}, status=404)
+        return JsonResponse({"error": "Persona no encontrada."}, status=404)
     except ValueError:
-        return JsonResponse({"error": "ID inválido"}, status=400)
+        return JsonResponse({"error": "ID inválido."}, status=400)
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
 
@@ -490,10 +490,10 @@ def login(request):
             else:
                 return redirect('/inicioTecnico')
         else:
-            mensaje = "Usuario o Contraseña Incorrectas"
+            mensaje = "Usuario o Contraseña Incorrectas."
             return render(request, "inicio.html",{"mensaje":mensaje})
     else:
-        mensaje="Debe validar primero el recaptcha"
+        mensaje="Debe validar primero el recaptcha."
         return render(request, "inicio.html",{"mensaje" :mensaje})
  
     
@@ -548,7 +548,7 @@ def vistaRegistrarServiciosPrestados(request):
     if user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
     
 def registrarServicioPrestado(request):
@@ -600,7 +600,7 @@ def registrarServicioPrestado(request):
                     detalleServicioPrestado.save()
                 
                 estado = True
-                mensaje = "Se ha registrado el servicio prestado correctamente"
+                mensaje = "Se ha registrado el servicio prestado correctamente."
         
         except Exception as error:
             transaction.rollback()
@@ -624,7 +624,7 @@ def vistaGestionarFacturas(request):
     if user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
     
     
 def vistaGestionarSolicitudesV(request):
@@ -641,7 +641,7 @@ def vistaGestionarSolicitudesV(request):
     if user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
     
     
 def existeCliente(request):
@@ -653,14 +653,14 @@ def existeCliente(request):
     try:
         if id_identificacion:
             persona = Persona.objects.get(perIdentificacion=id_identificacion)
-            mensaje = "Cliente consultado de manera exitosa"
+            mensaje = "Cliente consultado de manera exitosa."
             estado = True
         else:
-            mensaje = "Por favor, ingrese una identificación"
+            mensaje = "Por favor, ingrese una identificación."
     except Persona.DoesNotExist:
-        mensaje = "No se encontró un cliente con esa identificación"
+        mensaje = "No se encontró un cliente con esa identificación."
     except Exception as error:
-        mensaje = f"Problemas -> {error}"
+        mensaje = f"Problemas -> {error}."
 
     retorno = {
         "mensaje": mensaje,
@@ -693,9 +693,9 @@ def actualizarVehiculo(request):
                 vehiculo.vehTipo = tipoV
                 vehiculo.save()
                 estado = True
-                mensaje = "Vehículo actualizado correctamente"
+                mensaje = "Vehículo actualizado correctamente."
     except Vehiculo.DoesNotExist:
-        mensaje = "El vehículo no existe"
+        mensaje = "El vehículo no existe."
     except Exception as error:
         transaction.rollback()
         mensaje = str(error)
@@ -730,11 +730,11 @@ def actualizarCliente(request):
             persona = cliente.cliPersona
             
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
-                mensaje = "La identificación ya está registrada en otro cliente"
+                mensaje = "La identificación ya está registrada en otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
-                mensaje = "El correo electrónico ya está registrado en otro cliente"
+                mensaje = "El correo electrónico ya está registrado en otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
-                mensaje = "El número de celular ya está registrado en otro cliente"
+                mensaje = "El número de celular ya está registrado en otro cliente."
             else:
                 persona.perIdentificacion = identificacion
                 persona.perNombres = nombres
@@ -746,9 +746,9 @@ def actualizarCliente(request):
                 cliente.cliDireccion = direccion
                 cliente.save()
                 estado = True
-                mensaje = "Cliente actualizado correctamente"
+                mensaje = "Cliente actualizado correctamente."
     except Cliente.DoesNotExist:
-        mensaje = "El cliente no existe"
+        mensaje = "El cliente no existe."
     except Exception as error:
         transaction.rollback()
         mensaje = str(error)
@@ -783,11 +783,11 @@ def actualizarEmpleado(request):
             persona = empleado.empPersona
             
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
-                mensaje = "La identificación ya está registrada en otro empleado"
+                mensaje = "La identificación ya está registrada en otro empleado."
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
-                mensaje = "El correo electrónico ya está registrado en otro empleado"
+                mensaje = "El correo electrónico ya está registrado en otro empleado."
             elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
-                mensaje = "El número de celular ya está registrado en otro empleado"
+                mensaje = "El número de celular ya está registrado en otro empleado."
             else:
                 persona.perIdentificacion = identificacion
                 persona.perNombres = nombres
@@ -801,9 +801,9 @@ def actualizarEmpleado(request):
                 empleado.empEstado = estadoE
                 empleado.save()
                 estado = True
-                mensaje = "Empleado actualizado correctamente"
+                mensaje = "Empleado actualizado correctamente."
     except Empleado.DoesNotExist:
-        mensaje = "El Empleado no existe"
+        mensaje = "El Empleado no existe."
     except Exception as error:
         transaction.rollback()
         mensaje = str(error)
@@ -833,7 +833,7 @@ def vistaEdicionPerfilAsistente(request):
     if user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
     
 
 
@@ -852,7 +852,7 @@ def vistaEdicionPerfilAdministrador(request):
     if user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
     
     
 def vistaEdicionPerfilTecnico(request):
@@ -870,7 +870,7 @@ def vistaEdicionPerfilTecnico(request):
     if user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
 
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión"})
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
     
 def actualizarUsuarioAdmin(request):
@@ -893,7 +893,7 @@ def actualizarUsuarioAdmin(request):
                     usuario.userFoto = nueva_imagen
                 usuario.save()
                 estado = True
-                mensaje = "Usuario actualizado correctamente"
+                mensaje = "Usuario actualizado correctamente."
     except Exception as error:
             transaction.rollback()
             mensaje = str(error)
@@ -924,7 +924,7 @@ def actualizarUsuarioAsistente(request):
                     usuario.userFoto = nueva_imagen
                 usuario.save()
                 estado = True
-                mensaje = "Usuario actualizado correctamente"
+                mensaje = "Usuario actualizado correctamente."
     except Exception as error:
             transaction.rollback()
             mensaje = str(error)
@@ -955,7 +955,7 @@ def actualizarUsuarioTecnico(request):
                     usuario.userFoto = nueva_imagen
                 usuario.save()
                 estado = True
-                mensaje = "Usuario actualizado correctamente"
+                mensaje = "Usuario actualizado correctamente."
     except Exception as error:
             transaction.rollback()
             mensaje = str(error)
@@ -1139,10 +1139,10 @@ def registrarPeticionForgot(request):
                 thread = threading.Thread(target=enviarCorreo, args=(asunto, mensaje, usuario.email))
                 thread.start()
 
-                mensaje = "Correo enviado exitosamente"
+                mensaje = "Correo enviado exitosamente,por favor verifique su bandeja de entrada."
                 estado = True
         except User.DoesNotExist:
-            mensaje = "El correo electrónico no está registrado"
+            mensaje = "El correo electrónico no está registrado en ningun usuario."
             estado = False
 
         return render(request, "vistaCorreoForgot.html", {"mensaje": mensaje, "estado": estado})
@@ -1163,17 +1163,18 @@ def cambiarContraseña(request, uidb64, token):
 
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == 'POST':
-            password = request.POST.get('new_password')
+            password = request.POST.get('nuevaContraseña')
             user.set_password(password)
             user.save()
-            messages.success(request, 'Contraseña restablecida correctamente. Ahora puedes iniciar sesión con tu nueva contraseña.')
+            messages.success(request, 'Contraseña restablecida correctamente,ahora puedes iniciar sesión con tu nueva contraseña.')
 
-            # Actualizar el estado de la petición de forgot a "inactiva"
             PeticionForgot.objects.filter(id_user=user).update(estado='Inactiva')
-
-            return redirect('/')  # Redirige a la página de inicio de sesión
+            return redirect('/mostrarMensaje/')
         return render(request, 'cambiarContraseña.html', {'validlink': True})
     else:
         return render(request, 'cambiarContraseña.html', {'validlink': False})
     
-    
+
+def mostrarMensaje(request):
+    return render(request, 'mostrarMensaje.html')
+   

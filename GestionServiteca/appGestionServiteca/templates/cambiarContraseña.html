@@ -1,33 +1,38 @@
 {% extends "index.html" %}
 {% block menu %}
 {% include "menu.html" %}
-{%endblock %}
+{% endblock %}
 {% block contenido %}
 <br>
 <br>
 <br>
 <br>
-<h1 class="text-center">Restablecimiento de Contraseña</h1>
-{% if validlink %}
-<p>Ingresa tu nueva contraseña:</p>
-<form method="post">
-    {% csrf_token %}
-    <label for="new_password">Nueva Contraseña:</label>
-    <input type="password" id="new_password" name="new_password" required>
+<div class="d-flex justify-content-center align-items-center flex-column">
+    <h1 class="text-center">Restablecimiento de Contraseña</h1>
+    {% if validlink %}
+    <p class="text-center">Ingresa tu nueva contraseña</p>
+    <form class="needs-validation" method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <label for="nuevaContraseña">Nueva Contraseña:</label>
+        <input type="password" id="nuevaContraseña" name="nuevaContraseña" class="form-control" required>
+        <br>
+        <button type="submit" class="btn btn-dark">Guardar Contraseña</button>
+    </form>
+    {% else %}
+    <p class="text-center">El enlace para restablecimiento de contraseña no es válido. Por favor, verifique el enlace o
+        solicita un nuevo enlace de restablecimiento.</p>
     <br>
-    <button type="submit">Guardar Contraseña</button>
-</form>
-{% else %}
-<p class="text-center">El enlace para restablecimiento de contraseña no es válido. Por favor, verifica el enlace o
-    solicita un nuevo enlace de restablecimiento.</p>
-{% endif %}
+    <br>
+    <br>
+    <br>
+    {% endif %}
+</div>
 
 <script>
     (() => {
         "use strict";
 
         const forms = document.querySelectorAll(".needs-validation");
-
 
         Array.from(forms).forEach((form) => {
             form.addEventListener(
@@ -45,38 +50,7 @@
         });
     })();
 </script>
-{% if mensaje %}
-{% if estado %}
-<script>
-    Swal.fire({
-        title: 'Restablecimiento de contraseña',
-        text: '{{mensaje}}',
-        icon: 'success',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            location.href = "/"
-        }
-    });
-</script>
-{% else %}
-<script>
-    Swal.fire({
-        title: 'Restablecimiento de contraseña',
-        text: '{{mensaje}}',
-        icon: 'error',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            location.href = "/vistaCorreoForgot/"
-        }
-    });
-</script>
-{% endif %}
-{% endif %}
-{%endblock %}
+{% endblock %}
 {% block piePagina %}
 {% include "piePagina.html" %}
-{%endblock %}
+{% endblock %}
