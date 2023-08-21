@@ -45,7 +45,7 @@
             <div class="mb-3 col-lg-4">
                 <label for="txtNumeroC" class="fw-bold" style="color: black;">Numero telefonico:</label>
                 <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                placeholder="Numero telefonico del cliente" required />
+                    placeholder="Numero telefonico del cliente" required />
                 <div class="invalid-feedback">Por favor ingrese el numero telefonico del cliente</div>
             </div>
             <div class="mb-3 col-lg-4">
@@ -56,8 +56,7 @@
             </div>
             <br>
             <div class="d-flex justify-content-center">
-                <button type="submit" class="btn"
-                    style="background-color: black; color:white;">Registrar</button>
+                <button type="submit" class="btn" style="background-color: black; color:white;">Registrar</button>
                 <a href="/vistaGestionarClientes/"><button type="button"
                         class="btn btn-danger mx-2">Cancelar</button></a>
             </div>
@@ -98,29 +97,28 @@
 {% endif %}
 
 <script>
-        // Example starter JavaScript for disabling form submissions if there are invalid fields
-        (() => {
-            "use strict";
+    (() => {
+        "use strict";
 
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            const forms = document.querySelectorAll(".needs-validation");
 
-            // Loop over them and prevent submission
-            Array.from(forms).forEach((form) => {
-                form.addEventListener(
-                    "submit",
-                    (event) => {
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
+        const forms = document.querySelectorAll(".needs-validation");
 
-                        form.classList.add("was-validated");
-                    },
-                    false
-                );
-            });
-        })();
+
+        Array.from(forms).forEach((form) => {
+            form.addEventListener(
+                "submit",
+                (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add("was-validated");
+                },
+                false
+            );
+        });
+    })();
 </script>
 {%endblock %}
 {% block piePagina %}

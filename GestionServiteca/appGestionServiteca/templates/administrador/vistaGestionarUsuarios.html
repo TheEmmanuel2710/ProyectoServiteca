@@ -42,23 +42,23 @@
                 <td><img src="https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280.jpg"
                         alt="No foto" style="width:60px;" class="rounded-pill"></td>
                 {% endif %}
-                <td> 
+                <td>
                     <div style="display: grid; place-items: center;">
-                    {%if not usuario.is_active  %}
-                    <a href="/habilitar_usuario/{{usuario.id}}" class="enabled-link"
-                    onclick="return confirmHabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
-                    <i class="bi bi-plus-circle" title="Habilitar" style="font-size: 2rem; color: green;"></i>
-                </a>
-                {% endif %}
-                {%if  usuario.is_active  %}
-                <a href="/deshabilitar_usuario/{{usuario.id}}" class="enabled-link"
-                    onclick="return confirmDeshabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
-                    <i class="bi bi-dash-circle" title="Deshabilitar" style="font-size: 2rem; color: red; "></i>
-                </a>
-                {% endif %}
-            </div>
+                        {%if not usuario.is_active %}
+                        <a href="/habilitar_usuario/{{usuario.id}}" class="enabled-link"
+                            onclick="return confirmHabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
+                            <i class="bi bi-plus-circle" title="Habilitar" style="font-size: 2rem; color: green;"></i>
+                        </a>
+                        {% endif %}
+                        {%if usuario.is_active %}
+                        <a href="/deshabilitar_usuario/{{usuario.id}}" class="enabled-link"
+                            onclick="return confirmDeshabilitar(event, '{{usuario.first_name}} {{usuario.last_name}}', '{{usuario.id}}')">
+                            <i class="bi bi-dash-circle" title="Deshabilitar" style="font-size: 2rem; color: red; "></i>
+                        </a>
+                        {% endif %}
+                    </div>
                 </td>
-                
+
             </tr>
             {% endfor %}
         </tbody>
@@ -76,7 +76,7 @@
                 if (data.success) {
                     // Encontrar la fila correspondiente al usuario
                     var usuarioFila = $(`#tblPersonas tbody tr[data-user-id="${userId}"]`);
-    
+
                     // Mostrar SweetAlert de éxito
                     Swal.fire({
                         title: 'Sistema Serviteca',

@@ -173,7 +173,7 @@ def registrarUsuario(request):
                 <br><b>Username: </b> {user.username}\
                 <br><b>Password: </b> {passwordGenerado}\
                 <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
-                http://serviteca.pythonanywhere.com'
+                http://127.0.0.1:8000/'
             thread = threading.Thread(target=enviarCorreo, args=(asunto, mensaje, user.email))
             thread.start()
     except Exception as error:

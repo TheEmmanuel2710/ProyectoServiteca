@@ -55,7 +55,8 @@
             </div>
             <!-- Modal body -->
             <div class="modal-body">
-                <form action="/ActualizarV/" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <form action="/ActualizarV/" method="post" enctype="multipart/form-data" class="needs-validation"
+                    novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="idVehiculo" id="idVehiculo" value="">
                     <div class="form-group row">
@@ -94,7 +95,7 @@
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button class="btn btn-secondary"  data-bs-dismiss="modal">Actualizar</button>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
                         <a href="/vistaGestionarVehiculos/">
                             <button type="button" class="btn btn-danger mx-2">Cancelar</button>
                         </a>

@@ -43,19 +43,19 @@
     </div>
   </div>
 </div>
-{% if  mensaje2 %}
+{% if mensaje2 %}
 <script>
-    Swal.fire({
-        title: 'Sistema Serviteca',
-        text: '{{mensaje2}}',
-        icon: 'info',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            location.href = "/"
-        }
-    });
+  Swal.fire({
+    title: 'Sistema Serviteca',
+    text: '{{mensaje2}}',
+    icon: 'info',
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: 'Aceptar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      location.href = "/"
+    }
+  });
 </script>
 {% endif %}
 {%endblock %}

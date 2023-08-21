@@ -24,7 +24,8 @@
         </li>
         <li class="option">
           <button class="btn btn-outline-danger" id="btn-1" title="Ver Perfil" data-bs-toggle="modal"
-            data-bs-target="#perfilModal" onclick="redireccionar('/vistaGestionarPerfilAdministrador/')">Ver Perfil</button>
+            data-bs-target="#perfilModal" onclick="redireccionar('/vistaGestionarPerfilAdministrador/')">Ver
+            Perfil</button>
         </li>
         <li class="option">
           <button onclick="salir()" class="btn btn-outline-danger" title="Cerrar Sesión" id="btn-1">Cerrar
@@ -38,35 +39,35 @@
         selectBtn = optionMenu.querySelector(".select-btn"),
         options = optionMenu.querySelectorAll(".option"),
         sBtn_text = optionMenu.querySelector(".sBtn-text");
-    
-      
-      document.addEventListener("click", function(event) {
+
+
+      document.addEventListener("click", function (event) {
         const isInsideOptionMenu = optionMenu.contains(event.target);
-    
-        
+
+
         if (!isInsideOptionMenu) {
           optionMenu.classList.remove("active");
         }
       });
-    
-      selectBtn.addEventListener("click", function() {
+
+      selectBtn.addEventListener("click", function () {
         optionMenu.classList.toggle("active");
       });
-    
+
       options.forEach(option => {
-        option.addEventListener("click", function() {
+        option.addEventListener("click", function () {
           let selectedOption = option.querySelector(".option-text").innerText;
           sBtn_text.innerText = selectedOption;
-    
+
           optionMenu.classList.remove("active");
         });
       });
-    
+
       function redireccionar(url) {
         window.location.href = url;
       }
     </script>
-    
+
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
