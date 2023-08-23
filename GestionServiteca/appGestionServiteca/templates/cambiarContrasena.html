@@ -3,10 +3,6 @@
 {% include "menu.html" %}
 {% endblock %}
 {% block contenido %}
-<br>
-<br>
-<br>
-<br>
 <div class="d-flex justify-content-center align-items-center flex-column">
     <h1 class="text-center">Restablecimiento de Contraseña</h1>
     {% if validlink %}
@@ -21,12 +17,9 @@
     {% else %}
     <p class="text-center">El enlace para restablecimiento de contraseña no es válido. Por favor, verifique el enlace o
         solicita un nuevo enlace de restablecimiento.</p>
-    <br>
-    <br>
-    <br>
-    <br>
     {% endif %}
 </div>
+
 
 <script>
     (() => {

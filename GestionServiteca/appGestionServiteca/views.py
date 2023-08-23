@@ -26,6 +26,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib import messages
+from django.utils import timezone
+
 
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -1154,7 +1156,8 @@ def vistaCambiarContraseña(request):
     return render(request,"cambiarContraseña.html")
 
 
-def cambiarContraseña(request, uidb64, token):
+
+def cambiarContraseña(request, uidb64, token): 
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -1166,15 +1169,23 @@ def cambiarContraseña(request, uidb64, token):
             password = request.POST.get('nuevaContraseña')
             user.set_password(password)
             user.save()
-            messages.success(request, 'Contraseña restablecida correctamente,ahora puedes iniciar sesión con tu nueva contraseña.')
+            messages.success(request, 'Contraseña restablecida correctamente, ahora puedes iniciar sesión con tu nueva contraseña.')
 
             PeticionForgot.objects.filter(id_user=user).update(estado='Inactiva')
             return redirect('/mostrarMensaje/')
-        return render(request, 'cambiarContraseña.html', {'validlink': True})
-    else:
-        return render(request, 'cambiarContraseña.html', {'validlink': False})
-    
 
+        # Comprobar el intervalo de tiempo
+        peticion = PeticionForgot.objects.get(id_user=user)
+        current_time = timezone.now()
+        time_difference = current_time - peticion.fechaHoraCreacion
+        if time_difference.total_seconds() > 300:  # 5 minutos en segundos
+            return render(request, 'cambiarContrasena.html', {'validlink': False})
+
+        return render(request, 'cambiarContrasena.html', {'validlink': True})
+    else:
+        return render(request, 'cambiarContrasena.html', {'validlink': False})
+    
+    
 def mostrarMensaje(request):
     return render(request, 'mostrarMensaje.html')
    
