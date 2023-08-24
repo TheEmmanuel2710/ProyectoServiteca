@@ -15,7 +15,7 @@ tipoVehiculo = [
     ('Electrico','Electrico'),('Gasolina', 'Gasolina')
 ]
 tipoCodigo=[
-    ('SVP','Servicio Prestado')
+    ('SVP','SVP')
 ]
 estadoEmpleados = [
     ('Activo','Activo'),('Inactivo', 'Inactivo')

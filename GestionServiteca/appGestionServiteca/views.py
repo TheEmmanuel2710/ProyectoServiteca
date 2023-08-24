@@ -135,53 +135,60 @@ def vistaRegistrarUsuario(request):
 
 
 def registrarUsuario(request):
-    estado=False
-    try:
-        nombres = request.POST.get("txtNombres")
-        apellidos = request.POST.get("txtApellidos")
-        correo = request.POST.get("txtCorreo")
-        tipo = request.POST.get("cbTipo")
-        foto = request.FILES.get("fileFoto",False)
-        idRol = int(request.POST.get("cbRol"))
+    estado = False
+    mensaje1 = ""
 
-        with transaction.atomic():
-            # Crear un objeto de tipo User
-            user = User(username=correo, first_name=nombres, last_name=apellidos, email=correo, userTipo=tipo, userFoto=foto)
-            user.save()
-            
-            # Obtener el Rol de acuerdo al id del rol
-            rol = Group.objects.get(pk=idRol)
-            # Agregar el usuario a ese Rol
-            user.groups.add(rol)
-            
-            # Si el rol es Administrador, habilitar el acceso al sitio web del administrador
-            if rol.name == "Administrador":
-                user.is_staff = True
-            
-            # Generar y asignar contraseña al usuario
-            passwordGenerado = generarPassword()
-            user.set_password(passwordGenerado)
-            user.save()
-            
-            mensaje1 = "Usuario Agregado Correctamente."
-            estado=True
-            
-            
-            # Enviar correo al usuario en un hilo separado
-            asunto = 'Registro Sistema Serviteca'
-            mensaje = f'Cordial saludo, <b>{user.first_name} {user.last_name}</b>, nos permitimos\
-                informarle que usted ha sido registrado en el Sistema de ServitecaOpita.\
-                Nos permitimos enviarle las credenciales de Ingreso a nuestro sistema.<br>\
-                <br><b>Username: </b> {user.username}\
-                <br><b>Password: </b> {passwordGenerado}\
-                <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
-                http://127.0.0.1:8000/'
-            thread = threading.Thread(target=enviarCorreo, args=(asunto, mensaje, user.email))
-            thread.start()
+    try:
+        correo = request.POST.get("txtCorreo")
+
+        if User.objects.filter(email=correo).exists():
+            mensaje1 = "Error: Correo electrónico ya está registrado en otro usuario."
+        else:
+            nombres = request.POST.get("txtNombres")
+            apellidos = request.POST.get("txtApellidos")
+            tipo = request.POST.get("cbTipo")
+            foto = request.FILES.get("fileFoto", False)
+            idRol = int(request.POST.get("cbRol"))
+
+            with transaction.atomic():
+                user = User(
+                    username=correo,
+                    first_name=nombres,
+                    last_name=apellidos,
+                    email=correo,
+                    userTipo=tipo,
+                    userFoto=foto,
+                )
+                user.save()
+
+                rol = Group.objects.get(pk=idRol)
+                user.groups.add(rol)
+
+                if rol.name == "Administrador":
+                    user.is_staff = True
+
+                passwordGenerado = generarPassword()
+                user.set_password(passwordGenerado)
+                user.save()
+
+                mensaje1 = "Usuario Agregado Correctamente."
+                estado = True
+
+                asunto = "Registro Sistema Serviteca"
+                mensaje = f"Cordial saludo, <b>{user.first_name} {user.last_name}</b>, nos permitimos\
+                    informarle que usted ha sido registrado en el Sistema de ServitecaOpita.\
+                    Nos permitimos enviarle las credenciales de Ingreso a nuestro sistema.<br>\
+                    <br><b>Username: </b> {user.username}\
+                    <br><b>Password: </b> {passwordGenerado}\
+                    <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
+                    http://127.0.0.1:8000/"
+                thread = threading.Thread(target=enviarCorreo, args=(asunto, mensaje, user.email))
+                thread.start()
+
     except Exception as error:
-        transaction.rollback()
-        mensaje1 = "Error al agregar usuario,datos duplicados."
-    retorno = {"mensaje1": mensaje1,"estado":estado}
+        mensaje1 = f"Error al registrar usuario: {error}."
+
+    retorno = {"mensaje1": mensaje1, "estado": estado}
     return render(request, "administrador/frmRegistrarUsuario.html", retorno)
 
 
@@ -221,27 +228,44 @@ def vistaRegistrarClientes(request):
 
 def registrarCliente(request):
     estado = False
+    mensaje = ""
+
     try:
         identificacion = request.POST.get("txtIdentificacion")
-        nombres = request.POST.get("txtNombres")
-        apellidos = request.POST.get("txtApellidos")
-        correo = request.POST.get("txtCorreo")
         numeroC = request.POST.get("txtNumeroC")
-        direccion = request.POST.get("txtDireccion")
-        
-        with transaction.atomic():
-            persona = Persona(perIdentificacion=identificacion, perNombres=nombres, perApellidos=apellidos, perCorreo=correo, perNumeroCelular=numeroC)
-            persona.save()
-            
-            cliente = Cliente(cliDireccion=direccion, cliPersona=persona)
-            cliente.save()
-            
+        correo = request.POST.get("txtCorreo")
+
+
+        if Persona.objects.filter(perIdentificacion=identificacion).exists():
+            mensaje = "Error : Identificación ya registrada en otro cliente."
+        elif Persona.objects.filter(perNumeroCelular=numeroC).exists():
+            mensaje = "Error : Número de celular ya registrado en otro cliente."
+        elif Persona.objects.filter(perCorreo=correo).exists():
+            mensaje = "Error : Correo electrónico ya registrado en otro cliente."
+        else:
+            nombres = request.POST.get("txtNombres")
+            apellidos = request.POST.get("txtApellidos")
+            direccion = request.POST.get("txtDireccion")
+
+            with transaction.atomic():
+                persona = Persona(
+                    perIdentificacion=identificacion,
+                    perNombres=nombres,
+                    perApellidos=apellidos,
+                    perCorreo=correo,
+                    perNumeroCelular=numeroC
+                )
+                persona.save()
+
+                cliente = Cliente(cliDireccion=direccion, cliPersona=persona)
+                cliente.save()
+
             estado = True
             mensaje = "Cliente Agregado Correctamente."
+
     except Exception as error:
-        transaction.rollback()
-        mensaje = "Error al registrar cliente: Datos duplicados."
-    
+        mensaje = f"Error al registrar cliente: {error}."
+
     retorno = {"mensaje": mensaje, "estado": estado, "user": request.user}
     return render(request, "asistente/frmRegistrarCliente.html", retorno)
 
@@ -308,22 +332,32 @@ def vistaRegistrarVehiculos(request):
 
 def registrarVehiculo(request):
     estado = False
+    mensaje = ""
+
     try:
         placa = request.POST.get("txtPlaca")
-        marca = request.POST.get("cbMarca")
-        modelo = request.POST.get("txtModelo")
-        tipoV = request.POST.get("cbTipoV")
-        
-        with transaction.atomic():
-            vehiculo = Vehiculo(vehPlaca=placa, vehMarca=marca, vehModelo=modelo, vehTipo=tipoV)
-            vehiculo.save()
-            
+
+        if Vehiculo.objects.filter(vehPlaca=placa).exists():
+            mensaje = "Error : Placa ya registrada en otro vehiculo."
+        else:
+            marca = request.POST.get("cbMarca")
+            modelo = request.POST.get("txtModelo")
+            tipoV = request.POST.get("cbTipoV")
+
+            with transaction.atomic():
+                vehiculo = Vehiculo(
+                    vehPlaca=placa,
+                    vehMarca=marca,
+                    vehModelo=modelo,
+                    vehTipo=tipoV
+                )
+                vehiculo.save()
+
             estado = True
-            mensaje = "Vehiculo Agregado Correctamente."
+            mensaje = "Vehículo Agregado Correctamente."
     except Exception as error:
-        transaction.rollback()
-        mensaje = "Error al registrar vehiculo: Datos duplicados."
-    
+        mensaje = f"Error al registrar vehículo : {error}."
+
     retorno = {"mensaje": mensaje, "estado": estado, "user": request.user}
     return render(request, "asistente/frmRegistrarVehiculo.html", retorno)
 
@@ -403,27 +437,48 @@ def vistaRegistrarEmpleados(request):
 
 def registrarEmpleado(request):
     estado = False
+    mensaje = ""
+
     try:
         identificacion = request.POST.get("txtIdentificacion")
-        nombres = request.POST.get("txtNombres")
-        apellidos = request.POST.get("txtApellidos")
-        correo = request.POST.get("txtCorreo")
         numeroC = request.POST.get("txtNumeroC")
-        cargo = request.POST.get("txtCargo")
-        sueldo = request.POST.get("txtSueldo")
-        estadoE = request.POST.get("cbEstado")
+        correo = request.POST.get("txtCorreo")
 
-        with transaction.atomic():
-            persona = Persona(perIdentificacion=identificacion, perNombres=nombres, perApellidos=apellidos, perCorreo=correo, perNumeroCelular=numeroC)
-            persona.save()
-            empleado = Empleado(empCargo=cargo, empSueldo=sueldo, empEstado=estadoE, empPersona=persona)
-            empleado.save()
+        if Persona.objects.filter(perIdentificacion=identificacion).exists():
+            mensaje = "Error : Identificación ya registrada en un empleado."
+        elif Persona.objects.filter(perNumeroCelular=numeroC).exists():
+            mensaje = "Error : Número de celular ya registrado en un empleado."
+        elif Persona.objects.filter(perCorreo=correo).exists():
+            mensaje = "Error : Correo electrónico ya registrado en un empleado."
+        else:
+            nombres = request.POST.get("txtNombres")
+            apellidos = request.POST.get("txtApellidos")
+            cargo = request.POST.get("txtCargo")
+            sueldo = request.POST.get("txtSueldo")
+            estadoE = request.POST.get("cbEstado")
+
+            with transaction.atomic():
+                persona = Persona(
+                    perIdentificacion=identificacion,
+                    perNombres=nombres,
+                    perApellidos=apellidos,
+                    perCorreo=correo,
+                    perNumeroCelular=numeroC
+                )
+                persona.save()
+                empleado = Empleado(
+                    empCargo=cargo,
+                    empSueldo=sueldo,
+                    empEstado=estadoE,
+                    empPersona=persona
+                )
+                empleado.save()
 
             estado = True
             mensaje = "Empleado Agregado Correctamente."
+
     except Exception as error:
-        transaction.rollback()
-        mensaje = "Error al registrar empleado: Datos duplicados."
+        mensaje = f"Error al registrar empleado : {error}."
 
     retorno = {"mensaje": mensaje, "estado": estado}
     return render(request, "administrador/frmRegistrarEmpleado.html", retorno)
@@ -502,7 +557,7 @@ def login(request):
 def salir(request):
     auth.logout(request)
     return render(request, "inicio.html",
-                  {"mensaje":"Ha cerrado la sesión"})
+                  {"mensaje":"Ha cerrado la sesión."})
   
     
 def enviarCorreo (asunto=None, mensaje=None, destinatario=None): 
@@ -616,7 +671,10 @@ def vistaGestionarFacturas(request):
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
-        return render(request, "asistente/vistaGestionarFacturas.html")
+        facturasP = Factura.objects.filter(facEstado="Pagada") 
+        facturasNP = Factura.objects.filter(facEstado="No Pagada") 
+        retorno={"facturasP":facturasP,"facturasNP":facturasNP}
+        return render(request, "asistente/vistaGestionarFacturas.html",retorno)
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
@@ -687,7 +745,7 @@ def actualizarVehiculo(request):
             vehiculo = Vehiculo.objects.select_for_update().get(pk=idVehiculo)
             
             if Vehiculo.objects.filter(vehPlaca=placa).exclude(pk=idVehiculo).exists():
-                mensaje = "La placa ya está en uso por otro vehículo"
+                mensaje = "La placa ya está en uso por otro vehículo."
             else:
                 vehiculo.vehPlaca = placa
                 vehiculo.vehMarca = marca
@@ -700,7 +758,7 @@ def actualizarVehiculo(request):
         mensaje = "El vehículo no existe."
     except Exception as error:
         transaction.rollback()
-        mensaje = str(error)
+        mensaje = f"Error al actualizar vehiculo,{error}."
     
     vehiculos = Vehiculo.objects.all()
     retorno = {
@@ -732,11 +790,11 @@ def actualizarCliente(request):
             persona = cliente.cliPersona
             
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
-                mensaje = "La identificación ya está registrada en otro cliente."
+                mensaje = "La identificación ya está en uso por otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
-                mensaje = "El correo electrónico ya está registrado en otro cliente."
+                mensaje = "El correo electrónico ya está en uso por otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
-                mensaje = "El número de celular ya está registrado en otro cliente."
+                mensaje = "El número de celular ya está en uso por otro cliente."
             else:
                 persona.perIdentificacion = identificacion
                 persona.perNombres = nombres
@@ -753,7 +811,7 @@ def actualizarCliente(request):
         mensaje = "El cliente no existe."
     except Exception as error:
         transaction.rollback()
-        mensaje = str(error)
+        mensaje = f"Error,{error}"
     
     clientes = Cliente.objects.all()
     retorno = {
@@ -785,11 +843,11 @@ def actualizarEmpleado(request):
             persona = empleado.empPersona
             
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
-                mensaje = "La identificación ya está registrada en otro empleado."
+                mensaje = "La identificación ya está en uso por otro empleado."
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
-                mensaje = "El correo electrónico ya está registrado en otro empleado."
+                mensaje = "El correo electrónico ya está en uso por otro empleado."
             elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
-                mensaje = "El número de celular ya está registrado en otro empleado."
+                mensaje = "El número de celular ya está en uso por otro empleado."
             else:
                 persona.perIdentificacion = identificacion
                 persona.perNombres = nombres
@@ -808,7 +866,7 @@ def actualizarEmpleado(request):
         mensaje = "El Empleado no existe."
     except Exception as error:
         transaction.rollback()
-        mensaje = str(error)
+        mensaje = f"Error,{error}"
     
     empleados = Empleado.objects.all()
     retorno = {
@@ -898,7 +956,7 @@ def actualizarUsuarioAdmin(request):
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
             transaction.rollback()
-            mensaje = str(error)
+            mensaje = f"Error,{error}"
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
@@ -929,7 +987,7 @@ def actualizarUsuarioAsistente(request):
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
             transaction.rollback()
-            mensaje = str(error)
+            mensaje = f"Error,{error}"
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
@@ -960,7 +1018,7 @@ def actualizarUsuarioTecnico(request):
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
             transaction.rollback()
-            mensaje = str(error)
+            mensaje = f"Error,{error}"
     retorno = {
         "mensaje": mensaje,
         "estado": estado,

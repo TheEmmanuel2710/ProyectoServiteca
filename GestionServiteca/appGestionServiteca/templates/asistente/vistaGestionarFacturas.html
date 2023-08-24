@@ -25,7 +25,15 @@
             </tr>
         </thead>
         <tbody>
-
+            {% for factura in facturasP %}
+            <tr>
+                <td class="text-center">{{factura.facCodigo}}</td>
+                <td class="text-center">{{factura.facServicioPrestado}}</td>
+                <td class="text-center">{{factura.facFecha}}</td>
+                <td class="text-center">{{factura.facEstado}}</td>
+                <td class="text-center">{{factura.facTotal}}</td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
@@ -42,7 +50,15 @@
             </tr>
         </thead>
         <tbody>
-
+            {% for factura in facturasNP %}
+            <tr>
+                <td class="text-center">{{factura.facCodigo}}</td>
+                <td class="text-center">{{factura.facServicioPrestado}}</td>
+                <td class="text-center">{{factura.facFecha}}</td>
+                <td class="text-center">{{factura.facEstado}}</td>
+                <td class="text-center">{{factura.facTotal}}</td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
