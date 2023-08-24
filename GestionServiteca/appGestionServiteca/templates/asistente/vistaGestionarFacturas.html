@@ -1,10 +1,10 @@
 {% extends "index.html" %}
 {% block encabezado %}
 {% include "encabezado.html" %}
-{%endblock %}
+{% endblock %}
 {% block menu %}
 {% include "asistente/menu.html" %}
-{%endblock %}
+{% endblock %}
 {% block contenido %}
 <br>
 <br>
@@ -18,20 +18,26 @@
         <thead>
             <tr class="text-white text-center" style="background-color: black;">
                 <th class="text-center" style="background-color: black;">Codigo</th>
+                <th class="text-center" style="background-color: black;">Cliente</th>
                 <th class="text-center" style="background-color: black;">Servicio Prestado</th>
-                <th class="text-center" style="background-color: black;">Fecha</th>
                 <th class="text-center" style="background-color: black;">Estado</th>
+                <th class="text-center" style="background-color: black;">Fecha</th>
                 <th class="text-center" style="background-color: black;">Total</th>
             </tr>
         </thead>
         <tbody>
             {% for factura in facturasP %}
             <tr>
-                <td class="text-center">{{factura.facCodigo}}</td>
-                <td class="text-center">{{factura.facServicioPrestado}}</td>
-                <td class="text-center">{{factura.facFecha}}</td>
+                <td class="text-center">{{ factura.facCodigo }}</td>
+                <td class="text-center">{{ factura.facServicioPrestado.serpCli }}</td>
+                <td class="text-center">
+                    {% for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all %}
+                    {{ detalle.detServicio.serNombre }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
                 <td class="text-center">{{factura.facEstado}}</td>
-                <td class="text-center">{{factura.facTotal}}</td>
+                <td class="text-center">{{ factura.facFecha }}</td>
+                <td class="text-center">${{ factura.facTotal }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -43,31 +49,214 @@
         <thead>
             <tr class="text-white text-center" style="background-color: black;">
                 <th class="text-center" style="background-color: black;">Codigo</th>
+                <th class="text-center" style="background-color: black;">Cliente</th>
                 <th class="text-center" style="background-color: black;">Servicio Prestado</th>
-                <th class="text-center" style="background-color: black;">Fecha</th>
                 <th class="text-center" style="background-color: black;">Estado</th>
+                <th class="text-center" style="background-color: black;">Fecha</th>
                 <th class="text-center" style="background-color: black;">Total</th>
+                <th style="background-color:black ;">Acción</th>
             </tr>
         </thead>
         <tbody>
             {% for factura in facturasNP %}
             <tr>
-                <td class="text-center">{{factura.facCodigo}}</td>
-                <td class="text-center">{{factura.facServicioPrestado}}</td>
-                <td class="text-center">{{factura.facFecha}}</td>
+                <td class="text-center">{{ factura.facCodigo }}</td>
+                <td class="text-center">{{ factura.facServicioPrestado.serpCli }}</td>
+                <td class="text-center">
+                    {% for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all %}
+                    {{ detalle.detServicio.serNombre }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
                 <td class="text-center">{{factura.facEstado}}</td>
-                <td class="text-center">{{factura.facTotal}}</td>
+                <td class="text-center">{{ factura.facFecha }}</td>
+                <td class="text-center">${{ factura.facTotal }}</td>
+                <td class="text-center">
+                    <a onclick="abrirModalActualizarFactura('{{ factura.id }}')">
+                        <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
+                    </a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+<!-- The Modal -->
+<div class="modal" id="ActualizarFac" style="margin-top: 5%;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header tituloModal">
+                <h4 class="modal-title">Actualizar Factua</h4>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form action="/ActualizarFac/" method="post" enctype="multipart/form-data" class="needs-validation"
+                    novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="idFactura" id="idFactura" value="">
+                    <div class="form-group row">
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtCodigo" class="fw-bold" style="color: black;">Codigo:</label>
+                            <input type="text" name="txtCodigo" class="form-control" id="txtCodigo"
+                                placeholder="Codigo de la factura" readonly>
+                            <div class="invalid-feedback">Por favor ingrese el codigo de la factura</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
+                            <input type="text" name="txtNombres" class="form-control" id="txtNombres"
+                                placeholder="Nombres del cliente" readonly>
+                            <div class="invalid-feedback">Por favor ingrese el nombre del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos</label>
+                            <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
+                                placeholder="Apellidos del cliente" readonly>
+                            <div class="invalid-feedback">Por favor ingrese el apellido del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtServiciosP" class="fw-bold" style="color: black;">Servicio Prestado:</label>
+                            <input type="text" name="txtServiciosP" class="form-control" id="txtServiciosP"
+                                placeholder="Servicio Prestado" readonly>
+                            <div class="invalid-feedback">Por favor ingrese el servicio prestado</div>
+                        </div>
+                        <div class="mb-3 col-lg-4" style="margin: 0% auto;">
+                            <label for="cbEstado" class="fw-bold" style="color: black;">Estado:</label>
+                            <select name="cbEstado" id="cbEstado" class="form-select" required>
+                                <option value="">Seleccione</option>
+                                {% for estado in estadoFactura %}
+                                <option value="{{estado.0}}">{{estado.1}}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Por favor ingrese el estado de l a factura</div>
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtFecha" class="fw-bold" style="color: black;">Fecha:</label>
+                            <input type="text" class="form-control" id="txtFecha" name="txtFecha"
+                                placeholder="Fecha del servicio prestado" readonly />
+                            <div class="invalid-feedback">Por favor ingrese la fecha del servicio prestado</div>
+                        </div>
+                        <div class="mb-3 col-lg-12">
+                            <label for="txtTotal" class="fw-bold" style="color: black;">Total:</label>
+                            <input type="number" class="form-control" id="txtTotal" name="txtTotal"
+                                placeholder="Total de la factura" readonly />
+                            <div class="invalid-feedback">Por favor ingrese el total de la factura</div>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
+                        <a href="/vistaGestionarFacturas/"><button type="button"
+                                class="btn btn-danger mx-2">Cancelar</button></a>
+                    </div>
+                </form>
+            </div>
 
+        </div>
+    </div>
+</div>
 <script>
-    cargarDataTable($("#tblFacturasC"), "LISTADO FACTURAS PAGADAS", 5);
-    cargarDataTable($("#tblFacturasP"), "LISTADO FACTURAS NO PAGADAS", 5);
+    (() => {
+        "use strict";
+
+        const forms = document.querySelectorAll(".needs-validation");
+
+        Array.from(forms).forEach((form) => {
+            form.addEventListener(
+                "submit",
+                (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add("was-validated");
+                },
+                false
+            );
+        });
+    })();
 </script>
-{%endblock %}
+<script>
+    function abrirModalActualizarFactura(id) {
+        // Funcion AJAX para obtener los datos de la factura por ID
+        $.ajax({
+            url: "/consultarFac/" + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // Rellenar el formulario de la modal con los datos obtenidos
+                $("#txtTotal").val(data.factura.facTotal);
+                $("#cbEstado").val(data.factura.facEstado);
+                $("#txtCodigo").val(data.factura.facCodigo);
+                $("#txtFecha").val(data.factura.facFecha);
+                $("#txtNombres").val(data.cliente.persona.perNombres);
+                $("#txtApellidos").val(data.cliente.persona.perApellidos);
+                $("#idFactura").val(id);
+
+                // Verifica si existen servicios prestados en la respuesta JSON enviada desde la funcion python de consultarFactura
+                if (data.factura.serviciosPrestados && data.factura.serviciosPrestados.length > 0) {
+                    $("#txtServiciosP").val(data.factura.serviciosPrestados.join(', '));
+                } else {
+                    $("#txtServiciosP").val("Sin servicios prestados");
+                }
+
+                var form = $('#ActualizarFac').find('.needs-validation')[0];
+                form.classList.remove('was-validated');
+
+                $('#ActualizarFac').modal('show');
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Hubo un error al cargar los datos de la factura.");
+            }
+        });
+    }
+    $('#ActualizarFac').on('hide.bs.modal', function (event) {
+        var form = $(this).find('.needs-validation')[0];
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            form.classList.add('was-validated');
+        }
+    });
+</script>
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Actualización de datos',
+        text: '{{mensaje}}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaGestionarFacturas/"
+        }
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Actualización de datos',
+        text: '{{mensaje}}',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaGestionarFacturas/"
+        }
+    });
+</script>
+{% endif %}
+{% endif %}
+<script>
+    cargarDataTable($("#tblFacturasC"), "LISTADO FACTURAS PAGADAS", 6);
+    cargarDataTable($("#tblFacturasP"), "LISTADO FACTURAS NO PAGADAS", 6);
+</script>
+{% endblock %}
 {% block piePagina %}
 {% include "piePagina.html" %}
-{%endblock %}
+{% endblock %}

@@ -65,7 +65,7 @@ class Cliente(models.Model):
     cliPersona=models.ForeignKey(Persona,on_delete=models.PROTECT,db_comment="Hace relación a la persona FK")
     
     def __str__(self):
-        return f"{self.cliPersona}"    
+        return f"Cliente: {self.cliPersona.perNombres} {self.cliPersona.perApellidos}"
 
 class Vehiculo(models.Model):
     vehPlaca=models.CharField(max_length=6,unique=True,db_comment="Placa del vehiculo")
@@ -74,7 +74,7 @@ class Vehiculo(models.Model):
     vehTipo=models.CharField(max_length=9,choices=tipoVehiculo,db_comment="Tipo de vehiculo")
     
     def __str__(self):
-        return f"{self.vehPlaca}" 
+        return f"Vehiculo: {self.vehPlaca}" 
     
 class Empleado(models.Model):
     empCargo = models.CharField(max_length=30,unique=True,db_comment="Cargo del empleado")
@@ -83,7 +83,7 @@ class Empleado(models.Model):
     empPersona=models.ForeignKey(Persona,on_delete=models.PROTECT,db_comment="Hace relación a la persona FK")
     
     def __str__(self):
-        return f"{self.empPersona}" 
+        return f"Empleado: {self.empPersona.perNombres} {self.empPersona.perApellidos}" 
 
 class Servicio(models.Model):
     serNombre=models.CharField(max_length=50,unique=True,db_comment="Nombre del servicio")

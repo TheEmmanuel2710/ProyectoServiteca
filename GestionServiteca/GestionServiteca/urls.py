@@ -47,6 +47,8 @@ urlpatterns = [
     path('registrarServicioPrestado/',views.registrarServicioPrestado),
     path('vistaRegistrarServiciosP/',views.vistaRegistrarServiciosPrestados),
     path('vistaGestionarFacturas/',views.vistaGestionarFacturas),
+    path('consultarFac/<int:id>',views.consultarFactura),
+    path("ActualizarFac/", views.ActualizarFac),
     path('inicioTecnico/',views.inicioTecnico),
     path('vistaGestionarSolicitudesV/',views.vistaGestionarSolicitudesV),  
     path('login/',views.login),

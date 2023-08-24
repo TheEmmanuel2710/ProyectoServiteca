@@ -26,18 +26,22 @@
             </tr>
         </thead>
         <tbody>
-            {% for vehiculo in vehiculos %}
+            {% for servicio_prestado in servicios_prestados %}
             <tr>
-                <td class="text-center">{{vehiculo.vehPlaca}}</td>
-                <td class="text-center">{{vehiculo.vehMarca}}</td>
-                <td class="text-center">{{vehiculo.vehTipo}}</td>
-                <td class="text-center">{{vehiculo.vehModelo}}</td>
+                <td class="text-center">{{ servicio_prestado.serpCli }}</td>
+                <td class="text-center">{{ servicio_prestado.serpVehi.vehPlaca }}</td>
+                <td class="text-center">{{ servicio_prestado.serpObservaciones }}</td>
                 <td class="text-center">
-                    <i class="fa fa-edit text-body" tile="ver/editar" style="font-size: 2rem;"></i>
+                    {% for detalle in detalles_servicios %}
+                    {% if detalle.detServicioPrestado == servicio_prestado %}
+                    {{ detalle.detServicio.detServicio }} - {{ detalle.detServicioPrestado.serpEmp }}
+                    {% endif %}
+                    {% endfor %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
+
     </table>
 </div>
 

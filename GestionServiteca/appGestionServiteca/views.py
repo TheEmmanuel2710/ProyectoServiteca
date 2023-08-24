@@ -293,8 +293,69 @@ def consultarCliente(request, id):
         return JsonResponse({"error": "ID inválido."}, status=400)
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
+
+def consultarFactura(request, id):
+    try:
+        factura = Factura.objects.get(pk=int(id))
+        servicio_prestado = factura.facServicioPrestado
+        cliente = servicio_prestado.serpCli
+        persona = cliente.cliPersona
+        nombres_servicios_prestados = [detalle.detServicio.serNombre for detalle in servicio_prestado.detalleservicioprestado_set.all()]
+        datos_persona = {
+            "perNombres": persona.perNombres,
+            "perApellidos": persona.perApellidos,
+        }
+        
+        datos_cliente = {
+            "persona": datos_persona,
+        }
+        
+        datos_factura = {
+            "facTotal": factura.facTotal,
+            "facEstado": factura.facEstado,
+            "facCodigo": factura.facCodigo,
+            "facFecha": factura.facFecha.strftime("%Y-%m-%d %H :%M :%S"), 
+            "serviciosPrestados": nombres_servicios_prestados,
+        }
+        
+        return JsonResponse({"cliente": datos_cliente, "factura": datos_factura})
+    except Factura.DoesNotExist:
+        return JsonResponse({"error": "Factura no encontrada."}, status=404)
+    except Cliente.DoesNotExist:
+        return JsonResponse({"error": "Cliente no encontrado."}, status=404)
+    except Persona.DoesNotExist:
+        return JsonResponse({"error": "Persona no encontrada."}, status=404)
+    except ValueError:
+        return JsonResponse({"error": "ID inválido."}, status=400)
+    except Exception as error:
+        return JsonResponse({"error": str(error)}, status=500)
     
+
+def ActualizarFac(request):
+    estado = False
+    mensaje = ""
+    if request.method == "POST":
+        factura_id = request.POST.get("idFactura")
+        nuevo_estado = request.POST.get("cbEstado")
+        try:
+            factura = Factura.objects.get(pk=factura_id)
+            factura.facEstado = nuevo_estado
+            factura.save()
+            estado = True
+            mensaje = "Factura actualizado correctamente."
+        except Factura.DoesNotExist:
+            return JsonResponse({"error": "Factura no encontrada."}, status=404)
+        except Exception as error:
+          transaction.rollback()
+          mensaje = f"Error al actualizar factura,{error}."
+    retorno = {
+        "mensaje": mensaje,
+        "estado": estado
+    }
+    return render(request, "asistente/vistaGestionarFacturas.html", retorno)
+        
     
+
 def vistaGestionarVehiculos(request):
     user = request.user
 
@@ -671,12 +732,12 @@ def vistaGestionarFacturas(request):
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
-        facturasP = Factura.objects.filter(facEstado="Pagada") 
-        facturasNP = Factura.objects.filter(facEstado="No Pagada") 
-        retorno={"facturasP":facturasP,"facturasNP":facturasNP}
-        return render(request, "asistente/vistaGestionarFacturas.html",retorno)
+        facturasNP = Factura.objects.filter(facEstado="No Pagada").select_related('facServicioPrestado__serpCli') 
+        facturasP = Factura.objects.filter(facEstado="Pagada").select_related('facServicioPrestado__serpCli')
+        retorno = {"facturasP": facturasP,"facturasNP":facturasNP,"estadoFactura": estadoFactura}
+        return render(request, "asistente/vistaGestionarFacturas.html", retorno)
 
-    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta URL."
 
     if user.groups.filter(name='Administrador').exists():
         return render(request, "administrador/inicio.html", {"mensaje": mensaje})
@@ -685,7 +746,7 @@ def vistaGestionarFacturas(request):
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
-    
+
     
 def vistaGestionarSolicitudesV(request):
     user = request.user
@@ -1038,13 +1099,8 @@ def deshabilitarUsuario(request, user_id):
 
         usuarios = User.objects.all()
 
-        table_html = ""
-        for usuario in usuarios:
-            table_html += f"<tr>...</tr>"
-
         return JsonResponse({
-            'success': True,
-            'tableHtml': table_html,
+            'success': True
         })
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
@@ -1214,7 +1270,6 @@ def vistaCambiarContraseña(request):
     return render(request,"cambiarContraseña.html")
 
 
-
 def cambiarContraseña(request, uidb64, token): 
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
@@ -1232,11 +1287,12 @@ def cambiarContraseña(request, uidb64, token):
             PeticionForgot.objects.filter(id_user=user).update(estado='Inactiva')
             return redirect('/mostrarMensaje/')
 
-        # Comprobar el intervalo de tiempo
+        # Validacion para expirar el enlace de recuperacion de contraseña segun un tiempo pre-establecido
         peticion = PeticionForgot.objects.get(id_user=user)
-        current_time = timezone.now()
-        time_difference = current_time - peticion.fechaHoraCreacion
-        if time_difference.total_seconds() > 300:  # 5 minutos en segundos
+        tiempoAc = timezone.now()
+        tiempoDif = tiempoAc - peticion.fechaHoraCreacion
+        if tiempoDif.total_seconds() > 300:  # 5 minutos en segundos
+            PeticionForgot.objects.filter(id_user=user).update(estado='Inactiva')
             return render(request, 'cambiarContrasena.html', {'validlink': False})
 
         return render(request, 'cambiarContrasena.html', {'validlink': True})
@@ -1246,4 +1302,4 @@ def cambiarContraseña(request, uidb64, token):
     
 def mostrarMensaje(request):
     return render(request, 'mostrarMensaje.html')
-   
+
