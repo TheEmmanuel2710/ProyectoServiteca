@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect,get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from appGestionServiteca.models import *
 from django.contrib.auth.models import Group
 from django.db import transaction
@@ -15,7 +15,7 @@ import threading
 from django.http import JsonResponse
 from smtplib import SMTPException
 from rest_framework import generics
-from appGestionServiteca.serializers import PersonaSerializer,ClienteSerializer
+from appGestionServiteca.serializers import PersonaSerializer, ClienteSerializer
 import matplotlib.pyplot as plt
 import matplotlib
 from fpdf import FPDF
@@ -29,19 +29,19 @@ from django.contrib import messages
 from django.utils import timezone
 
 
-datosSesion={"user":None,"rutaFoto":None, "rol":None}
+datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
 
 def urlValidacion(request, texto):
     mensaje2 = "Nuestro sistema detecta que la ulr ingresada no es valida,por favor verifique."
     if not request.user.is_authenticated:
-        return render(request,"inicio.html", {"mensaje2": mensaje2})
+        return render(request, "inicio.html", {"mensaje2": mensaje2})
     if request.user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje2": mensaje2})
     elif request.user.groups.filter(name='Administrador').exists():
-         return render(request, "administrador/inicio.html", {"mensaje2": mensaje2})
+        return render(request, "administrador/inicio.html", {"mensaje2": mensaje2})
     elif request.user.groups.filter(name='Tecnico').exists():
-         return render(request, "tecnico/inicio.html", {"mensaje2": mensaje2})
+        return render(request, "tecnico/inicio.html", {"mensaje2": mensaje2})
 
 
 def inicio(request):
@@ -56,9 +56,9 @@ def inicioAdministrador(request):
     if request.user.groups.filter(name='Administrador').exists():
         datos_sesion = {"user": request.user}
         return render(request, "administrador/inicio.html", datos_sesion)
-    
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
-    
+
     if request.user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
     elif request.user.groups.filter(name='Tecnico').exists():
@@ -73,7 +73,7 @@ def inicioAsistente(request):
     if request.user.groups.filter(name='Asistente').exists():
         datos_sesion = {"user": request.user}
         return render(request, "asistente/inicio.html", datos_sesion)
-    
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
     if request.user.groups.filter(name='Administrador').exists():
@@ -90,7 +90,7 @@ def inicioTecnico(request):
     if request.user.groups.filter(name='Tecnico').exists():
         datos_sesion = {"user": request.user}
         return render(request, "tecnico/inicio.html", datos_sesion)
-    
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
     if request.user.groups.filter(name='Administrador').exists():
@@ -106,26 +106,26 @@ def vistaGestionarUsuarios(request):
         usuarios = User.objects.all()
         retorno = {"usuarios": usuarios, "user": user}
         return render(request, "administrador/vistaGestionarUsuarios.html", retorno)
-    
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
-    
+
     if user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
     elif user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
-    
-       
+
+
 def vistaRegistrarUsuario(request):
     user = request.user
-    
+
     if user.groups.filter(name='Administrador').exists():
         roles = Group.objects.all()
-        return render(request, "administrador/frmRegistrarUsuario.html", {"roles": roles, "tipoUsuario":tipoUsuario, "user": user})
-    
+        return render(request, "administrador/frmRegistrarUsuario.html", {"roles": roles, "tipoUsuario": tipoUsuario, "user": user})
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
-    
+
     if request.user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
     elif request.user.groups.filter(name='Asistente').exists():
@@ -182,7 +182,8 @@ def registrarUsuario(request):
                     <br><b>Password: </b> {passwordGenerado}\
                     <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
                     http://127.0.0.1:8000/"
-                thread = threading.Thread(target=enviarCorreo, args=(asunto, mensaje, user.email))
+                thread = threading.Thread(
+                    target=enviarCorreo, args=(asunto, mensaje, user.email))
                 thread.start()
 
     except Exception as error:
@@ -199,9 +200,9 @@ def vistaGestionarClientes(request):
         clientes = Cliente.objects.all()
         retorno = {"clientes": clientes, "user": user}
         return render(request, "asistente/vistaGestionarClientes.html", retorno)
-    
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
-    
+
     if request.user.groups.filter(name='Administrador').exists():
         return render(request, "administrador/inicio.html", {"mensaje": mensaje})
     elif request.user.groups.filter(name='Tecnico').exists():
@@ -216,15 +217,16 @@ def vistaRegistrarClientes(request):
     if user.groups.filter(name='Asistente').exists():
         retorno = {"user": user}
         return render(request, "asistente/frmRegistrarCliente.html", retorno)
-    
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
-    
+
     if request.user.groups.filter(name='Administrador').exists():
         return render(request, "administrador/inicio.html", {"mensaje": mensaje})
     elif request.user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
+
 
 def registrarCliente(request):
     estado = False
@@ -234,7 +236,6 @@ def registrarCliente(request):
         identificacion = request.POST.get("txtIdentificacion")
         numeroC = request.POST.get("txtNumeroC")
         correo = request.POST.get("txtCorreo")
-
 
         if Persona.objects.filter(perIdentificacion=identificacion).exists():
             mensaje = "Error : Identificación ya registrada en otro cliente."
@@ -269,6 +270,7 @@ def registrarCliente(request):
     retorno = {"mensaje": mensaje, "estado": estado, "user": request.user}
     return render(request, "asistente/frmRegistrarCliente.html", retorno)
 
+
 def consultarCliente(request, id):
     try:
         cliente = Cliente.objects.get(pk=int(id))
@@ -294,30 +296,35 @@ def consultarCliente(request, id):
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
 
+
 def consultarFactura(request, id):
     try:
         factura = Factura.objects.get(pk=int(id))
         servicio_prestado = factura.facServicioPrestado
         cliente = servicio_prestado.serpCli
         persona = cliente.cliPersona
-        nombres_servicios_prestados = [detalle.detServicio.serNombre for detalle in servicio_prestado.detalleservicioprestado_set.all()]
+        nombres_servicios_prestados = [
+            detalle.detServicio.serNombre for detalle in servicio_prestado.detalleservicioprestado_set.all()]
+        costos_servicios_prestados = [
+            detalle.detServicio.serCosto for detalle in servicio_prestado.detalleservicioprestado_set.all()]
         datos_persona = {
             "perNombres": persona.perNombres,
             "perApellidos": persona.perApellidos,
         }
-        
+
         datos_cliente = {
             "persona": datos_persona,
         }
-        
+
         datos_factura = {
             "facTotal": factura.facTotal,
             "facEstado": factura.facEstado,
             "facCodigo": factura.facCodigo,
-            "facFecha": factura.facFecha.strftime("%Y-%m-%d %H :%M :%S"), 
-            "serviciosPrestados": nombres_servicios_prestados,
+            "facFecha": factura.facFecha.strftime("%Y-%m-%d %H :%M :%S"),
+            "nombresServiciosPrestados": nombres_servicios_prestados,
+            "costosServiciosPrestados": costos_servicios_prestados,
         }
-        
+
         return JsonResponse({"cliente": datos_cliente, "factura": datos_factura})
     except Factura.DoesNotExist:
         return JsonResponse({"error": "Factura no encontrada."}, status=404)
@@ -329,7 +336,7 @@ def consultarFactura(request, id):
         return JsonResponse({"error": "ID inválido."}, status=400)
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
-    
+
 
 def ActualizarFac(request):
     estado = False
@@ -346,22 +353,22 @@ def ActualizarFac(request):
         except Factura.DoesNotExist:
             return JsonResponse({"error": "Factura no encontrada."}, status=404)
         except Exception as error:
-          transaction.rollback()
-          mensaje = f"Error al actualizar factura,{error}."
+            transaction.rollback()
+            mensaje = f"Error al actualizar factura,{error}."
     retorno = {
         "mensaje": mensaje,
         "estado": estado
     }
     return render(request, "asistente/vistaGestionarFacturas.html", retorno)
-        
-    
+
 
 def vistaGestionarVehiculos(request):
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
         vehiculos = Vehiculo.objects.all()
-        retorno = {"vehiculos": vehiculos, "tipoVeh": tipoVehiculo, "tipoMar": tiposMarcas,"user": user}
+        retorno = {"vehiculos": vehiculos, "tipoVeh": tipoVehiculo,
+                   "tipoMar": tiposMarcas, "user": user}
         return render(request, "asistente/vistaGestionarVehiculos.html", retorno)
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
@@ -378,7 +385,8 @@ def vistaRegistrarVehiculos(request):
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
-        retorno = {"user": user, "tipoVeh": tipoVehiculo, "tipoMar": tiposMarcas}
+        retorno = {"user": user, "tipoVeh": tipoVehiculo,
+                   "tipoMar": tiposMarcas}
         return render(request, "asistente/frmRegistrarVehiculo.html", retorno)
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
@@ -450,12 +458,13 @@ def generarPassword():
         _str_: retorna un password
     """
     longitud = 10
-    
-    caracteres = string.ascii_lowercase + string.ascii_uppercase + string.digits + string.punctuation
+
+    caracteres = string.ascii_lowercase + \
+        string.ascii_uppercase + string.digits + string.punctuation
     password = ''
-    
+
     for i in range(longitud):
-        password +=''.join(random.choice(caracteres))
+        password += ''.join(random.choice(caracteres))
     return password
 
 
@@ -464,14 +473,15 @@ def vistaGestionarEmpleados(request):
 
     if user.groups.filter(name='Administrador').exists():
         empleados = Empleado.objects.all()
-        retorno = {"empleados": empleados,"estadoEmpl": estadoEmpleados, "user": user}
+        retorno = {"empleados": empleados,
+                   "estadoEmpl": estadoEmpleados, "user": user}
         return render(request, "administrador/vistaGestionarEmpleados.html", retorno)
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
     if user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
-    
+
     if user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
@@ -489,7 +499,7 @@ def vistaRegistrarEmpleados(request):
 
     if user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
-    
+
     if user.groups.filter(name='Tecnico').exists():
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
@@ -547,7 +557,8 @@ def registrarEmpleado(request):
 
 def consultarEmpleado(request, id):
     try:
-        empleado = Empleado.objects.get(pk=int(id))  # Buscar empleado por ID de Persona
+        # Buscar empleado por ID de Persona
+        empleado = Empleado.objects.get(pk=int(id))
         persona = empleado.empPersona
 
         datos_empleado = {
@@ -575,31 +586,31 @@ def consultarEmpleado(request, id):
 
 
 def vistaLogin(request):
-    return render(request,"menu.html")
+    return render(request, "menu.html")
 
 
 def login(request):
-    #validar el recapthcha
+    # validar el recapthcha
     """Begin reCAPTCHA validation"""
     recaptcha_response = request.POST.get('g-recaptcha-response')
     url = 'https://www.google.com/recaptcha/api/siteverify'
     values = {
-        'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY, 
+        'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
         'response': recaptcha_response
     }
     data = urllib.parse.urlencode(values).encode()
     req = urllib.request.Request(url, data=data)
     response = urllib.request.urlopen(req)
-    result = json.loads(response.read().decode()) 
-    print (result)
+    result = json.loads(response.read().decode())
+    print(result)
     """ End reCAPTCHA validation """
     if result['success']:
-        username= request.POST["txtUsername"] 
+        username = request.POST["txtUsername"]
         password = request.POST["txtPassword"]
         user = authenticate(username=username, password=password)
-        print (user)
+        print(user)
         if user is not None:
-            #registrar la variable de sesión
+            # registrar la variable de sesión
             auth.login(request, user)
             if user.groups.filter(name='Administrador').exists():
                 return redirect('/inicioAdministrador')
@@ -609,20 +620,20 @@ def login(request):
                 return redirect('/inicioTecnico')
         else:
             mensaje = "Usuario o Contraseña Incorrectas."
-            return render(request, "inicio.html",{"mensaje":mensaje})
+            return render(request, "inicio.html", {"mensaje": mensaje})
     else:
-        mensaje="Debe validar primero el recaptcha."
-        return render(request, "inicio.html",{"mensaje" :mensaje})
- 
-    
+        mensaje = "Debe validar primero el recaptcha."
+        return render(request, "inicio.html", {"mensaje": mensaje})
+
+
 def salir(request):
     auth.logout(request)
     return render(request, "inicio.html",
-                  {"mensaje":"Ha cerrado la sesión."})
-  
-    
-def enviarCorreo (asunto=None, mensaje=None, destinatario=None): 
-    remitente = settings.EMAIL_HOST_USER 
+                  {"mensaje": "Ha cerrado la sesión."})
+
+
+def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
+    remitente = settings.EMAIL_HOST_USER
     template = get_template('enviarCorreo.html')
     contenido = template.render({
         'destinatario': destinatario,
@@ -631,13 +642,14 @@ def enviarCorreo (asunto=None, mensaje=None, destinatario=None):
         'remitente': remitente,
     })
     try:
-        correo = EmailMultiAlternatives (asunto, mensaje, remitente, [destinatario]) 
-        correo.attach_alternative (contenido, 'text/html') 
+        correo = EmailMultiAlternatives(
+            asunto, mensaje, remitente, [destinatario])
+        correo.attach_alternative(contenido, 'text/html')
         correo.send(fail_silently=True)
-    except SMTPException as error: 
+    except SMTPException as error:
         print(error)
- 
-       
+
+
 def vistaRegistrarServiciosPrestados(request):
     user = request.user
 
@@ -668,73 +680,70 @@ def vistaRegistrarServiciosPrestados(request):
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
-    
+
 def registrarServicioPrestado(request):
-    estado = False
     if request.method == 'POST':
         try:
             with transaction.atomic():
+                estado = False
                 idCliente = int(request.POST['cliente'])
                 idVehiculo = int(request.POST['vehiculo'])
-                idEmpleado = int(request.POST['empleado'])
-                estadoServicio = request.POST['estado']
                 fechaHora = request.POST.get('fechaHora', None)
-                idServicio = int(request.POST['servicio'])
                 observaciones = request.POST['observaciones']
-                
+
                 cliente = Cliente.objects.get(pk=idCliente)
                 vehiculo = Vehiculo.objects.get(pk=idVehiculo)
-                empleado = Empleado.objects.get(pk=idEmpleado)
-                servicio = Servicio.objects.get(pk=idServicio)
-                
-                servicioprestado = ServicioPrestado(
+
+                servicioPrestado = ServicioPrestado(
                     serpCli=cliente,
                     serpVehi=vehiculo,
-                    serpEmp=empleado,
-                    serpServicio=servicio,
-                    serpEstado=estadoServicio,
                     serpObservaciones=observaciones,
                     serpFechaServicio=fechaHora
                 )
-                servicioprestado.save()
-                
-                detalleServicios = json.loads(request.POST['detalle'])
-                sumaCostos = 0
-                
-                for detalle in detalleServicios:
-                    idDetalleServicio = int(detalle['idServicio'])
-                    costoServicio = int(detalle['costo'])
-                    
-                    servicioDetalle = Servicio.objects.get(pk=idDetalleServicio)
-                    
-                    sumaCostos += costoServicio
-                    
+                servicioPrestado.save()
+
+                detalleServicioPrestado = json.loads(request.POST['detalle'])
+
+                for detalle in detalleServicioPrestado:
+                    idServicio = int(detalle['idServicio'])
+                    servicio = Servicio.objects.get(id=idServicio)
+                    empleado = detalle['empleado']
+                    estado = detalle['estado']
                     detalleServicioPrestado = DetalleServicioPrestado(
-                        detMonto=sumaCostos,
-                        detServicio=servicioDetalle,
-                        detServicioPrestado=servicioprestado,
+                        detServicio=servicio,
+                        detServicioPrestado=servicioPrestado,
                         serpEmp=empleado
                     )
                     detalleServicioPrestado.save()
-                
+
                 estado = True
                 mensaje = "Se ha registrado el servicio prestado correctamente."
-        
         except Exception as error:
             transaction.rollback()
             mensaje = str(error)
-        
+
         retorno = {"estado": estado, "mensaje": mensaje}
         return JsonResponse(retorno)
-        
-        
+
+
 def vistaGestionarFacturas(request):
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
-        facturasNP = Factura.objects.filter(facEstado="No Pagada").select_related('facServicioPrestado__serpCli') 
-        facturasP = Factura.objects.filter(facEstado="Pagada").select_related('facServicioPrestado__serpCli')
-        retorno = {"facturasP": facturasP,"facturasNP":facturasNP,"estadoFactura": estadoFactura}
+        facturasNP = Factura.objects.filter(
+            facEstado="No Pagada").select_related('facServicioPrestado__serpCli')
+        facturasP = Factura.objects.filter(
+            facEstado="Pagada").select_related('facServicioPrestado__serpCli')
+        for factura in facturasNP:
+            total = sum(
+                detalle.detServicio.serCosto for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all())
+            factura.facMonto = total
+        for factura in facturasP:
+            total = sum(
+                detalle.detServicio.serCosto for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all())
+            factura.facMonto = total
+        retorno = {"facturasP": facturasP, "facturasNP": facturasNP,
+                   "estadoFactura": estadoFactura}
         return render(request, "asistente/vistaGestionarFacturas.html", retorno)
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta URL."
@@ -747,7 +756,7 @@ def vistaGestionarFacturas(request):
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
-    
+
 def vistaGestionarSolicitudesV(request):
     user = request.user
 
@@ -763,8 +772,8 @@ def vistaGestionarSolicitudesV(request):
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
-    
-    
+
+
 def existeCliente(request):
     id_identificacion = request.POST.get("txtIdentificacion", None)
     mensaje = ""
@@ -794,17 +803,17 @@ def existeCliente(request):
 def actualizarVehiculo(request):
     estado = False
     mensaje = ""
-    
+
     try:
         idVehiculo = int(request.POST.get("idVehiculo"))
         placa = request.POST.get("txtPlaca")
         marca = request.POST.get("cbMarca")
         modelo = request.POST.get("txtModelo")
         tipoV = request.POST.get("cbTipoV")
-        
+
         with transaction.atomic():
             vehiculo = Vehiculo.objects.select_for_update().get(pk=idVehiculo)
-            
+
             if Vehiculo.objects.filter(vehPlaca=placa).exclude(pk=idVehiculo).exists():
                 mensaje = "La placa ya está en uso por otro vehículo."
             else:
@@ -820,7 +829,7 @@ def actualizarVehiculo(request):
     except Exception as error:
         transaction.rollback()
         mensaje = f"Error al actualizar vehiculo,{error}."
-    
+
     vehiculos = Vehiculo.objects.all()
     retorno = {
         "mensaje": mensaje,
@@ -829,14 +838,14 @@ def actualizarVehiculo(request):
         "tipoMar": tiposMarcas,
         "estado": estado,
     }
-    
+
     return render(request, "asistente/vistaGestionarVehiculos.html", retorno)
 
 
 def actualizarCliente(request):
     estado = False
     mensaje = ""
-    
+
     try:
         idCliente = int(request.POST.get("idCliente"))
         identificacion = request.POST.get("txtIdentificacion")
@@ -845,11 +854,11 @@ def actualizarCliente(request):
         correo = request.POST.get("txtCorreo")
         direccion = request.POST.get("txtDireccion")
         numero = request.POST.get("txtNumeroC")
-        
+
         with transaction.atomic():
             cliente = Cliente.objects.select_for_update().get(pk=idCliente)
             persona = cliente.cliPersona
-            
+
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
                 mensaje = "La identificación ya está en uso por otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
@@ -863,7 +872,7 @@ def actualizarCliente(request):
                 persona.perCorreo = correo
                 persona.perNumeroCelular = numero
                 persona.save()
-                
+
                 cliente.cliDireccion = direccion
                 cliente.save()
                 estado = True
@@ -873,21 +882,21 @@ def actualizarCliente(request):
     except Exception as error:
         transaction.rollback()
         mensaje = f"Error,{error}"
-    
+
     clientes = Cliente.objects.all()
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
         "clientes": clientes,
     }
-    
+
     return render(request, "asistente/vistaGestionarClientes.html", retorno)
 
 
 def actualizarEmpleado(request):
     estado = False
     mensaje = ""
-    
+
     try:
         idEmpleado = int(request.POST.get("idEmpleado"))
         identificacion = request.POST.get("txtIdentificacion")
@@ -898,11 +907,11 @@ def actualizarEmpleado(request):
         estadoE = request.POST.get("cbEstado")
         correo = request.POST.get("txtCorreo")
         numero = request.POST.get("txtNumeroC")
-        
+
         with transaction.atomic():
             empleado = Empleado.objects.select_for_update().get(pk=idEmpleado)
             persona = empleado.empPersona
-            
+
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
                 mensaje = "La identificación ya está en uso por otro empleado."
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
@@ -916,7 +925,7 @@ def actualizarEmpleado(request):
                 persona.perCorreo = correo
                 persona.perNumeroCelular = numero
                 persona.save()
-                
+
                 empleado.empCargo = cargo
                 empleado.empSueldo = sueldo
                 empleado.empEstado = estadoE
@@ -928,14 +937,14 @@ def actualizarEmpleado(request):
     except Exception as error:
         transaction.rollback()
         mensaje = f"Error,{error}"
-    
+
     empleados = Empleado.objects.all()
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
         "empleados": empleados,
     }
-    
+
     return render(request, "administrador/vistaGestionarEmpleados.html", retorno)
 
 
@@ -943,8 +952,7 @@ def vistaEdicionPerfilAsistente(request):
     user = request.user
     if user.groups.filter(name='Asistente').exists():
         roles = Group.objects.all()
-        return render(request, "asistente/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario":tipoUsuario, "user": user})
-        
+        return render(request, "asistente/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario": tipoUsuario, "user": user})
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
@@ -955,15 +963,13 @@ def vistaEdicionPerfilAsistente(request):
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
-    
 
 
 def vistaEdicionPerfilAdministrador(request):
     user = request.user
     if user.groups.filter(name='Administrador').exists():
         roles = Group.objects.all()
-        return render(request, "administrador/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario":tipoUsuario, "user": user})
-        
+        return render(request, "administrador/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario": tipoUsuario, "user": user})
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
@@ -974,14 +980,13 @@ def vistaEdicionPerfilAdministrador(request):
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
-    
-    
+
+
 def vistaEdicionPerfilTecnico(request):
     user = request.user
     if user.groups.filter(name='Tecnico').exists():
         roles = Group.objects.all()
-        return render(request, "tecnico/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario":tipoUsuario, "user": user})
-        
+        return render(request, "tecnico/frmEdicionPerfil.html", {"roles": roles, "tipoUsuario": tipoUsuario, "user": user})
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
@@ -993,7 +998,7 @@ def vistaEdicionPerfilTecnico(request):
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
-    
+
 def actualizarUsuarioAdmin(request):
     estado = False
     mensaje = ""
@@ -1004,7 +1009,7 @@ def actualizarUsuarioAdmin(request):
         nueva_imagen = request.FILES.get('fileFoto')
         with transaction.atomic():
             if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
-                mensaje= "El correo electrónico ya está en uso por otro usuario."
+                mensaje = "El correo electrónico ya está en uso por otro usuario."
             else:
                 usuario = request.user
                 usuario.first_name = nombres
@@ -1016,8 +1021,8 @@ def actualizarUsuarioAdmin(request):
                 estado = True
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
-            transaction.rollback()
-            mensaje = f"Error,{error}"
+        transaction.rollback()
+        mensaje = f"Error,{error}"
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
@@ -1035,7 +1040,7 @@ def actualizarUsuarioAsistente(request):
         nueva_imagen = request.FILES.get('fileFoto')
         with transaction.atomic():
             if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
-                mensaje= "El correo electrónico ya está en uso por otro usuario."
+                mensaje = "El correo electrónico ya está en uso por otro usuario."
             else:
                 usuario = request.user
                 usuario.first_name = nombres
@@ -1047,8 +1052,8 @@ def actualizarUsuarioAsistente(request):
                 estado = True
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
-            transaction.rollback()
-            mensaje = f"Error,{error}"
+        transaction.rollback()
+        mensaje = f"Error,{error}"
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
@@ -1066,7 +1071,7 @@ def actualizarUsuarioTecnico(request):
         nueva_imagen = request.FILES.get('fileFoto')
         with transaction.atomic():
             if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
-                mensaje= "El correo electrónico ya está en uso por otro usuario."
+                mensaje = "El correo electrónico ya está en uso por otro usuario."
             else:
                 usuario = request.user
                 usuario.first_name = nombres
@@ -1078,8 +1083,8 @@ def actualizarUsuarioTecnico(request):
                 estado = True
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
-            transaction.rollback()
-            mensaje = f"Error,{error}"
+        transaction.rollback()
+        mensaje = f"Error,{error}"
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
@@ -1088,22 +1093,32 @@ def actualizarUsuarioTecnico(request):
 
 
 def deshabilitarUsuario(request, user_id):
-    try:
-        usuario = User.objects.get(pk=user_id)
+    user = request.user
+    if user.groups.filter(name='Administrador').exists():
+        try:
+            usuario = User.objects.get(pk=user_id)
 
-        if usuario.is_superuser:
-            raise Exception("No se puede deshabilitar a un superusuario.")
+            if usuario.is_superuser:
+                raise Exception("No se puede deshabilitar a un superusuario.")
 
-        usuario.is_active = False
-        usuario.save()
+            usuario.is_active = False
+            usuario.save()
 
-        usuarios = User.objects.all()
+            return JsonResponse({
+                'success': True
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
 
-        return JsonResponse({
-            'success': True
-        })
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+
+    if user.groups.filter(name='Asistente').exists():
+        return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+
+    if user.groups.filter(name='Tecnico').exists():
+        return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
+
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def habilitarUsuario(request, user_id):
@@ -1119,16 +1134,16 @@ def habilitarUsuario(request, user_id):
     except Exception as error:
         mensaje = str(error)
         estado = False
-    
+
     return JsonResponse({
         "mensaje": mensaje,
         "estado": estado
     })
-  
+
 
 class PersonaList(generics.ListCreateAPIView):
-    queryset=Persona.objects.all()
-    serializer_class=PersonaSerializer
+    queryset = Persona.objects.all()
+    serializer_class = PersonaSerializer
 
 
 class PersonaDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1145,96 +1160,115 @@ class ClienteList(generics.ListCreateAPIView):
 class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
-    
+
 
 def mostrarGrafica1(request):
     matplotlib.use('Agg')
-    
-    
+
     categorias = ['A', 'B', 'C', 'D', 'E']
     valores = [25, 50, 75, 100, 125]
-    
+
     grafica = plt.bar(categorias, valores)
 
     plt.xlabel('Categorías')
     plt.ylabel('Valores')
     plt.title('Gráfica de Barras')
 
-    ruta_grafica = os.path.join(settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras.png')
-    
+    ruta_grafica = os.path.join(
+        settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras.png')
+
     plt.savefig(ruta_grafica)
-    
-    generar_pdf(request)
-    retorno = { 
+
+    generarFacturapdf(request)
+    retorno = {
         "ruta_grafica": ruta_grafica
     }
     return render(request, "administrador/vistaGraficas.html", retorno)
 
-    
+
 class PDF(FPDF):
     def header(self):
         self.image('./media/fotos/Toji.jpg', 10, 10, 25)
-        
+
     def footer(self):
         self.set_xy(10, -15)
         self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Fecha de creación: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 0, 0, 'L')
-        
+        self.cell(0, 10, 'Fecha de creación: ' +
+                  datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 0, 0, 'L')
+
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, 'El impulso que necesita tu vehículo', 0, 0, 'R')
-  
-  
-def generar_pdf(request):
-    try:
 
-        pdf = PDF()
+
+def generarFacturapdf(request):
+    try:
+        pdf = FPDF()
         pdf.add_page()
 
-       
-        image_path = settings.MEDIA_ROOT + '/fotos/Toji.jpg'
+        # Encabezado
+        pdf.set_font('Arial', 'B', 18)
+        pdf.set_text_color(255, 0, 0)
+        pdf.cell(0, 10, 'Factura', 0, 1, 'L')
 
-       
-        pdf.image(image_path, x=10, y=10, w=25)
+        pdf.image(settings.MEDIA_ROOT + '/fotos/Toji.jpg', x=160, y=10, w=40)
 
-       
-        pdf.ln(20)  
-        pdf.set_font('Arial', 'B', 12)
-        pdf.cell(0, 10, 'Tabla de Valores Aleatorios', 0, 1, 'C')
-
+        pdf.set_text_color(0, 0, 0)
         pdf.set_font('Arial', '', 12)
-        column_widths = [40, 40, 40]  
-        row_height = 10 
-        num_rows = 5  
-        num_columns = 3  
+        pdf.cell(0, 10, 'Serviteca Opita', 0, 1, 'L')
+        pdf.cell(0, 10, 'El impulso que necesita tu vehiculo', 0, 1, 'L')
+        pdf.cell(0, 10, 'Calle 4 #7', 0, 1, 'L')
+        pdf.ln(10)
 
-        pdf.cell(column_widths[0], row_height, 'Columna 1', border=1)
-        pdf.cell(column_widths[1], row_height, 'Columna 2', border=1)
-        pdf.cell(column_widths[2], row_height, 'Columna 3', border=1)
-        pdf.ln()
+        # Encabezado tabla
+        pdf.set_fill_color(255, 0, 0)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font('Arial', 'B', 12)
+        ancho_columnas = [20, 40, 60, 30, 30, 30]
+        pdf.cell(ancho_columnas[0], 10, 'Codigo',
+                 border=1, ln=False, fill=True)
+        pdf.cell(ancho_columnas[1], 10, 'Cliente',
+                 border=1, ln=False, fill=True)
+        pdf.cell(ancho_columnas[2], 10, 'Servicio Prestado',
+                 border=1, ln=False, fill=True)
+        pdf.cell(ancho_columnas[3], 10, 'Estado',
+                 border=1, ln=False, fill=True)
+        pdf.cell(ancho_columnas[4], 10, 'Fecha', border=1, ln=False, fill=True)
+        pdf.cell(ancho_columnas[5], 10, 'Total', border=1, ln=True, fill=True)
+        pdf.set_fill_color(255, 255, 255)
+        pdf.set_text_color(0, 0, 0)
 
-        for _ in range(num_rows):
-            for _ in range(num_columns):
-                random_value = random.randint(1, 100)
-                pdf.cell(column_widths[_], row_height, str(random_value), border=1)
+        facturas = Factura.objects.all()
+        for factura in facturas:
+            pdf.set_font('Arial', '', 5)
+            pdf.cell(ancho_columnas[0], 5, str(factura.facCodigo), border=1)
+            pdf.cell(ancho_columnas[1], 5, str(
+                factura.facServicioPrestado.serpCli), border=1)
+
+            service_names = ", ".join(
+                [str(detalle.detServicio) for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all()])
+            pdf.cell(ancho_columnas[2], 5, service_names, border=1)
+            pdf.cell(ancho_columnas[3], 5, str(factura.facEstado), border=1)
+            pdf.cell(ancho_columnas[4], 5, str(factura.facFecha), border=1)
+            pdf.cell(ancho_columnas[5], 5, str(factura.facTotal), border=1)
             pdf.ln()
 
-        pdf_path = settings.MEDIA_ROOT + '/pdf/SERVITECA_OPITA.pdf'
+        # Footer
+        pdf.set_y(-15)
+        pdf.set_font('Arial', 'I', 8)
+        pdf.cell(0, 10, 'Hola', 0, 0, 'L')
+        pdf.cell(0, 10, 'Pagina ' + str(pdf.page_no()), 0, 0, 'C')
+        pdf.cell(0, 10, 'Gracias por su compra', 0, 0, 'R')
 
-        pdf.output(pdf_path)
-
-        # PDF como respuesta HTTP 
-        # with open(pdf_path, 'rb') as pdf_file:
-        #     response = HttpResponse(pdf_file.read(), content_type='application/pdf')
-        #     response['Content-Disposition'] = 'attachment; filename="SERVITECA OPITA.pdf"'
-        #     return response
+        rutaPdf = settings.MEDIA_ROOT + '/pdf/Facturas.pdf'
+        pdf.output(rutaPdf)
 
         return HttpResponse("PDF generado y guardado correctamente.")
     except Exception as e:
         return HttpResponse("Error al generar el PDF: " + str(e))
-   
+
 
 def vistaCorreoForgot(request):
-    return render(request,"vistaCorreoForgot.html")
+    return render(request, "vistaCorreoForgot.html")
 
 
 def registrarPeticionForgot(request):
@@ -1252,7 +1286,8 @@ def registrarPeticionForgot(request):
                 # Enviar correo al usuario en un hilo separado
                 asunto = 'Solicitud de Restablecimiento de Contraseña'
                 mensaje = f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña. Por favor, haga clic en el siguiente enlace para continuar con el proceso: http://127.0.0.1:8000/cambiarContrasena/{uidb64}/{token}/'
-                thread = threading.Thread(target=enviarCorreo, args=(asunto, mensaje, usuario.email))
+                thread = threading.Thread(
+                    target=enviarCorreo, args=(asunto, mensaje, usuario.email))
                 thread.start()
 
                 mensaje = "Correo enviado exitosamente,por favor verifique su bandeja de entrada."
@@ -1264,13 +1299,13 @@ def registrarPeticionForgot(request):
         return render(request, "vistaCorreoForgot.html", {"mensaje": mensaje, "estado": estado})
     else:
         return render(request, "vistaCorreoForgot.html")
-    
-    
+
+
 def vistaCambiarContraseña(request):
-    return render(request,"cambiarContraseña.html")
+    return render(request, "cambiarContraseña.html")
 
 
-def cambiarContraseña(request, uidb64, token): 
+def cambiarContraseña(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -1282,24 +1317,27 @@ def cambiarContraseña(request, uidb64, token):
             password = request.POST.get('nuevaContraseña')
             user.set_password(password)
             user.save()
-            messages.success(request, 'Contraseña restablecida correctamente, ahora puedes iniciar sesión con tu nueva contraseña.')
+            messages.success(
+                request, 'Contraseña restablecida correctamente, ahora puedes iniciar sesión con tu nueva contraseña.')
 
-            PeticionForgot.objects.filter(id_user=user).update(estado='Inactiva')
+            PeticionForgot.objects.filter(
+                id_user=user).update(estado='Inactiva')
             return redirect('/mostrarMensaje/')
 
         # Validacion para expirar el enlace de recuperacion de contraseña segun un tiempo pre-establecido
-        peticion = PeticionForgot.objects.get(id_user=user)
-        tiempoAc = timezone.now()
-        tiempoDif = tiempoAc - peticion.fechaHoraCreacion
-        if tiempoDif.total_seconds() > 300:  # 5 minutos en segundos
-            PeticionForgot.objects.filter(id_user=user).update(estado='Inactiva')
-            return render(request, 'cambiarContrasena.html', {'validlink': False})
+        peticiones = PeticionForgot.objects.filter(id_user=user)
+        if peticiones.exists():
+            peticion = peticiones.first()
+            tiempoAc = timezone.now()
+            tiempoDif = tiempoAc - peticion.fechaHoraCreacion
+            if tiempoDif.total_seconds() > 3600:  # 1 hora en segundos
+                peticiones.update(estado='Inactiva')
+                return render(request, 'cambiarContrasena.html', {'validlink': False})
 
         return render(request, 'cambiarContrasena.html', {'validlink': True})
     else:
         return render(request, 'cambiarContrasena.html', {'validlink': False})
-    
-    
+
+
 def mostrarMensaje(request):
     return render(request, 'mostrarMensaje.html')
-

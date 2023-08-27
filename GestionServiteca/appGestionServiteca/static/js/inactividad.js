@@ -1,6 +1,6 @@
 let tiempoInactividad = 0;
-const tiempoSesionInactiva = 180;
-sesionCerrada = false; 
+const tiempoSesionInactiva = 300;
+sesionCerrada = false;
 
 function reiniciarTemporizador() {
     tiempoInactividad = 0;
@@ -11,7 +11,7 @@ function cerrarSesion() {
         sesionCerrada = true;
         Swal.fire({
             title: 'Sistema Serviteca',
-            text: 'Inactividad detectada, cerrando sesión.',
+            text: 'Inactividad detectada,Sesión Cerrada.',
             icon: 'info',
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Aceptar'

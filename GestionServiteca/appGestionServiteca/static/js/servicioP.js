@@ -1,9 +1,10 @@
 let serviciosPrestados = []
-let DetalleServiciosPrestados = []
+let detalleServicioPrestado = []
 let servicios = []
 let clientes = []
 let vehiculos = []
 let empleados = []
+let idServicio;
 
 $(function () {
     $.ajaxSetup({
@@ -12,10 +13,14 @@ $(function () {
         }
     });
     $("#btnAgregarDetalleServicioP").click(function () {
-        agregarServiciospDetalle();
+        agregarDetalleServicioPrestados();
+    });
+    $("#btnRegistrarServicioP").click(function () {
+        registroServivicioPrestado();
     });
     $("#cbServicio").change(function () {
-        posServicio = servicios.findIndex(servicio => servicio.id == $("#cbServicio").val());
+        idServicio = $("#cbServicio").val();
+        posServicio = servicios.findIndex(servicio => servicio.id == idServicio);
         costoServicio = servicios[posServicio].costo;
         $("#txtCosto").val("$" + costoServicio);
     });
@@ -43,57 +48,68 @@ function getCookie(name) {
     return cookieValue;
 }
 
+/**
+ *  Realiza una petición AJAX para registrar un servicio prestado, 
+ * enviando datos relevantes como el cliente, el vehículo, la fecha&hora, observaciones y detalles.
+ */
+function registroServivicioPrestado() {
+    var datos = {
+        "cliente": $("#cbCliente").val(),
+        "vehiculo": $("#cbVehiculo").val(),
+        "fechaHora": $("#txtFechaHoraSP").val(),
+        "observaciones": $("#txtObservaciones").val(),
+
+        "detalle": JSON.stringify(serviciosPrestados),
+    };
+    $.ajax({
+        url: "/registrarServicioPrestado/",
+        data: datos,
+        type: 'post',
+        dataType: 'json',
+        cache: false,
+        success: function (resultado) {
+            console.log(resultado);
+            if (resultado.estado) {
+                frmDatosGenerales.reset();
+                serviciosPrestados.length = 0;
+                mostrarDatosTabla();
+            }
+            Swal.fire("Registro de Servicio Prestado", resultado.mensaje, "success");
+        }
+    })
+}
 
 /**
- * Agrega cada servicio al arreglo de DetalleServiciosPrestados,
- * primero valida que no se haya agregado previamente
+ * Agrega detalles de un servicio prestado al arreglo serviciosPrestados, 
+ * verificando si el servicio ya ha sido agregado.
  */
-function agregarServiciospDetalle() {
-    const cliente = $("#cbCliente").val();
-    const vehiculo = $("#cbVehiculo").val();
-    const observaciones = $("#txtObservaciones").val();
-    const fechaHora = $("#txtFechaHoraSP").val();
-    const empleado = $("#cbEmpleado").val();
-    const estado = $("#cbEstado").val();
-    const idServicio = $("#cbServicio").val();
-
-    if (!cliente || !vehiculo || !observaciones || !fechaHora || !empleado || !estado || !idServicio) {
-        Swal.fire("Registro Servicio Prestado",
-            "Por favor, completa todos los campos antes de agregar el servicio.", "error");
-        return;
-    }
-
-    const d = DetalleServiciosPrestados.find(servicio => servicio.idServicio == idServicio);
+function agregarDetalleServicioPrestados() {
+    const d = serviciosPrestados.find(servicio => servicio.idServicio == idServicio);
     if (d == null) {
-        const servi = {
-            "cliente": cliente,
-            "vehiculo": vehiculo,
-            "observaciones": observaciones,
-            "fechaHora": fechaHora,
-            "empleado": empleado,
-            "estado": estado,
-            "idServicio": idServicio,
+        const detalle = {
+            "empleado": $("#cbEmpleado").val(),
+            "estado": $("#cbEstado").val(),
+            "idServicio": $("#cbServicio").val(),
             "servicio": $('#cbServicio option:selected').html(),
             "costo": $("#txtCosto").val(),
         }
-        DetalleServiciosPrestados.push(servi);
-        frmDatosGenerales.reset();
+        serviciosPrestados.push(detalle);
+        frmdetalleSerciosP.reset();
         mostrarDatosTabla();
     } else {
-        Swal.fire("Sistema Serviteca",
-            "El Servicio seleccionado ya se ha agregado en el detalle.", "error");
+        Swal.fire("Registro Detalle",
+            "El servicio seleccionado ya se ha agregado en el detalle", "info");
     }
 }
-
+/**
+ * Construye filas de una tabla HTML para mostrar los detalles de los servicios prestados en el elemento tblDetalleSP.
+*/
 function mostrarDatosTabla() {
     datos = "";
-    DetalleServiciosPrestados.forEach(detail => {
-        posC = clientes.findIndex(cliente => cliente.id == detail.idCliente);
-        posV = vehiculos.findIndex(vehiculo => vehiculo.id == detail.idVehiculo);
-        posE = empleados.findIndex(empleado => empleado.id == detail.idEmpleado);
-        posS = servicios.findIndex(servicio => servicio.id == detail.idServicio);
+
+    serviciosPrestados.forEach(detail => {
         datos += "<tr>";
-        datos += "<td class='text-center'>" + detail.cliente+ "</td>";
+        datos += "<td class='text-center'>" + detail.cliente + "</td>";
         datos += "<td class='text-center'>" + detail.vehiculo + "</td>";
         datos += "<td class='text-center'>" + detail.empleado + "</td>";
         datos += "<td class='text-center'>" + detail.estado + "</td>";
@@ -103,12 +119,13 @@ function mostrarDatosTabla() {
         datos += "<td class='text-center'>" + detail.observaciones + "</td>";
         datos += "</tr>";
     });
-    //Agregar a la tabla con id tblDetalleSP
+
     tblDetalleSP.innerHTML = datos;
 }
 
+
 /**
- * Funcion que obtiene los datos de la lista y los guarda en un arreglo
+ *  Agrega datos de un cliente al arreglo clientes.
  * @param {*} id 
  * @param {*} nombre 
  */
@@ -120,7 +137,11 @@ function cargarClientes(idCliente, nombre) {
     clientes.push(cliente);
 }
 
-
+/**
+ *  Agrega datos de un vehículo al arreglo vehiculos.
+ * @param {*} idVehiculo 
+ * @param {*} placa 
+ */
 function cargarVehiculos(idVehiculo, placa) {
     const vehiculo = {
         idVehiculo: idVehiculo,
@@ -129,6 +150,11 @@ function cargarVehiculos(idVehiculo, placa) {
     vehiculos.push(vehiculo);
 }
 
+/**
+ Agrega datos de un empleado al arreglo empleados.
+ * @param {*} idEmpleado 
+ * @param {*} nombre 
+ */
 function cargarEmpleados(idEmpleado, nombre) {
     const empleado = {
         idEmpleado: idEmpleado,
@@ -137,6 +163,12 @@ function cargarEmpleados(idEmpleado, nombre) {
     empleados.push(empleado);
 }
 
+/**
+ *  Agrega datos de un servicio al arreglo servicios.
+ * @param {*} id 
+ * @param {*} nombre 
+ * @param {*} costo 
+ */
 function cargarServicios(id, nombre, costo) {
     const servicio = {
         id: id,

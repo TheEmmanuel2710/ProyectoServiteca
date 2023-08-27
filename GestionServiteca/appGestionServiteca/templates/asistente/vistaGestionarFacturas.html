@@ -20,6 +20,7 @@
                 <th class="text-center" style="background-color: black;">Codigo</th>
                 <th class="text-center" style="background-color: black;">Cliente</th>
                 <th class="text-center" style="background-color: black;">Servicio Prestado</th>
+                <th class="text-center" style="background-color: black;">Valor Unitario</th>
                 <th class="text-center" style="background-color: black;">Estado</th>
                 <th class="text-center" style="background-color: black;">Fecha</th>
                 <th class="text-center" style="background-color: black;">Total</th>
@@ -32,16 +33,24 @@
                 <td class="text-center">{{ factura.facServicioPrestado.serpCli }}</td>
                 <td class="text-center">
                     {% for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all %}
-                    {{ detalle.detServicio.serNombre }}{% if not forloop.last %}, {% endif %}
+                    {{ detalle.detServicio.serNombre }}{% if not forloop.last %}, {% else %}.{% endif %}
                     {% endfor %}
                 </td>
-                <td class="text-center">{{factura.facEstado}}</td>
+                <td class="text-center">
+                    {% for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all %}
+                    ${{ detalle.detServicio.serCosto }}{% if not forloop.last %}, {% else %}.{% endif %}
+                    {% endfor %}
+                </td>
+                <td class="text-center">{{ factura.facEstado }}</td>
                 <td class="text-center">{{ factura.facFecha }}</td>
-                <td class="text-center">${{ factura.facTotal }}</td>
+                <td class="text-center">
+                    ${{ factura.facMonto }}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
 </div>
 <h3 class="text-center fw-bold" style="color: black;">GESTIONAR FACTURAS PENDIENTES</h3>
 <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
@@ -51,6 +60,7 @@
                 <th class="text-center" style="background-color: black;">Codigo</th>
                 <th class="text-center" style="background-color: black;">Cliente</th>
                 <th class="text-center" style="background-color: black;">Servicio Prestado</th>
+                <th class="text-center" style="background-color: black;">Valor Unitario</th>
                 <th class="text-center" style="background-color: black;">Estado</th>
                 <th class="text-center" style="background-color: black;">Fecha</th>
                 <th class="text-center" style="background-color: black;">Total</th>
@@ -64,12 +74,19 @@
                 <td class="text-center">{{ factura.facServicioPrestado.serpCli }}</td>
                 <td class="text-center">
                     {% for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all %}
-                    {{ detalle.detServicio.serNombre }}{% if not forloop.last %}, {% endif %}
+                    {{ detalle.detServicio.serNombre }}{% if not forloop.last %}, {% else %}.{% endif %}
                     {% endfor %}
                 </td>
-                <td class="text-center">{{factura.facEstado}}</td>
+                <td class="text-center">
+                    {% for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all %}
+                    ${{ detalle.detServicio.serCosto }}{% if not forloop.last %}, {% else %}.{% endif %}
+                    {% endfor %}
+                </td>
+                <td class="text-center">{{ factura.facEstado }}</td>
                 <td class="text-center">{{ factura.facFecha }}</td>
-                <td class="text-center">${{ factura.facTotal }}</td>
+                <td class="text-center">
+                    ${{ factura.facMonto }}
+                </td>
                 <td class="text-center">
                     <a onclick="abrirModalActualizarFactura('{{ factura.id }}')">
                         <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
@@ -86,7 +103,7 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header tituloModal">
-                <h4 class="modal-title">Actualizar Factua</h4>
+                <h4 class="modal-title">Actualizar Factura</h4>
                 <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
             </div>
             <!-- Modal body -->
@@ -120,6 +137,12 @@
                                 placeholder="Servicio Prestado" readonly>
                             <div class="invalid-feedback">Por favor ingrese el servicio prestado</div>
                         </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="txtCosto" class="fw-bold" style="color: black;">Costo Unitario:</label>
+                            <input type="text" name="txtCosto" class="form-control" id="txtCosto"
+                                placeholder="Servicio Prestado" readonly>
+                            <div class="invalid-feedback">Por favor ingrese el servicio prestado</div>
+                        </div>
                         <div class="mb-3 col-lg-4" style="margin: 0% auto;">
                             <label for="cbEstado" class="fw-bold" style="color: black;">Estado:</label>
                             <select name="cbEstado" id="cbEstado" class="form-select" required>
@@ -130,7 +153,7 @@
                             </select>
                             <div class="invalid-feedback">Por favor ingrese el estado de l a factura</div>
                         </div>
-                        <div class="mb-3 col-lg-4">
+                        <div class="mb-3 col-lg-12">
                             <label for="txtFecha" class="fw-bold" style="color: black;">Fecha:</label>
                             <input type="text" class="form-control" id="txtFecha" name="txtFecha"
                                 placeholder="Fecha del servicio prestado" readonly />
@@ -139,7 +162,7 @@
                         <div class="mb-3 col-lg-12">
                             <label for="txtTotal" class="fw-bold" style="color: black;">Total:</label>
                             <input type="number" class="form-control" id="txtTotal" name="txtTotal"
-                                placeholder="Total de la factura" readonly />
+                                placeholder="Total de la factura"  readonly />
                             <div class="invalid-feedback">Por favor ingrese el total de la factura</div>
                         </div>
                     </div>
@@ -179,7 +202,7 @@
 </script>
 <script>
     function abrirModalActualizarFactura(id) {
-        // Funcion AJAX para obtener los datos de la factura por ID
+        // Función AJAX para obtener los datos de la factura por ID
         $.ajax({
             url: "/consultarFac/" + id,
             type: 'GET',
@@ -194,13 +217,27 @@
                 $("#txtApellidos").val(data.cliente.persona.perApellidos);
                 $("#idFactura").val(id);
 
-                // Verifica si existen servicios prestados en la respuesta JSON enviada desde la funcion python de consultarFactura
-                if (data.factura.serviciosPrestados && data.factura.serviciosPrestados.length > 0) {
-                    $("#txtServiciosP").val(data.factura.serviciosPrestados.join(', '));
+                var nombres_servicios_prestados = data.factura.nombresServiciosPrestados;
+                var costos_servicios_prestados = data.factura.costosServiciosPrestados;
+
+                if (nombres_servicios_prestados && nombres_servicios_prestados.length > 0) {
+                    $("#txtServiciosP").val(nombres_servicios_prestados.join(', ') + '.');
                 } else {
                     $("#txtServiciosP").val("Sin servicios prestados");
                 }
 
+                if (costos_servicios_prestados && costos_servicios_prestados.length > 0) {
+                    const costosConDolar = costos_servicios_prestados.map(costo => '$' + costo);
+                    $("#txtCosto").val(costosConDolar.join(', ') + '.');
+                } else {
+                    $("#txtCosto").val("Sin costos disponibles");
+                }
+                if (costos_servicios_prestados && costos_servicios_prestados.length > 0) {
+                    var totalCosto = costos_servicios_prestados.reduce((sum, costo) => sum + costo, 0);
+                    $("#txtTotal").val(totalCosto);
+                } else {
+                    $("#txtTotal").val(0);
+                }
                 var form = $('#ActualizarFac').find('.needs-validation')[0];
                 form.classList.remove('was-validated');
 
@@ -212,6 +249,7 @@
             }
         });
     }
+
     $('#ActualizarFac').on('hide.bs.modal', function (event) {
         var form = $(this).find('.needs-validation')[0];
         if (!form.checkValidity()) {

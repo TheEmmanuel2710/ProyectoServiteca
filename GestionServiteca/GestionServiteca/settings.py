@@ -26,11 +26,11 @@ SECRET_KEY = 'django-insecure-czeucv&il-^0t27ckl13)z8%mei22%g77)0&z_d8qha2p^#60h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL = True
 
 ALLOWED_HOSTS = ['*']
 
-CORS_ORIGIN_WHITELIST=(
+CORS_ORIGIN_WHITELIST = (
     'http://localhost:8000',
 )
 
@@ -89,7 +89,7 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'serviteca',
         'USER': 'root',
@@ -131,10 +131,10 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = os.path.join(BASE_DIR,'/static/')
-#para guardar archivos de multimedia
+STATIC_URL = os.path.join(BASE_DIR, '/static/')
+# para guardar archivos de multimedia
 MEDIA_URL = '/media/'
-MEDIA_ROOT= os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -143,12 +143,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'appGestionServiteca.User'
 
-#recaptcha
+# recaptcha
 GOOGLE_RECAPTCHA_SECRET_KEY = '6LevdIonAAAAAFkDaO3PDkt3J0-dWGSAHGJEDMZE'
 
-#variables configuración correo
-EMAIL_HOST="smtp.gmail.com"
-EMAIL_PORT=587
-EMAIL_HOST_USER="theemmanuelwtg@gmail.com" 
-EMAIL_HOST_PASSWORD='dwrzidbxkgaixhey' 
-EMAIL_USE_TLS=True
+# variables configuración correo
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "theemmanuelwtg@gmail.com"
+EMAIL_HOST_PASSWORD = 'dwrzidbxkgaixhey'
+EMAIL_USE_TLS = True

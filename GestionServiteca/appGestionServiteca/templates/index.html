@@ -49,16 +49,17 @@
 </head>
 
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid contenido">
         {% block menu %}
         {% endblock %}
         {% block contenido %}
         {% endblock %}
-        <footer class="row fixed-bottom" id="footer">
-            {% block piePagina %}
-            {% endblock %}
-        </footer>
+
     </div>
+    <footer class="pie-pagina">
+        {% block piePagina %}
+        {% endblock %}
+    </footer>
 </body>
 
 </html>

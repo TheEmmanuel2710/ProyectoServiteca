@@ -7,163 +7,193 @@
     font-family: 'Poppins', sans-serif;
 }
 
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.grupo-2{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.contenido{
+    min-height: 80vh;
+}
+
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 3px 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 9999;
+    background-color: #000000;
+}
+
+/*:::::Pie de Pagina*/
+.pie-pagina {
+    min-height: 20vh;
+    min-width: 100%;
+    background-color: rgb(0, 0, 0);
+    color: #fff;
+}
+.pie-pagina .grupo-1{
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap:50px;
+    padding: 45px 0px;
+}
+.pie-pagina .grupo-1 .box figure{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.pie-pagina .grupo-1 .box figure img{
+    width: 250px;
+}
+.pie-pagina .grupo-1 .box{
+    display: grid;
+    place-items: center;
+}
+.pie-pagina .grupo-1 .box h2{
+    color: #fff;
+
+    margin-bottom: 25px;
+    font-size: 20px;
+}
+.pie-pagina .grupo-1 .box p{
+    color: #efefef;
+    margin-bottom: 10px;
+}
+.pie-pagina .grupo-1 .red-social #facebook{
+    display: inline-block;
+    text-decoration: none;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    color: #fff;
+    margin-right: 10px;
+    text-align: center;
+    transition: all 300ms ease;
+}
+.pie-pagina .grupo-1 .red-social #facebook{
+    display: inline-block;
+    text-decoration: none;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    margin-right: 10px;
+    background-color: #000000;
+    border-radius: 50%;
+    text-align: center;
+    transition: all 300ms ease;
+}
+
+.pie-pagina .grupo-1 .red-social #instagram{
+    display: inline-block;
+    text-decoration: none;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    color: #fff;
+    margin-right: 10px;
+    background-color: #000000;
+    border-radius: 20%;
+    text-align: center;
+    transition: all 300ms ease;
+}
+
+.pie-pagina .grupo-1 .red-social #twitter{
+    display: inline-block;
+    text-decoration: none;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    color: #fff;
+    margin-right: 10px;
+    background-color: #000000;
+    border-radius: 30%;
+    text-align: center;
+    transition: all 300ms ease;
+}
+
+
+.pie-pagina .grupo-1 .red-social #facebook:hover {
+    background-color: #ffffff; 
+    color: #1877F2;
+
+}
+
+
+.pie-pagina .grupo-1 .red-social #instagram:hover {
+    background: linear-gradient(45deg,  #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F56040, #F77737, #FCAF45, #FFDC80);
+    color: white;
+}
+
+
+
+
+.pie-pagina .grupo-1 .red-social #twitter:hover {
+    background:rgb(34, 144, 255);
+   
+}
+
+
+
+
+
+.pie-pagina .grupo-2{
+    background-color: #0b0b0b;
+    padding: 15px 10px;
+    text-align: center;
+    color: #fff;
+}
+.pie-pagina .grupo-2 small{
+    font-size: 15px;
+}
+
+
+
+
+@media screen and (max-width:800px){
+    .pie-pagina .grupo-1{
+        width: 90%;
+        grid-template-columns: repeat(1, 1fr);
+        grid-gap:30px;
+        padding: 35px 0px;
+    }
+}
+
+
 #logo {
     width: 160px;
     height: 60px;
 }
 
-#footer {
-    background-color: #000000;
-    color: white;
-    position: relative;
+
+#img-grafica {
+    height: 600px;
 }
 
-.container-footer-all {
-    width: 100%;
-    max-width: 1200px;
-    margin: auto;
-    padding: 40px;
+.grafica {
+    margin-top: 60px;
+    display: grid;
+    place-items: center;
+    min-height: 600px;
 }
 
-.container-body {
-    display: flex;
-    justify-content: space-between;
-}
-
-.column1 {
-    max-width: 400px;
-}
-
-.column1 h1 {
-    font-size: 22px;
-}
-
-.column1 p {
-    font-size: 14px;
-    color: #C7C7C7;
-    margin-top: 20px;
-}
-
-.column2 {
-    max-width: 400px;
-
-
-}
-
-
-
-.column2 h1 {
-    font-size: 22px;
-
-}
-
-.row {
-    margin-top: 20px;
-    display: flex;
-}
-
-.row img {
-    width: 100px;
-    height: 100px;
-}
-
-.row label {
-    margin-top: 10px;
-    margin-left: 20px;
-    color: #C7C7C7;
-}
-
-.container-body {
-    flex-direction: row;
-    /* Change to row for side-by-side layout */
-    justify-content: space-between;
-    /* Add space between columns */
-}
-
-.column1,
-.column2,
-.column3 {
-    flex-basis: calc(33.33% - 30px);
-    /* Divide space equally with some margin */
-    margin: 0 10px;
-    /* Add margin between columns */
-}
-
-.row2 {
-    margin-left: 0;
-    /* Adjust margin */
-}
-
-
-
-.column3 {
-    max-width: 400px;
-    margin: 0;
-    /* Remove the margin to center-align the column */
-    text-align: center;
-}
-
-/* Adjust the social media icons alignment */
-.redes {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0;
-    margin-right: 0;
-}
-
-.redes img {
-    margin: 0 5px;
-    /* Adjust spacing */
-}
-
-.column3 h1 {
-    font-size: 22px;
-}
-
-
-.row2 img {
-    width: 36px;
-    height: 36px;
-}
-
-.row2 label {
-    margin-left: 20px;
-}
-
-.container-footer {
-    width: 100%;
-    background-color: #000000;
-}
-
-.footer {
-    max-width: 1200px;
-    margin: auto;
-    display: flex;
-    padding: 20px;
-    justify-content: space-between;
-}
-
-.copyright {
-    color: white
-}
-
-.copyright a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-}
-
-.information {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-}
-
-.information a {
-    text-decoration: none;
-    color: white
-}
 
 
 #navPrincipal {
@@ -192,6 +222,10 @@ a {
 a:hover {
     color: white;
 }
+#iconoxd {
+    color: red;
+    font-size: 64px;
+  }
 
 #navAsistente {
     position: fixed;
@@ -203,7 +237,7 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     z-index: 9999;
-    background-color: #000000;
+     background-color: #000000; 
 }
 
 #navAsistente a {
@@ -317,6 +351,7 @@ a:hover {
 }
 
 
+
 #navAdministrador {
     position: fixed;
     top: 0;
@@ -358,15 +393,7 @@ a:hover {
     transform-origin: left;
 }
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 100vh;
-    background-size: cover !important;
-    background-position: center;
-}
+
 
 header {
     position: fixed;
@@ -590,12 +617,19 @@ header {
     color: rgb(255, 0, 0);
 }
 
+/** si el contenido esta muy arriba use esto: donde el contenido es la clase de lo que esta mostrando y la altura es la altura del header que tine posisicion fixed */
+
+/*! contenido {
+    margin-top: altura;
+} */
+
 /*Cards*/
 .container-card {
     width: 100%;
     display: flex;
     max-width: 1100px;
     margin: auto;
+
 }
 
 .title-cards {
@@ -603,9 +637,10 @@ header {
     max-width: 1080px;
     margin: auto;
     padding: 20px;
-    margin-top: 20px;
+    margin-top: 80px;
     text-align: center;
     color: #7a7a7a;
+
 }
 
 .card {
@@ -617,6 +652,7 @@ header {
     box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.2);
     transition: all 400ms ease-out;
     cursor: default;
+
 }
 
 .card:hover {
@@ -664,7 +700,61 @@ header {
     color: #fff;
 }
 
-@media only screen and (min-width:375px) and (max-width:540px) {
+.navbar-toggler-icon {
+    background-color: #202020;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='rgba%280, 0, 0, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+    filter: hue-rotate(120deg)
+}
+
+#logo {
+    width: 120px;
+    height: 50px;
+    margin-left: -80px;
+}
+
+.navigation a {
+    position: relative;
+    font-size: 1.1em;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: -20px;
+
+
+}
+
+.navigation .btnLogin-popup {
+    width: 130px;
+    height: 45px;
+    background: transparent;
+    border: 2px solid #ff0000;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #fff;
+    font-weight: 500;
+    margin-right: -95px;
+    transition: .5s;
+}
+
+
+.wrapper {
+    width: 350px;
+    height: 505px;
+
+}
+
+
+
+
+
+.grecaptcha-badge {
+    transform: translate(0, 10px);
+
+
+}
+@media only screen and (min-width: 375px) and (max-width: 540px) {
     .container-card {
         flex-wrap: wrap;
     }
@@ -673,94 +763,26 @@ header {
         margin: 15px;
     }
 
-
-    #logo {
-        width: 120px;
-        height: 50px;
-        margin-left: -80px;
-    }
-
-    .navigation a {
-        position: relative;
-        font-size: 1.1em;
-        color: #fff;
-        text-decoration: none;
-        font-weight: 500;
-        margin-left: -20px;
-
-
-    }
-
-    .navigation .btnLogin-popup {
-        width: 130px;
-        height: 45px;
-        background: transparent;
-        border: 2px solid #ff0000;
-        outline: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1.1em;
-        color: #fff;
-        font-weight: 500;
-        margin-right: -95px;
-        transition: .5s;
-    }
-
-
-    .wrapper {
+    #img-grafica {
+        height: 350px;
         width: 350px;
-        height: 505px;
-        
     }
-
-
-    .container-body {
-        flex-direction: column;
+    
+    p{
+        text-align: center;
     }
-
-    .column1,
-    .column2 {
-        margin-bottom: 10px;
-        display: grid;
-        place-items: center;
-
-    }
-
-
-    #footer {
-        flex-direction: column;
-        align-items: center;
-        padding: 10px 0;
-        display: grid;
-        place-items: center;
-
-    }
-
-    .container-footer-all {
-        padding: 20px;
-        display: grid;
-        place-items: center;
-    }
-
-    .redes{
-        margin-right: 30px;
-    }
-    .row2 {
-        margin-left: 0;
-
-    }
-
-    #Contactenos {
-        margin-left: 10px;
-    }
-
-    .grecaptcha-badge {
-        transform: translate(0,10px);
-        
-        
-     }
+   .box {
+    display: grid;
+    place-items: center;
+   }
+   .select-menu{
+    margin-left: -60px;
+   }
+   #iconoxd{
+    margin-right: -60px;
+   }
+  
 }
-
 
 
 @media only screen and (min-width:414px) and (max-width:540px) {
@@ -800,7 +822,9 @@ header {
         margin-left: 0;
 
     }
-    
+
+
+
 
     #Contactenos {
         margin-left: 10px;
@@ -1020,39 +1044,11 @@ header {
         transition: .5s;
     }
 
-    .container-body {
-        flex-direction: row;
-        /* Change to row for side-by-side layout */
-        justify-content: space-between;
-        /* Add space between columns */
-    }
+   
 
-    .column1,
-    .column2,
-    .column3 {
-        flex-basis: calc(33.33% - 20px);
-        /* Divide space equally with some margin */
-        margin: 0 10px;
-        /* Add margin between columns */
-    }
 
-    .row2 {
-        margin-left: 0;
-        /* Adjust margin */
-    }
 
-    /* Adjust footer columns for side-by-side layout */
-    .column1,
-    .column2 {
-        max-width: 320px;
-    }
 
-    .column3 {
-        max-width: 400px;
-        margin: 0;
-        /* Remove the margin to center-align the column */
-        text-align: center;
-    }
 
     /* Adjust the social media icons alignment */
     .redes {
@@ -1062,7 +1058,8 @@ header {
         margin-top: 10px;
         margin-right: 20px;
     }
-    #Social{
+
+    #Social {
         margin-left: 10px;
     }
 
@@ -1121,9 +1118,9 @@ header {
     }
 
     .grecaptcha-badge {
-       transform: translate(0,20px);
-       
-       
+        transform: translate(0, 20px);
+
+
     }
 }
 
@@ -1151,36 +1148,10 @@ header {
 
     }
 
-    .container-body {
-        flex-direction: column;
-    }
 
-    .column1,
-    .column2 {
 
-        flex-basis: 100%;
-        margin-bottom: 10px;
-        display: grid;
-        place-items: center;
 
-    }
 
-    .column3 {
-        margin-left: 30px;
-    }
-
-    .redes {
-        margin-left: 10px;
-    }
-
-    .container-footer-all {
-        display: grid;
-        place-items: center;
-    }
-
-    .copyright {
-        margin-right: 10%;
-    }
 
     #logo {
         width: 120px;
@@ -1221,26 +1192,7 @@ header {
     }
 
 
-    #footer {
-        flex-direction: column;
-        align-items: center;
-        padding: 10px 0;
-        display: grid;
-        place-items: center;
 
-    }
-
-    .container-footer-all {
-        padding: 20px;
-        display: grid;
-        place-items: center;
-    }
-
-    .row2 {
-        display: grid;
-        place-items: center;
-        margin-left: 20px;
-    }
 
 
 
@@ -1259,52 +1211,7 @@ header {
         width: 60%;
     }
 
-    .container-body {
-        flex-direction: column;
-    }
-
-    .column1,
-    .column2 {
-
-        flex-basis: 100%;
-        margin-bottom: 10px;
-        display: grid;
-        place-items: center;
-
-
-    }
-
-    .column3 {
-        margin-left: 0;
-    }
-
-    #footer {
-        flex-direction: column;
-        align-items: center;
-        padding: 10px 0;
-
-        display: grid;
-        place-items: center;
-
-    }
-
-    .container-footer-all {
-        padding: 20px;
-        display: grid;
-        place-items: center;
-    }
-
-    .row2 {
-        display: grid;
-        place-items: center;
-        margin-left: 0;
-    }
-
-
-
-    .redes {
-        margin-right: 40px;
-    }
+   
 
     #logo {
         width: 120px;
@@ -1338,9 +1245,6 @@ header {
         transition: .5s;
     }
 
-    #Contactenos{
-        margin-left: 20px;
-    }
 
 }
 
@@ -1357,48 +1261,5 @@ header {
         width: 60%;
     }
 
-    #footer {
-        color: white;
-        position: relative;
-    }
 
-    .footer {
-        max-width: 1200px;
-        margin: auto;
-        display: flex;
-        padding: 20px;
-        justify-content: space-between;
-
-    }
-
-    .column3 {
-        margin-left: 10%;
-    }
-
-    #footer {
-        flex-direction: column;
-        align-items: center;
-        padding: 10px 0;
-
-        display: grid;
-        place-items: center;
-
-    }
-
-    .container-footer-all {
-        padding: 20px;
-        display: grid;
-        place-items: center;
-    }
-
-    .row2 {
-
-        margin-left: 20px;
-    }
-
-    .redes {
-
-        margin-left: 25px;
-    }
 }
-

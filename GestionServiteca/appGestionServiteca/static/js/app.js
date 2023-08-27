@@ -1,12 +1,12 @@
 $(function () {
-    $("#fileFoto").on("change", mostrarImagen);
+  $("#fileFoto").on("change", mostrarImagen);
 })
 
 function mostrarImagen(evento) {
-    const archivos = evento.target.files;
-    const archivo = archivos[0];
-    const url = URL.createObjectURL(archivo);
-    $("#imagenMostrar").attr("src", url)
+  const archivos = evento.target.files;
+  const archivo = archivos[0];
+  const url = URL.createObjectURL(archivo);
+  $("#imagenMostrar").attr("src", url)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -25,5 +25,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  
-  
+
