@@ -316,11 +316,13 @@ def consultarFactura(request, id):
             "persona": datos_persona,
         }
 
+        total_costo = sum(costos_servicios_prestados)
+
         datos_factura = {
-            "facTotal": factura.facTotal,
+            "facTotal": total_costo,
             "facEstado": factura.facEstado,
             "facCodigo": factura.facCodigo,
-            "facFecha": factura.facFecha.strftime("%Y-%m-%d %H :%M :%S"),
+            "facFecha": factura.facFecha.strftime("%Y-%m-%d %H:%M:%S"),
             "nombresServiciosPrestados": nombres_servicios_prestados,
             "costosServiciosPrestados": costos_servicios_prestados,
         }
