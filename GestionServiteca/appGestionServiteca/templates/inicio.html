@@ -3,25 +3,25 @@
 {% include "menu.html" %}
 {%endblock %}
 {% block contenido %}
-
+{% load static %}
 <div class="title-cards">
-  <h2>Servicios que Ofrecemos</h2>
+  <h2>Algunos de nuestros servicios</h2>
 </div>
 <div class="container-card">
 
   <div class="card">
     <figure>
-      <img src="../media/Car1.jpg" alt="">
+      <img src="{% static '../static/img/Car1.jpg'%}" alt="">
     </figure>
     <div class="contenido-card">
       <h3>Sincronización</h3>
-      <p>En la danza perfecta del tiempo y la armonía, la sincronización cuida la vida de tu motor.</p>
+      <p >En la danza perfecta del tiempo y la armonía, la sincronización cuida la vida de tu motor.</p>
       <button id="btn-card">Serviteca Opita</button>
     </div>
   </div>
   <div class="card">
     <figure>
-      <img src="../media/Car2.jpg" alt="">
+      <img src="{% static '../static/img/Car2.jpg'%}" alt="">
     </figure>
     <div class="contenido-card">
       <h3>Cambio De Aceite</h3>
@@ -31,7 +31,7 @@
   </div>
   <div class="card">
     <figure>
-      <img src="../media/Car3.jpg" alt="">
+      <img src="{% static '../static/img/Car3.jpg'%}" alt="">
     </figure>
     <div class="contenido-card">
       <h3>Alineación Y Balanceo</h3>

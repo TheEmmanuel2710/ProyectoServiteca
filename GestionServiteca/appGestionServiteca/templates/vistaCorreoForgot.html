@@ -3,21 +3,21 @@
 {% include "menu.html" %}
 {% endblock %}
 {% block contenido %}
-<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
-    <h3 class="text-center fw-bold" style="color: black;">Recupera tu Contraseña</h3>
-    <p class="text-center fw-bold" style="color: black;">Ingresa tu correo electrónico para buscar tu usuario.</p>
+<div class="d-flex flex-column align-items-center justify-content-center" style="padding: 200px;">
+    <h1 class="text-center fw-bold" style="color: black;">Recupera tu Contraseña</h1>
+    <p class="text-center fw-bold" style="color: black; font-size: 17px;">Ingresa tu correo electrónico para buscar tu usuario.</p>
     <form action="/registrarPeticionForgot/" method="post" class="needs-validation" novalidate>
         {% csrf_token %}
-        <div class="mb-3 col-lg-12">
-            <div class="d-flex">
-                <label for="txtCorreo" class="fw-bold" style="color: black; width: 150px;">Correo Electrónico:</label>
-                <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
-                    placeholder="Correo Electrónico" required>
-            </div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="txtCorreo" name="txtCorreo" placeholder="name@example.com" required>
+            <label for="txtCorreo">Correo Electrónico:</label>
         </div>
-        <button type="submit" class="btn" style="background-color: black; color: white;">Enviar correo</button>
+        <div style="display: grid; justify-items: center;">
+            <button id="btnEnviar" type="submit" class="btn">Enviar correo</button>
+        </div>
     </form>
 </div>
+
 
 
 <script>

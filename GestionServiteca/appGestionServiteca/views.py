@@ -357,9 +357,14 @@ def ActualizarFac(request):
         except Exception as error:
             transaction.rollback()
             mensaje = f"Error al actualizar factura,{error}."
+    facturasNP = Factura.objects.filter(
+            facEstado="No Pagada")
+    facturasP=Factura.objects.filter(facEstado="Pagada")
     retorno = {
         "mensaje": mensaje,
-        "estado": estado
+        "estado": estado,
+        "facturasP": facturasP,
+        "facturasNP": facturasNP
     }
     return render(request, "asistente/vistaGestionarFacturas.html", retorno)
 
@@ -1288,7 +1293,8 @@ def registrarPeticionForgot(request):
                 token = default_token_generator.make_token(usuario)
                 # Enviar correo al usuario en un hilo separado
                 asunto = 'Solicitud de Restablecimiento de Contraseña'
-                mensaje = f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña. Por favor, haga clic en el siguiente enlace para continuar con el proceso: http://127.0.0.1:8000/cambiarContrasena/{uidb64}/{token}/'
+                mensaje = f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña. \
+                Por favor, haga clic en el siguiente enlace para continuar con el proceso: http://127.0.0.1:8000/cambiarContrasena/{uidb64}/{token}/'
                 thread = threading.Thread(
                     target=enviarCorreo, args=(asunto, mensaje, usuario.email))
                 thread.start()

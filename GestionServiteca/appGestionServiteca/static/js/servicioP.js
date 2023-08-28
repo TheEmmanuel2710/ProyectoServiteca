@@ -1,5 +1,4 @@
 let serviciosPrestados = []
-let detalleServicioPrestado = []
 let servicios = []
 let clientes = []
 let vehiculos = []
@@ -92,6 +91,10 @@ function agregarDetalleServicioPrestados() {
             "idServicio": $("#cbServicio").val(),
             "servicio": $('#cbServicio option:selected').html(),
             "costo": $("#txtCosto").val(),
+            "cliente": $("#cbCliente").val(),
+            "vehiculo": $("#cbVehiculo").val(),
+            "fechaHora": $("#txtFechaHoraSP").val(),
+            "observaciones": $("#txtObservaciones").val(),
         }
         serviciosPrestados.push(detalle);
         frmdetalleSerciosP.reset();
@@ -108,10 +111,13 @@ function mostrarDatosTabla() {
     datos = "";
 
     serviciosPrestados.forEach(detail => {
+        posC = clientes.findIndex(cliente => cliente.idCliente == detail.cliente);
+        posV = vehiculos.findIndex(vehiculo => vehiculo.idVehiculo == detail.vehiculo);
+        posE = empleados.findIndex(empleado => empleado.idEmpleado == detail.empleado);
         datos += "<tr>";
-        datos += "<td class='text-center'>" + detail.cliente + "</td>";
-        datos += "<td class='text-center'>" + detail.vehiculo + "</td>";
-        datos += "<td class='text-center'>" + detail.empleado + "</td>";
+        datos += "<td class='text-center'>" + clientes[posC].nombre + "</td>";
+        datos += "<td class='text-center'>" + vehiculos[posV].placa + "</td>";
+        datos += "<td class='text-center'>" + empleados[posE].nombre + "</td>";
         datos += "<td class='text-center'>" + detail.estado + "</td>";
         datos += "<td class='text-center'>" + detail.servicio + "</td>";
         datos += "<td class='text-center'>" + detail.costo + "</td>";
@@ -126,7 +132,7 @@ function mostrarDatosTabla() {
 
 /**
  *  Agrega datos de un cliente al arreglo clientes.
- * @param {*} id 
+ * @param {*} idCliente 
  * @param {*} nombre 
  */
 function cargarClientes(idCliente, nombre) {

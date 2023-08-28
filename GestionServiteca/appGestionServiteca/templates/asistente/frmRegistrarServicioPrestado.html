@@ -43,7 +43,7 @@
                         <option value="">Seleccione</option>
                         {% for cliente in clientes %}
                         <option
-                            value="{{cliente.cliPersona.perIdentificacion}}-{{cliente.cliPersona.perNombres}} {{cliente.cliPersona.perApellidos}}">
+                            value="{{cliente.id}}">
                             {{cliente.cliPersona.perIdentificacion}}-{{cliente.cliPersona.perNombres}}
                             {{cliente.cliPersona.perApellidos}}</option>
                         {% endfor %}
@@ -55,7 +55,7 @@
                     <select name="cbVehiculo" id="cbVehiculo" class="form-select" required>
                         <option value="">Seleccione</option>
                         {% for vehiculo in vehiculos %}
-                        <option value="{{vehiculo.vehPlaca}}">{{vehiculo.vehPlaca}}</option>
+                        <option value="{{vehiculo.id}}">{{vehiculo.vehPlaca}}</option>
                         {% endfor %}
                     </select>
                     <div class="invalid-feedback">Por favor seleccione el vehiculo</div>
@@ -130,7 +130,7 @@
                                     <option value="">Seleccione</option>
                                     {% for empleado in empleados %}
                                     <option
-                                        value="{{empleado.empPersona.perNombres}} {{empleado.empPersona.perApellidos}}">
+                                        value="{{empleado.id}}">
                                         {{empleado.empPersona.perNombres}} {{empleado.empPersona.perApellidos}}</option>
                                     {% endfor %}
                                 </select>

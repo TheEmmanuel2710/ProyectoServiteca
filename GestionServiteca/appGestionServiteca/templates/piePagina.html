@@ -1,33 +1,47 @@
+{% load static %}
 <div class="grupo-1">
     <div class="box">
         <figure>
             <a href="">
-                <img src="../media/Logo.png" id="logopie" alt="Logo">
+                <img src="{% static '../static/img/Logo.png'%}" id="logopie" alt="Logo">
             </a>
         </figure>
     </div>
     <div class="box">
         <h2>SOBRE NOSOTROS</h2>
-        <p>Brindamos el mejor sercvicio de mantenimiento y reparacion para tu vehiculo</p>
-
+        <p>Brindamos el mejor servicio de mantenimiento y reparación para tu vehículo.</p>
     </div>
     <div class="box">
-        <h2>SIGUENOS</h2>
+        <h2>SÍGUENOS</h2>
         <div class="red-social">
             <ion-icon name="logo-facebook" id="facebook"></ion-icon>
             <ion-icon name="logo-instagram" id="instagram"></ion-icon>
             <ion-icon name="logo-twitter" id="twitter"></ion-icon>
         </div>
     </div>
+    <div class="box">
+        <h2>CONTÁCTENOS</h2>
+        <div>
+            <div class="av">
+                <ion-icon name="home"></ion-icon><label style="margin-left: 20px;">Av. Circunvalar #26 - 97</label>
+            </div>
+            <div class="av">
+                <ion-icon name="call"></ion-icon><label style="margin-left: 20px;">+57 3192837405</label>
+            </div>
+            <div class="av">
+                <ion-icon name="mail"></ion-icon><label style="margin-left: 20px;">servitecaopita@gmail.com</label>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="grupo-2">
     <div class="copyright">
-        © 2023 Todos lo derechos reservados|
+        © 2023 Todos los derechos reservados |
         <a href="">Serviteca Opita</a>
     </div>
     <div class="information">
-        <a href="">Información Compañia</a> |
-        <a href="">Privación y Politica</a> |
-        <a href="">Terminos y condiciones</a>
+        <a href="">Información Compañía</a> |
+        <a href="">Privacidad y Política</a> |
+        <a href="">Términos y condiciones</a>
     </div>
 </div>

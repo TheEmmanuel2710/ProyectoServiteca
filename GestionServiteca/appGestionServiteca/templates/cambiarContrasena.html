@@ -3,16 +3,19 @@
 {% include "menu.html" %}
 {% endblock %}
 {% block contenido %}
-<div class="d-flex justify-content-center align-items-center flex-column">
+<div class="d-flex justify-content-center align-items-center flex-column" style="padding: 200px;">
     <h1 class="text-center">Restablecimiento de Contraseña</h1>
     {% if validlink %}
     <p class="text-center">Ingresa tu nueva contraseña</p>
     <form class="needs-validation" method="post" class="needs-validation" novalidate>
         {% csrf_token %}
-        <label for="nuevaContraseña">Nueva Contraseña:</label>
-        <input type="password" id="nuevaContraseña" name="nuevaContraseña" class="form-control" required>
-        <br>
-        <button type="submit" class="btn btn-dark">Guardar Contraseña</button>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="nuevaContraseña" name="nuevaContraseña" required >
+            <label for="nuevaContraseña">Nueva Contraseña:</label>
+        </div>
+        <br><div style="display: grid; justify-items: center;">
+        <button id="btnEnviar" type="submit" class="btn">Cambio Contraseña</button>
+        </div>
     </form>
     {% else %}
     <p class="text-center">El enlace para restablecimiento de contraseña no es válido. Por favor, verifique el enlace o
