@@ -684,10 +684,10 @@ def vistaRegistrarServiciosPrestados(request):
 
 
 def registrarServicioPrestado(request):
+    estado = False
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                estado = False
                 idCliente = int(request.POST['cliente'])
                 idVehiculo = int(request.POST['vehiculo'])
                 fechaHora = request.POST.get('fechaHora', None)
@@ -704,12 +704,12 @@ def registrarServicioPrestado(request):
                 )
                 servicioPrestado.save()
 
-                detalleServicioPrestado = json.loads(request.POST['detalle'])
+                detalleServicioPrestado_lista = json.loads(request.POST['detalle'])
 
-                for detalle in detalleServicioPrestado:
+                for detalle in detalleServicioPrestado_lista:
                     idServicio = int(detalle['idServicio'])
                     servicio = Servicio.objects.get(id=idServicio)
-                    empleado = detalle['empleado']
+                    empleado = Empleado.objects.get(id=int(detalle['empleado']))
                     estado = detalle['estado']
                     detalleServicioPrestado = DetalleServicioPrestado(
                         detServicio=servicio,
@@ -726,6 +726,7 @@ def registrarServicioPrestado(request):
 
         retorno = {"estado": estado, "mensaje": mensaje}
         return JsonResponse(retorno)
+
 
 
 def vistaGestionarFacturas(request):
@@ -1326,12 +1327,12 @@ def cambiarContraseña(request, uidb64, token):
                 id_user=user).update(estado='Inactiva')
             return redirect('/mostrarMensaje/')
 
-        # Validacion para expirar el enlace de recuperacion de contraseña segun un tiempo pre-establecido
         peticiones = PeticionForgot.objects.filter(id_user=user)
         if peticiones.exists():
             peticion = peticiones.first()
             tiempoAc = timezone.now()
             tiempoDif = tiempoAc - peticion.fechaHoraCreacion
+        # Validacion para expirar el enlace de recuperacion de contraseña segun un tiempo pre-establecido
             if tiempoDif.total_seconds() > 3600:  # 1 hora en segundos
                 peticiones.update(estado='Inactiva')
                 return render(request, 'cambiarContrasena.html', {'validlink': False})
