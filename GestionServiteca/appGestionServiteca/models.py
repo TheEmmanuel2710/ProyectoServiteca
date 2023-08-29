@@ -136,6 +136,8 @@ class ServicioPrestado(models.Model):
         Cliente, on_delete=models.PROTECT, db_comment="Hace relación al cliente FK")
     serpVehi = models.ForeignKey(
         Vehiculo, on_delete=models.PROTECT, db_comment="Hace relación al vehiculo FK")
+    serpEstado = models.CharField(
+        max_length=10, choices=estadoServicioPrestado,null=True, db_comment="Estado del servicio prestado")
     serpObservaciones = models.TextField(
         null=True, db_comment="Novedad acerca del servicio prestado realizado")
     serpFechaServicio = models.DateTimeField(

@@ -53,11 +53,9 @@ function getCookie(name) {
  */
 function registroServivicioPrestado() {
     var datos = {
-        "cliente": $("#cbCliente").val(),
-        "vehiculo": $("#cbVehiculo").val(),
-        "fechaHora": $("#txtFechaHoraSP").val(),
+        "idCliente": $("#cbCliente").val(),
+        "idVehiculo": $("#cbVehiculo").val(),
         "observaciones": $("#txtObservaciones").val(),
-
         "detalle": JSON.stringify(serviciosPrestados),
     };
     $.ajax({
@@ -73,7 +71,17 @@ function registroServivicioPrestado() {
                 serviciosPrestados.length = 0;
                 mostrarDatosTabla();
             }
-            Swal.fire("Registro de Servicio Prestado", resultado.mensaje, "success");
+            Swal.fire({
+                title: 'Registro de Servicio Prestado',
+                text: resultado.mensaje,
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.href = "/vistaGestionarServiciosPrestados/"
+                }
+            });
         }
     })
 }
@@ -86,14 +94,12 @@ function agregarDetalleServicioPrestados() {
     const d = serviciosPrestados.find(servicio => servicio.idServicio == idServicio);
     if (d == null) {
         const detalle = {
-            "empleado": $("#cbEmpleado").val(),
-            "estado": $("#cbEstado").val(),
+            "idEmpleado": $("#cbEmpleado").val(),
             "idServicio": $("#cbServicio").val(),
             "servicio": $('#cbServicio option:selected').html(),
             "costo": $("#txtCosto").val(),
-            "cliente": $("#cbCliente").val(),
-            "vehiculo": $("#cbVehiculo").val(),
-            "fechaHora": $("#txtFechaHoraSP").val(),
+            "idCliente": $("#cbCliente").val(),
+            "idVehiculo": $("#cbVehiculo").val(),
             "observaciones": $("#txtObservaciones").val(),
         }
         serviciosPrestados.push(detalle);
@@ -111,17 +117,15 @@ function mostrarDatosTabla() {
     datos = "";
 
     serviciosPrestados.forEach(detail => {
-        posC = clientes.findIndex(cliente => cliente.idCliente == detail.cliente);
-        posV = vehiculos.findIndex(vehiculo => vehiculo.idVehiculo == detail.vehiculo);
-        posE = empleados.findIndex(empleado => empleado.idEmpleado == detail.empleado);
+        posC = clientes.findIndex(cliente => cliente.idCliente == detail.idCliente);
+        posV = vehiculos.findIndex(vehiculo => vehiculo.idVehiculo == detail.idVehiculo);
+        posE = empleados.findIndex(empleado => empleado.idEmpleado == detail.idEmpleado);
         datos += "<tr>";
         datos += "<td class='text-center'>" + clientes[posC].nombre + "</td>";
         datos += "<td class='text-center'>" + vehiculos[posV].placa + "</td>";
         datos += "<td class='text-center'>" + empleados[posE].nombre + "</td>";
-        datos += "<td class='text-center'>" + detail.estado + "</td>";
         datos += "<td class='text-center'>" + detail.servicio + "</td>";
         datos += "<td class='text-center'>" + detail.costo + "</td>";
-        datos += "<td class='text-center'>" + detail.fechaHora + "</td>";
         datos += "<td class='text-center'>" + detail.observaciones + "</td>";
         datos += "</tr>";
     });

@@ -358,8 +358,8 @@ def ActualizarFac(request):
             transaction.rollback()
             mensaje = f"Error al actualizar factura,{error}."
     facturasNP = Factura.objects.filter(
-            facEstado="No Pagada")
-    facturasP=Factura.objects.filter(facEstado="Pagada")
+        facEstado="No Pagada")
+    facturasP = Factura.objects.filter(facEstado="Pagada")
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
@@ -673,7 +673,6 @@ def vistaRegistrarServiciosPrestados(request):
             "serviciosPrestados": serviciosPrestados,
             "vehiculos": vehiculos,
             "clientes": clientes,
-            "estadoSP": estadoServicioPrestado
         }
         return render(request, "asistente/frmRegistrarServicioPrestado.html", retorno)
 
@@ -693,9 +692,9 @@ def registrarServicioPrestado(request):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                idCliente = int(request.POST['cliente'])
-                idVehiculo = int(request.POST['vehiculo'])
-                fechaHora = request.POST.get('fechaHora', None)
+                idCliente = int(request.POST['idCliente'])
+                idVehiculo = int(request.POST['idVehiculo'])
+                fechaHora = datetime.now()
                 observaciones = request.POST['observaciones']
 
                 cliente = Cliente.objects.get(pk=idCliente)
@@ -704,18 +703,20 @@ def registrarServicioPrestado(request):
                 servicioPrestado = ServicioPrestado(
                     serpCli=cliente,
                     serpVehi=vehiculo,
+                    serpEstado="Solicitado",
                     serpObservaciones=observaciones,
                     serpFechaServicio=fechaHora
                 )
                 servicioPrestado.save()
 
-                detalleServicioPrestado_lista = json.loads(request.POST['detalle'])
+                detalleServicioPrestado_lista = json.loads(
+                    request.POST['detalle'])
 
                 for detalle in detalleServicioPrestado_lista:
                     idServicio = int(detalle['idServicio'])
                     servicio = Servicio.objects.get(id=idServicio)
-                    empleado = Empleado.objects.get(id=int(detalle['empleado']))
-                    estado = detalle['estado']
+                    empleado = Empleado.objects.get(
+                        id=int(detalle['idEmpleado']))
                     detalleServicioPrestado = DetalleServicioPrestado(
                         detServicio=servicio,
                         detServicioPrestado=servicioPrestado,
@@ -732,6 +733,86 @@ def registrarServicioPrestado(request):
         retorno = {"estado": estado, "mensaje": mensaje}
         return JsonResponse(retorno)
 
+
+def consultarServicioPrestado(request, id):
+    try:
+        servicioPrestado = ServicioPrestado.objects.get(id=id)
+        
+        datos_serviciosP = {
+            "id": servicioPrestado.id,
+            "serpObservaciones": servicioPrestado.serpObservaciones,
+            "serpFechaServicio": servicioPrestado.serpFechaServicio,
+            "serpEstado": servicioPrestado.serpEstado,
+        }
+        
+        datos_cliente = {
+            "id": servicioPrestado.serpCli.id,
+            "cliPersona": {
+                "perNombres": servicioPrestado.serpCli.cliPersona.perNombres,
+                "perApellidos": servicioPrestado.serpCli.cliPersona.perApellidos,
+            }
+        }
+        
+        datos_vehiculo = {
+            "id": servicioPrestado.serpVehi.id,
+            "vehPlaca": servicioPrestado.serpVehi.vehPlaca,
+        }
+        
+        return JsonResponse({
+            "servicioPrestado": datos_serviciosP,
+            "cliente": datos_cliente,
+            "vehiculo": datos_vehiculo
+        })
+    except ServicioPrestado.DoesNotExist:
+        return JsonResponse({"error": "Servicio Prestado no encontrado."}, status=404)
+    except Exception as error:
+        return JsonResponse({"error": str(error)}, status=500)
+
+def actualizarSericioPrestado(request):
+    estado = False
+    mensaje = ""
+    if request.method == "POST":
+        servicioP_id = request.POST.get("idServicioP")
+        nuevo_estado = request.POST.get("cbEstado")
+        try:
+            servicioPrestado = ServicioPrestado.objects.get(pk=servicioP_id)
+            servicioPrestado.serpEstado = nuevo_estado
+            servicioPrestado.save()
+            estado = True
+            mensaje = "Servicio Prestado actualizado correctamente."
+        except ServicioPrestado.DoesNotExist:
+            return JsonResponse({"error": "Servicio prestado no encontrado."}, status=404)
+        except Exception as error:
+            transaction.rollback()
+            mensaje = f"Error al actualizar servicio prestado,{error}."
+    serviciosPrestados = ServicioPrestado.objects.all()
+    retorno = {
+        "mensaje": mensaje,
+        "estado": estado,
+        "serviciosPrestados": serviciosPrestados
+    }
+    return render(request, "asistente/vistaGestionarServicioPrestados.html", retorno)
+
+
+def vistaGestionarServiciosPrestados(request):
+    user = request.user
+    if user.groups.filter(name='Asistente').exists():
+        serviciosPrestados = ServicioPrestado.objects.all()
+        vehiculos = Vehiculo.objects.all()
+        clientes = Cliente.objects.all()
+        retorno = {"serviciosPrestados": serviciosPrestados,
+                   "estadoServicioPrestado": estadoServicioPrestado, "vehiculos": vehiculos, "clientes": clientes}
+        return render(request, "asistente/vistaGestionarServicioPrestados.html", retorno)
+
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta URL."
+
+    if user.groups.filter(name='Administrador').exists():
+        return render(request, "administrador/inicio.html", {"mensaje": mensaje})
+
+    if user.groups.filter(name='Tecnico').exists():
+        return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
+
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def vistaGestionarFacturas(request):

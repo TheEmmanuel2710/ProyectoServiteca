@@ -1,0 +1,216 @@
+{% extends "index.html" %}
+{% block encabezado %}
+{% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+{% include "asistente/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<br>
+<br>
+<br>
+{% load static %}
+<script src="{% static '../static/js/inactividad.js' %}"></script>
+<h3 class="text-center fw-bold" style="color: black;">GESTIONAR SERVICIOS PRESTADOS</h3>
+
+<a href="/vistaRegistrarServiciosP/"><button class="btn" style="background-color: black; color:white;">Agregar</button></a>
+<div class="w-105 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
+    <br>
+    <br>
+    <table id="tblServicioPrestados" class="table table-bordered table-hover">
+        <thead>
+            <tr class="text-center text-white">
+                <th style="background-color:black ;">Observaciones</th>
+                <th style="background-color:black ;">Fecha y Hora</th>
+                <th style="background-color:black ;">Cliente</th>
+                <th style="background-color:black ;">Vehiculo</th>
+                <th style="background-color:black ;">Estado</th>
+                <th style="background-color:black ;">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for servicioP in serviciosPrestados %}
+            <tr>
+                <td>{{ servicioP.serpObservaciones }}</td>
+                <td>{{ servicioP.serpFechaServicio }}</td>
+                <td>{{ servicioP.serpCli.cliPersona.perNombres }} {{ servicioP.serpCli.cliPersona.perApellidos }}</td>
+                <td>{{ servicioP.serpVehi.vehPlaca }}</td>
+                <td>{{ servicioP.serpEstado }}</td>
+                <td class="text-center">
+                    <a onclick="abrirModalActualizarServicioPrestado('{{ servicioP.id }}')">
+                        <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- The Modal -->
+<div class="modal" id="ActualizarSP" style="margin-top: 5%;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header tituloModal">
+                <h4 class="modal-title">Actualizar Servicio Presatado</h4>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form action="/ActualizarSP/" method="post" enctype="multipart/form-data" class="needs-validation"
+                    novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="idServicioP" id="idServicioP" value="">
+                    <div class="form-group row">
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtObservaciones" class="fw-bold" style="color: black;">Observaciones:</label>
+                            <input type="text" name="txtObservaciones" class="form-control" id="txtObservaciones"
+                                placeholder="Observaciones del servicio prestado" readonly required>
+                            <div class="invalid-feedback">Por favor ingrese la observacion del servicio prestado</div>
+                        </div>
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtFecha" class="fw-bold" style="color: black;">Fecha y Hora:</label>
+                            <input type="text" name="txtFecha" class="form-control" id="txtFecha"
+                                placeholder="Fecha del servicio prestado" readonly required>
+                            <div class="invalid-feedback">Por favor ingrese la fecha del servicio prestado</div>
+                        </div>
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
+                            <input type="text" name="txtNombres" class="form-control" id="txtNombres"
+                                placeholder="Nombres del cliente" readonly required>
+                            <div class="invalid-feedback">Por favor ingrese los nombres del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-6">
+                            <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos:</label>
+                            <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
+                                placeholder="Apellidos del cliente"  readonly required>
+                            <div class="invalid-feedback">Por favor ingrese los nombres del cliente</div>
+                        </div>
+                        <div class="mb-3 col-lg-12">
+                            <label for="txtPlaca" class="fw-bold" style="color: black;">Placa:</label>
+                            <input type="text" name="txtPlaca" class="form-control" id="txtPlaca"
+                                placeholder="Apellidos del cliente" readonly required>
+                            <div class="invalid-feedback">Por favor ingrese los nombres del cliente</div>
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label for="cbEstado" class="fw-bold" style="color: black;">Estado del servicio
+                                prestado:</label>
+                            <select name="cbEstado" id="cbEstado" class="form-select" required>
+                                <option value="">Seleccione</option>
+                                {% for estado in estadoServicioPrestado %}
+                                <option value="{{estado.0}}">{{estado.1}}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Por favor ingrese el estado del servicio solicitado</div>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
+                        <a href="/vistaGestionarServiciosPrestados/"><button type="button"
+                                class="btn btn-danger mx-2">Cancelar</button></a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    (() => {
+        "use strict";
+
+        const forms = document.querySelectorAll(".needs-validation");
+
+        Array.from(forms).forEach((form) => {
+            form.addEventListener(
+                "submit",
+                (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add("was-validated");
+                },
+                false
+            );
+        });
+    })();
+</script>
+<script>
+    function abrirModalActualizarServicioPrestado(id) {
+        // Funcion AJAX para obtener los datos del cliente por ID
+        $.ajax({
+            url: "/consultarSP/" + id, //URL para obtener los datos del cliente por ID
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // Rellenar el formulario de la modal con los datos obtenidos
+                $("#txtObservaciones").val(data.servicioPrestado.serpObservaciones);
+                $("#txtFecha").val(data.servicioPrestado.serpFechaServicio);
+                $("#txtNombres").val(data.cliente.cliPersona.perNombres);
+                $("#txtApellidos").val(data.cliente.cliPersona.perApellidos);
+                $("#txtPlaca").val(data.vehiculo.vehPlaca);
+                $("#cbEstado").val(data.servicioPrestado.serpEstado);
+                $("#idServicioP").val(id);
+
+                var form = $('#ActualizarSP').find('.needs-validation')[0];
+                form.classList.remove('was-validated');
+
+                $('#ActualizarSP').modal('show');
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Hubo un error al cargar los datos del servicio prestado.");
+            }
+        });
+    }
+    $('#ActualizarSP').on('hide.bs.modal', function (event) {
+        var form = $(this).find('.needs-validation')[0];
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            form.classList.add('was-validated');
+        }
+    });
+</script>
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Actualización de datos',
+        text: '{{mensaje}}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaGestionarServiciosPrestados/"
+        }
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Actualización de datos',
+        text: '{{mensaje}}',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaGestionarServiciosPrestados/"
+        }
+    });
+</script>
+{% endif %}
+{% endif %}
+<script>
+    cargarDataTable($("#tblServicioPrestados"), "LISTADO SERVICIOS PRESTADOS", 6);
+</script>
+{%endblock %}
+{% block piePagina %}
+{% include "piePagina.html" %}
+{%endblock %}
