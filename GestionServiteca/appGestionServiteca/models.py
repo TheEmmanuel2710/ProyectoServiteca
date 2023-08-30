@@ -83,7 +83,7 @@ class PeticionForgot(models.Model):
 
 class Cliente(models.Model):
     cliDireccion = models.CharField(
-        max_length=70, null=True, db_comment="Direccion del cliente")
+        max_length=72, null=True, db_comment="Direccion del cliente")
     cliPersona = models.ForeignKey(
         Persona, on_delete=models.PROTECT, db_comment="Hace relación a la persona FK")
 
@@ -167,7 +167,7 @@ class Factura(models.Model):
     facServicioPrestado = models.ForeignKey(
         ServicioPrestado, on_delete=models.PROTECT, db_comment="Hace relación al servicio prestado FK")
     facCodigo = models.CharField(
-        max_length=3, choices=tipoCodigo, db_comment="Codigo factura")
+        max_length=10, choices=tipoCodigo, db_comment="Codigo factura")
     facFecha = models.DateTimeField(
         auto_now_add=True, db_comment="Fecha y Hora de la factura")
 

@@ -650,7 +650,8 @@ def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
     })
     try:
         correo = EmailMultiAlternatives(
-            asunto, mensaje, remitente, [destinatario])
+            asunto, '', remitente, [destinatario]
+        )
         correo.attach_alternative(contenido, 'text/html')
         correo.send(fail_silently=True)
     except SMTPException as error:
@@ -687,8 +688,25 @@ def vistaRegistrarServiciosPrestados(request):
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
+def obtenerSiguienteNumeroFactura():
+    ultimaFactura = Factura.objects.last()
+    if ultimaFactura:
+        ultimoNumero = int(ultimaFactura.facCodigo[-1])
+        nuevoNumero = ultimoNumero + 1
+    else:
+        nuevoNumero = 1
+    return nuevoNumero
+
+
+def generarCodigoFactura():
+    siguienteNumero = obtenerSiguienteNumeroFactura()
+    return f'SVP-{siguienteNumero:06d}'
+
+
 def registrarServicioPrestado(request):
     estado = False
+    mensaje = ""
+
     if request.method == 'POST':
         try:
             with transaction.atomic():
@@ -712,6 +730,10 @@ def registrarServicioPrestado(request):
                 detalleServicioPrestado_lista = json.loads(
                     request.POST['detalle'])
 
+                total_costo = 0
+
+                empleados_notificados = {}
+
                 for detalle in detalleServicioPrestado_lista:
                     idServicio = int(detalle['idServicio'])
                     servicio = Servicio.objects.get(id=idServicio)
@@ -723,28 +745,69 @@ def registrarServicioPrestado(request):
                         serpEmp=empleado
                     )
                     detalleServicioPrestado.save()
+                    total_costo += servicio.serCosto
+
+                    if empleado not in empleados_notificados:
+                        empleados_notificados[empleado] = []
+                    empleados_notificados[empleado].append(servicio)
+
+                factura = Factura(
+                    facTotal=total_costo,
+                    facEstado='No Pagada',
+                    facServicioPrestado=servicioPrestado,
+                    facCodigo=generarCodigoFactura(),
+                    facFecha=fechaHora
+                )
+                factura.save()
+
+                # Enviar correos a los empleados implicados en el detalle servicio
+                for empleado, servicios_asignados in empleados_notificados.items():
+                    vehiculo_placa = servicioPrestado.serpVehi.vehPlaca
+                    cliente_nombre = servicioPrestado.serpCli.cliPersona.perNombres + \
+                        " " + servicioPrestado.serpCli.cliPersona.perApellidos
+                    asunto_empleado = 'Nuevo Servicio Asignado'
+                    servicios_asignados_str = ", ".join(
+                        [f"{servicio.serNombre}" for servicio in servicios_asignados])
+                    if len(servicios_asignados) == 1:
+                        servicios_asignados_str += "."
+                    else:
+                        servicios_asignados_str += ","
+                    mensaje_empleado = f'Se le ha asignado el siguiente servicio: {servicios_asignados_str} en el vehículo: {vehiculo_placa}, para el cliente: {cliente_nombre}.'
+                    thread_empleado = threading.Thread(
+                        target=enviarCorreo, args=(asunto_empleado, mensaje_empleado, empleado.empPersona.perCorreo))
+                    thread_empleado.start()
+
+                # Enviar correo al cliente con los servicios y costos
+                servicios_cliente_str = ", ".join(
+                    [f"{Servicio.objects.get(id=int(detalle['idServicio'])).serNombre}: ${Servicio.objects.get(id=int(detalle['idServicio'])).serCosto}" for detalle in detalleServicioPrestado_lista])
+                asunto_cliente = 'Registro de Servicios Solicitados'
+                mensaje_cliente = f'Cordial saludo, {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, su servicio ha sido registrado con los siguientes detalles: {servicios_cliente_str}.'
+                thread_cliente = threading.Thread(
+                    target=enviarCorreo, args=(asunto_cliente, mensaje_cliente, cliente.cliPersona.perCorreo))
+                thread_cliente.start()
 
                 estado = True
-                mensaje = "Se ha registrado el servicio prestado correctamente."
+                mensaje = "Se ha registrado el servicio prestado y generado la factura correctamente."
+
         except Exception as error:
             transaction.rollback()
             mensaje = str(error)
 
-        retorno = {"estado": estado, "mensaje": mensaje}
-        return JsonResponse(retorno)
+    retorno = {"estado": estado, "mensaje": mensaje}
+    return JsonResponse(retorno)
 
 
 def consultarServicioPrestado(request, id):
     try:
         servicioPrestado = ServicioPrestado.objects.get(id=id)
-        
+
         datos_serviciosP = {
             "id": servicioPrestado.id,
             "serpObservaciones": servicioPrestado.serpObservaciones,
             "serpFechaServicio": servicioPrestado.serpFechaServicio,
             "serpEstado": servicioPrestado.serpEstado,
         }
-        
+
         datos_cliente = {
             "id": servicioPrestado.serpCli.id,
             "cliPersona": {
@@ -752,12 +815,12 @@ def consultarServicioPrestado(request, id):
                 "perApellidos": servicioPrestado.serpCli.cliPersona.perApellidos,
             }
         }
-        
+
         datos_vehiculo = {
             "id": servicioPrestado.serpVehi.id,
             "vehPlaca": servicioPrestado.serpVehi.vehPlaca,
         }
-        
+
         return JsonResponse({
             "servicioPrestado": datos_serviciosP,
             "cliente": datos_cliente,
@@ -768,23 +831,39 @@ def consultarServicioPrestado(request, id):
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
 
+
 def actualizarSericioPrestado(request):
     estado = False
     mensaje = ""
+    
     if request.method == "POST":
         servicioP_id = request.POST.get("idServicioP")
         nuevo_estado = request.POST.get("cbEstado")
+        
         try:
             servicioPrestado = ServicioPrestado.objects.get(pk=servicioP_id)
             servicioPrestado.serpEstado = nuevo_estado
             servicioPrestado.save()
+            
             estado = True
             mensaje = "Servicio Prestado actualizado correctamente."
+            
+            if nuevo_estado == "Terminado":
+                # Enviar correo al cliente notificando el estado terminado
+                cliente = servicioPrestado.serpCli
+                asunto_cliente = 'Estado del Servicio Prestado'
+                mensaje_cliente = f'Cordial saludo, {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, el servicio prestado solicitado ha sido marcado como terminado,\
+                    ya puede pasar por nuestra serviteca por su vehiculo.'
+                thread_cliente = threading.Thread(
+                    target=enviarCorreo, args=(asunto_cliente, mensaje_cliente, cliente.cliPersona.perCorreo))
+                thread_cliente.start()
+            
         except ServicioPrestado.DoesNotExist:
             return JsonResponse({"error": "Servicio prestado no encontrado."}, status=404)
         except Exception as error:
             transaction.rollback()
-            mensaje = f"Error al actualizar servicio prestado,{error}."
+            mensaje = f"Error al actualizar servicio prestado: {error}."
+
     serviciosPrestados = ServicioPrestado.objects.all()
     retorno = {
         "mensaje": mensaje,
@@ -1372,7 +1451,7 @@ def registrarPeticionForgot(request):
                 uidb64 = urlsafe_base64_encode(force_bytes(usuario.pk))
                 # Generar el token
                 token = default_token_generator.make_token(usuario)
-                # Enviar correo al usuario en un hilo separado
+                # Enviar correo al usuario
                 asunto = 'Solicitud de Restablecimiento de Contraseña'
                 mensaje = f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña. \
                 Por favor, haga clic en el siguiente enlace para continuar con el proceso: http://127.0.0.1:8000/cambiarContrasena/{uidb64}/{token}/'
