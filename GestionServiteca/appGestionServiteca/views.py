@@ -835,19 +835,19 @@ def consultarServicioPrestado(request, id):
 def actualizarSericioPrestado(request):
     estado = False
     mensaje = ""
-    
+
     if request.method == "POST":
         servicioP_id = request.POST.get("idServicioP")
         nuevo_estado = request.POST.get("cbEstado")
-        
+
         try:
             servicioPrestado = ServicioPrestado.objects.get(pk=servicioP_id)
             servicioPrestado.serpEstado = nuevo_estado
             servicioPrestado.save()
-            
+
             estado = True
             mensaje = "Servicio Prestado actualizado correctamente."
-            
+
             if nuevo_estado == "Terminado":
                 # Enviar correo al cliente notificando el estado terminado
                 cliente = servicioPrestado.serpCli
@@ -857,7 +857,7 @@ def actualizarSericioPrestado(request):
                 thread_cliente = threading.Thread(
                     target=enviarCorreo, args=(asunto_cliente, mensaje_cliente, cliente.cliPersona.perCorreo))
                 thread_cliente.start()
-            
+
         except ServicioPrestado.DoesNotExist:
             return JsonResponse({"error": "Servicio prestado no encontrado."}, status=404)
         except Exception as error:
