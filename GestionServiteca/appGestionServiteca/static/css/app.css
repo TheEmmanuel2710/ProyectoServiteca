@@ -167,7 +167,7 @@ header {
 
 
 
-@media screen and (max-width:800px){
+@media screen and (max-width:980px){
     .pie-pagina .grupo-1{
         width: 90%;
         grid-template-columns: repeat(1, 1fr);
@@ -763,7 +763,7 @@ header {
 
 
 }
-@media only screen and (min-width: 375px) and (max-width: 540px) {
+@media only screen and (min-width: 280px) and (max-width: 413px) {
     .container-card {
         flex-wrap: wrap;
     }
@@ -790,7 +790,17 @@ header {
    #iconoxd{
     margin-right: -60px;
    }
-  
+   .navbar-collapse {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+
+
+
 }
 
 
@@ -826,18 +836,20 @@ header {
         margin-right: -90px;
         transition: .5s;
     }
-
-    .row2 {
-        margin-left: 0;
-
+    p{
+        text-align: center;
     }
+   .box {
+    display: grid;
+    place-items: center;
+   }
+   .select-menu{
+    margin-left: -60px;
+   }
+   #iconoxd{
+    margin-right: -60px;
+   }
 
-
-
-
-    #Contactenos {
-        margin-left: 10px;
-    }
 
 }
 
@@ -999,17 +1011,7 @@ header {
         transition: .5s;
     }
 
-    .column2 {
-        margin-right: 0;
-    }
-
-    #Contactenos {
-        margin-right: 0;
-    }
-
-    .row2 {
-        margin-right: 0;
-    }
+    
 }
 
 
@@ -1200,7 +1202,19 @@ header {
         height: 500px;
     }
 
-
+    p{
+        text-align: center;
+    }
+   .box {
+    display: grid;
+    place-items: center;
+   }
+   .select-menu{
+    margin-left: -60px;
+   }
+   #iconoxd{
+    margin-right: -60px;
+   }
 
 
 
@@ -1253,7 +1267,19 @@ header {
         margin-right: -95px;
         transition: .5s;
     }
-
+    p{
+        text-align: center;
+    }
+   .box {
+    display: grid;
+    place-items: center;
+   }
+   .select-menu{
+    margin-left: -60px;
+   }
+   #iconoxd{
+    margin-right: -60px;
+   }
 
 }
 

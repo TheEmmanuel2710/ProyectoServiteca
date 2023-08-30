@@ -1378,7 +1378,7 @@ def generarFacturapdf(request):
         pdf.set_text_color(255, 0, 0)
         pdf.cell(0, 10, 'Factura', 0, 1, 'L')
 
-        pdf.image(settings.MEDIA_ROOT + '/fotos/Toji.jpg', x=160, y=10, w=40)
+        pdf.image(settings.MEDIA_ROOT + '/fotos/LogoNegro.png', x=160, y=10, w=40)
 
         pdf.set_text_color(0, 0, 0)
         pdf.set_font('Arial', '', 12)
