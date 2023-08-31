@@ -152,7 +152,7 @@ class DetalleServicioPrestado(models.Model):
         Servicio, on_delete=models.PROTECT, db_comment="Hace relación al servicio FK")
     detServicioPrestado = models.ForeignKey(
         ServicioPrestado, on_delete=models.PROTECT, db_comment="Hace relación al servicio FK")
-    serpEmp = models.ForeignKey(
+    detEmpleado = models.ForeignKey(
         Empleado, on_delete=models.PROTECT, db_comment="Hace relación al empleado FK")
 
     def __str__(self):

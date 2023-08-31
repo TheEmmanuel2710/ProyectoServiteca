@@ -14,7 +14,8 @@
 <script src="{% static '../static/js/inactividad.js' %}"></script>
 <h3 class="text-center fw-bold" style="color: black;">GESTIONAR SERVICIOS PRESTADOS</h3>
 
-<a href="/vistaRegistrarServiciosP/"><button class="btn" style="background-color: black; color:white;">Agregar</button></a>
+<a href="/vistaRegistrarServiciosP/"><button class="btn"
+        style="background-color: black; color:white;">Agregar</button></a>
 <div class="w-105 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
     <br>
     <br>
@@ -41,13 +42,16 @@
                     <a onclick="abrirModalActualizarServicioPrestado('{{ servicioP.id }}')">
                         <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
                     </a>
+                    <a onclick="abrirModalDetalle('{{ servicioP.id }}')">
+                        <i class="bi bi-eye" title="ver detalle" style="font-size: 2rem;"></i>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-<!-- The Modal -->
+<!-- The Modal Actualizar Servicio Prestado -->
 <div class="modal" id="ActualizarSP" style="margin-top: 5%;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -84,7 +88,7 @@
                         <div class="mb-3 col-lg-6">
                             <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos:</label>
                             <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
-                                placeholder="Apellidos del cliente"  readonly required>
+                                placeholder="Apellidos del cliente" readonly required>
                             <div class="invalid-feedback">Por favor ingrese los nombres del cliente</div>
                         </div>
                         <div class="mb-3 col-lg-12">
@@ -117,6 +121,45 @@
         </div>
     </div>
 </div>
+
+<!-- The Modal -->
+<div class="modal" id="DetalleServicio" style="margin-top: 5%;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header tituloModal">
+                <h4 class="modal-title">Detalle Servicio</h4>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <!-- En tu HTML -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Servicio</th>
+                            <th>Costo</th>
+                            <th>Empleado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaDetalles">
+                        <!-- Aquí se llenarán los detalles dinámicamente -->
+                    </tbody>
+                </table>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <a href="/vistaGestionarServiciosPrestados/">
+                        <button type="button" class="btn btn-danger mx-2">Cerrar</button>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 <script>
     (() => {
         "use strict";
@@ -176,6 +219,48 @@
         }
     });
 </script>
+<script>
+    function abrirModalDetalle(id) {
+        $.ajax({
+            url: "/consultarSP/" + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var detalles = data.detalles;
+                var detallesHtml = "";
+
+                for (var i = 0; i < detalles.length; i++) {
+                    detallesHtml += "<tr>";
+                    detallesHtml += "<td>" + detalles[i].servicio.serNombre + "</td>";
+                    detallesHtml += "<td>$" + detalles[i].servicio.serCosto + "</td>";
+                    detallesHtml += "<td>" + detalles[i].empleado.perNombres + " " + detalles[i].empleado.perApellidos + "</td>";
+                    detallesHtml += "</tr>";
+                }
+
+                $("#tablaDetalles").html(detallesHtml);
+
+                // Mostrar el modal
+                $('#DetalleServicio').modal('show');
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Hubo un error al cargar los datos del detalle.");
+            }
+        });
+    }
+
+
+    $('#DetalleServicio').on('hide.bs.modal', function (event) {
+        var form = $(this).find('.needs-validation')[0];
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            form.classList.add('was-validated');
+        }
+    });    
+</script>
+
+
 {% if mensaje %}
 {% if estado %}
 <script>

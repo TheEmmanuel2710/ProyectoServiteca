@@ -742,7 +742,7 @@ def registrarServicioPrestado(request):
                     detalleServicioPrestado = DetalleServicioPrestado(
                         detServicio=servicio,
                         detServicioPrestado=servicioPrestado,
-                        serpEmp=empleado
+                        detEmpleado=empleado
                     )
                     detalleServicioPrestado.save()
                     total_costo += servicio.serCosto
@@ -815,6 +815,25 @@ def consultarServicioPrestado(request, id):
                 "perApellidos": servicioPrestado.serpCli.cliPersona.perApellidos,
             }
         }
+        detalles_servicio = DetalleServicioPrestado.objects.filter(
+            detServicioPrestado=servicioPrestado)
+
+        datos_detalles = []
+
+        for detalle in detalles_servicio:
+            servicio_detalle = detalle.detServicio  
+            empleado_detalle = detalle.detEmpleado  
+
+            datos_detalles.append({
+                "servicio": {
+                    "serNombre": servicio_detalle.serNombre,
+                    "serCosto": servicio_detalle.serCosto,
+                },
+                "empleado": {
+                    "perNombres": empleado_detalle.empPersona.perNombres,
+                    "perApellidos": empleado_detalle.empPersona.perApellidos,
+                }
+            })
 
         datos_vehiculo = {
             "id": servicioPrestado.serpVehi.id,
@@ -824,8 +843,10 @@ def consultarServicioPrestado(request, id):
         return JsonResponse({
             "servicioPrestado": datos_serviciosP,
             "cliente": datos_cliente,
-            "vehiculo": datos_vehiculo
+            "vehiculo": datos_vehiculo,
+            "detalles": datos_detalles
         })
+
     except ServicioPrestado.DoesNotExist:
         return JsonResponse({"error": "Servicio Prestado no encontrado."}, status=404)
     except Exception as error:
@@ -1378,7 +1399,8 @@ def generarFacturapdf(request):
         pdf.set_text_color(255, 0, 0)
         pdf.cell(0, 10, 'Factura', 0, 1, 'L')
 
-        pdf.image(settings.MEDIA_ROOT + '/fotos/LogoNegro.png', x=160, y=10, w=40)
+        pdf.image(settings.MEDIA_ROOT +
+                  '/fotos/LogoNegro.png', x=160, y=10, w=40)
 
         pdf.set_text_color(0, 0, 0)
         pdf.set_font('Arial', '', 12)
