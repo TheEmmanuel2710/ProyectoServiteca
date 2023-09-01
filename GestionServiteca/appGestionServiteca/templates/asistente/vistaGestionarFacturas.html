@@ -91,6 +91,9 @@
                     <a onclick="abrirModalActualizarFactura('{{ factura.id }}')">
                         <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
                     </a>
+                    <a onclick="abrirModalDetalle('{{ factura.id }}')">
+                        <i class="bi bi-eye" title="ver detalle" style="font-size: 2rem;"></i>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
@@ -131,18 +134,6 @@
                                 placeholder="Apellidos del cliente" readonly>
                             <div class="invalid-feedback">Por favor ingrese el apellido del cliente</div>
                         </div>
-                        <div class="mb-3 col-lg-12">
-                            <label for="txtServiciosP" class="fw-bold" style="color: black;">Servicio Prestado:</label>
-                            <input type="text" name="txtServiciosP" class="form-control" id="txtServiciosP"
-                                placeholder="Servicio Prestado" readonly>
-                            <div class="invalid-feedback">Por favor ingrese el servicio prestado</div>
-                        </div>
-                        <div class="mb-3 col-lg-12">
-                            <label for="txtCosto" class="fw-bold" style="color: black;">Costo Unitario:</label>
-                            <input type="text" name="txtCosto" class="form-control" id="txtCosto"
-                                placeholder="Servicio Prestado" readonly>
-                            <div class="invalid-feedback">Por favor ingrese el servicio prestado</div>
-                        </div>
                         <div class="mb-3 col-lg-12" style="margin: 0% auto;">
                             <label for="cbEstado" class="fw-bold" style="color: black;">Estado:</label>
                             <select name="cbEstado" id="cbEstado" class="form-select" required>
@@ -162,15 +153,14 @@
                         <div class="mb-3 col-lg-12">
                             <label for="txtTotal" class="fw-bold" style="color: black;">Total:</label>
                             <input type="number" class="form-control" id="txtTotal" name="txtTotal"
-                                placeholder="Total de la factura"  readonly />  
+                                placeholder="Total de la factura" readonly />
                             <div class="invalid-feedback">Por favor ingrese el total de la factura</div>
                         </div>
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
-                        <a href="/vistaGestionarFacturas/"><button type="button"
-                                class="btn btn-danger mx-2">Cancelar</button></a>
+                        <button class="btn btn-success" data-bs-dismiss="modal">Actualizar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </form>
             </div>
@@ -178,6 +168,37 @@
         </div>
     </div>
 </div>
+<!-- The Modal -->
+<div class="modal" id="DetalleServicio" style="margin-top: 5%;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header tituloModal">
+                <h4 class="modal-title">Detalle Servicio</h4>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Servicio</th>
+                            <th>Costo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaDetalles">
+
+                    </tbody>
+                </table>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     (() => {
         "use strict";
@@ -217,21 +238,8 @@
                 $("#txtApellidos").val(data.cliente.persona.perApellidos);
                 $("#idFactura").val(id);
 
-                var nombres_servicios_prestados = data.factura.nombresServiciosPrestados;
                 var costos_servicios_prestados = data.factura.costosServiciosPrestados;
 
-                if (nombres_servicios_prestados && nombres_servicios_prestados.length > 0) {
-                    $("#txtServiciosP").val(nombres_servicios_prestados.join(', ') + '.');
-                } else {
-                    $("#txtServiciosP").val("Sin servicios prestados");
-                }
-
-                if (costos_servicios_prestados && costos_servicios_prestados.length > 0) {
-                    const costosConDolar = costos_servicios_prestados.map(costo => '$' + costo);
-                    $("#txtCosto").val(costosConDolar.join(', ') + '.');
-                } else {
-                    $("#txtCosto").val("Sin costos disponibles");
-                }
                 if (costos_servicios_prestados && costos_servicios_prestados.length > 0) {
                     var totalCosto = costos_servicios_prestados.reduce((sum, costo) => sum + costo, 0);
                     $("#txtTotal").val(totalCosto);
@@ -258,6 +266,39 @@
             form.classList.add('was-validated');
         }
     });
+</script>
+<script>
+    function abrirModalDetalle(id) {
+        $.ajax({
+            url: "/consultarFac/" + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data && data.factura && data.factura.nombresServiciosPrestados) {
+                    var detalles = data.factura.nombresServiciosPrestados;
+                    var detallesHtml = "";
+
+                    for (var i = 0; i < detalles.length; i++) {
+                        detallesHtml += "<tr>";
+                        detallesHtml += "<td>" + detalles[i] + "</td>";
+                        detallesHtml += "<td>$" + data.factura.costosServiciosPrestados[i] + "</td>";
+                        detallesHtml += "</tr>";
+                    }
+
+                    $("#tablaDetalles").html(detallesHtml);
+
+                    // Mostrar el modal
+                    $('#DetalleServicio').modal('show');
+                } else {
+                    console.log("Datos de factura inválidos en la respuesta.");
+                }
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Hubo un error al cargar los datos del detalle.");
+            }
+        });
+    }
 </script>
 {% if mensaje %}
 {% if estado %}

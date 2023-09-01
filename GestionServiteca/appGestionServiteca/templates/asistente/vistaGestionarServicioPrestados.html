@@ -6,10 +6,6 @@
 {% include "asistente/menu.html" %}
 {%endblock %}
 {% block contenido %}
-<br>
-<br>
-<br>
-<br>
 {% load static %}
 <script src="{% static '../static/js/inactividad.js' %}"></script>
 <h3 class="text-center fw-bold" style="color: black;">GESTIONAR SERVICIOS PRESTADOS</h3>
@@ -51,7 +47,7 @@
         </tbody>
     </table>
 </div>
-<!-- The Modal Actualizar Servicio Prestado -->
+<!--  Actualizar Servicio Prestado -->
 <div class="modal" id="ActualizarSP" style="margin-top: 5%;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -111,9 +107,8 @@
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Actualizar</button>
-                        <a href="/vistaGestionarServiciosPrestados/"><button type="button"
-                                class="btn btn-danger mx-2">Cancelar</button></a>
+                        <button class="btn btn-success" data-bs-dismiss="modal">Actualizar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </form>
             </div>
@@ -121,7 +116,6 @@
         </div>
     </div>
 </div>
-
 <!-- The Modal -->
 <div class="modal" id="DetalleServicio" style="margin-top: 5%;">
     <div class="modal-dialog modal-lg">
@@ -133,7 +127,6 @@
             </div>
             <!-- Modal body -->
             <div class="modal-body">
-                <!-- En tu HTML -->
                 <table class="table">
                     <thead>
                         <tr>
@@ -143,18 +136,13 @@
                         </tr>
                     </thead>
                     <tbody id="tablaDetalles">
-                        <!-- Aquí se llenarán los detalles dinámicamente -->
                     </tbody>
                 </table>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <a href="/vistaGestionarServiciosPrestados/">
-                        <button type="button" class="btn btn-danger mx-2">Cerrar</button>
-                    </a>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                 </div>
-
             </div>
-
         </div>
     </div>
 </div>
@@ -229,11 +217,19 @@
                 var detalles = data.detalles;
                 var detallesHtml = "";
 
-                for (var i = 0; i < detalles.length; i++) {
+                for (var i = 0; i < detalles.length; i+=2) {
+                    var campoServicio = detalles[i].servicio.serNombre;
+                    var campoCosto = detalles[i].servicio.serCosto;
+                    var campoEmpleado = detalles[i].empleado.perNombres + " " + detalles[i].empleado.perApellidos;
+                    if ((i + 1) < detalles.length) {
+                        campoServicio +="<br>"+ detalles[i+1].servicio.serNombre;
+                        campoCosto += "<br>"+detalles[i+1].servicio.serCosto;
+                        campoEmpleado += "<br>"+detalles[i+1].empleado.perNombres + " " + detalles[i+1].empleado.perApellidos;
+                    }
                     detallesHtml += "<tr>";
-                    detallesHtml += "<td>" + detalles[i].servicio.serNombre + "</td>";
-                    detallesHtml += "<td>$" + detalles[i].servicio.serCosto + "</td>";
-                    detallesHtml += "<td>" + detalles[i].empleado.perNombres + " " + detalles[i].empleado.perApellidos + "</td>";
+                    detallesHtml += "<td>" + campoServicio + "</td>";
+                    detallesHtml += "<td>$" + campoCosto + "</td>";
+                    detallesHtml += "<td>" + campoEmpleado + "</td>";
                     detallesHtml += "</tr>";
                 }
 
@@ -247,17 +243,7 @@
                 alert("Hubo un error al cargar los datos del detalle.");
             }
         });
-    }
-
-
-    $('#DetalleServicio').on('hide.bs.modal', function (event) {
-        var form = $(this).find('.needs-validation')[0];
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-            form.classList.add('was-validated');
-        }
-    });    
+    }   
 </script>
 
 

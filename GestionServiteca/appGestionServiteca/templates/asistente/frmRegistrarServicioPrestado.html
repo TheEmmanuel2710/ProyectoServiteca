@@ -9,10 +9,7 @@
 {% load static%}
 <script src="{% static '../static/js/inactividad.js' %}"></script>
 <script src="{%static '../static/js/servicioP.js' %}"></script>
-<br>
-<br>
-<br>
-<br>
+
 {% for cliente in clientes %}
 <script> cargarClientes('{{cliente.id}}', '{{cliente.cliPersona.perNombres}}');</script>
 {% endfor %}

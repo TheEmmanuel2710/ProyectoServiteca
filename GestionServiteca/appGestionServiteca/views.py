@@ -177,7 +177,7 @@ def registrarUsuario(request):
                 asunto = "Registro Sistema Serviteca"
                 mensaje = f"Cordial saludo, <b>{user.first_name} {user.last_name}</b>, nos permitimos\
                     informarle que usted ha sido registrado en el Sistema de ServitecaOpita.\
-                    Nos permitimos enviarle las credenciales de Ingreso a nuestro sistema.<br>\
+                    Nos permitimos enviarle las credenciales de ingreso a nuestro sistema.<br>\
                     <br><b>Username: </b> {user.username}\
                     <br><b>Password: </b> {passwordGenerado}\
                     <br><br>Lo invitamos a ingresar a nuestro sistema en la url:\
@@ -772,7 +772,7 @@ def registrarServicioPrestado(request):
                         servicios_asignados_str += "."
                     else:
                         servicios_asignados_str += ","
-                    mensaje_empleado = f'Se le ha asignado el siguiente servicio: {servicios_asignados_str} en el vehículo: {vehiculo_placa}, para el cliente: {cliente_nombre}.'
+                    mensaje_empleado = f"Le informamos que se le ha asignado el siguiente servicio: {servicios_asignados_str} el cual deberá ser atendido en el vehículo con placa: {vehiculo_placa}, en nombre del cliente: {cliente_nombre}. Agradecemos su atención y diligencia en la prestación de este servicio."
                     thread_empleado = threading.Thread(
                         target=enviarCorreo, args=(asunto_empleado, mensaje_empleado, empleado.empPersona.perCorreo))
                     thread_empleado.start()
@@ -781,7 +781,7 @@ def registrarServicioPrestado(request):
                 servicios_cliente_str = ", ".join(
                     [f"{Servicio.objects.get(id=int(detalle['idServicio'])).serNombre}: ${Servicio.objects.get(id=int(detalle['idServicio'])).serCosto}" for detalle in detalleServicioPrestado_lista])
                 asunto_cliente = 'Registro de Servicios Solicitados'
-                mensaje_cliente = f'Cordial saludo, {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, su servicio ha sido registrado con los siguientes detalles: {servicios_cliente_str}.'
+                mensaje_cliente = f"Estimado(a) {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, reciba un cordial saludo,nos complace informarle que su servicio ha sido registrado con los siguientes detalles: {servicios_cliente_str}. Agradecemos su confianza en nuestros servicios y quedamos a su disposición para cualquier consulta adicional."
                 thread_cliente = threading.Thread(
                     target=enviarCorreo, args=(asunto_cliente, mensaje_cliente, cliente.cliPersona.perCorreo))
                 thread_cliente.start()
@@ -821,8 +821,8 @@ def consultarServicioPrestado(request, id):
         datos_detalles = []
 
         for detalle in detalles_servicio:
-            servicio_detalle = detalle.detServicio  
-            empleado_detalle = detalle.detEmpleado  
+            servicio_detalle = detalle.detServicio
+            empleado_detalle = detalle.detEmpleado
 
             datos_detalles.append({
                 "servicio": {
@@ -863,6 +863,16 @@ def actualizarSericioPrestado(request):
 
         try:
             servicioPrestado = ServicioPrestado.objects.get(pk=servicioP_id)
+            
+            if nuevo_estado == "Cancelado":
+                # Enviar correo al cliente notificando la cancelación
+                cliente = servicioPrestado.serpCli
+                asunto_cliente = 'Cancelación del Servicio Prestado'
+                mensaje_cliente = f"Estimado(a) {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, lamentamos informarle que el servicio prestado que había solicitado ha sido cancelado. Le ofrecemos nuestras disculpas por cualquier inconveniente que esto pueda causarle. Si tiene alguna pregunta o requiere más información, no dude en contactarnos."
+                thread_cliente = threading.Thread(
+                    target=enviarCorreo, args=(asunto_cliente, mensaje_cliente, cliente.cliPersona.perCorreo))
+                thread_cliente.start()
+
             servicioPrestado.serpEstado = nuevo_estado
             servicioPrestado.save()
 
@@ -873,8 +883,7 @@ def actualizarSericioPrestado(request):
                 # Enviar correo al cliente notificando el estado terminado
                 cliente = servicioPrestado.serpCli
                 asunto_cliente = 'Estado del Servicio Prestado'
-                mensaje_cliente = f'Cordial saludo, {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, el servicio prestado solicitado ha sido marcado como terminado,\
-                    ya puede pasar por nuestra serviteca por su vehiculo.'
+                mensaje_cliente = f"Estimado(a) {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, Nos complace informarle que el servicio prestado que solicitó ha sido marcado como concluido, le invitamos a que pase por nuestra serviteca para recoger su vehículo. Quedamos a su disposición para cualquier consulta adicional."
                 thread_cliente = threading.Thread(
                     target=enviarCorreo, args=(asunto_cliente, mensaje_cliente, cliente.cliPersona.perCorreo))
                 thread_cliente.start()
@@ -892,6 +901,7 @@ def actualizarSericioPrestado(request):
         "serviciosPrestados": serviciosPrestados
     }
     return render(request, "asistente/vistaGestionarServicioPrestados.html", retorno)
+
 
 
 def vistaGestionarServiciosPrestados(request):
@@ -1475,7 +1485,7 @@ def registrarPeticionForgot(request):
                 token = default_token_generator.make_token(usuario)
                 # Enviar correo al usuario
                 asunto = 'Solicitud de Restablecimiento de Contraseña'
-                mensaje = f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña. \
+                mensaje = f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña.<br> \
                 Por favor, haga clic en el siguiente enlace para continuar con el proceso: http://127.0.0.1:8000/cambiarContrasena/{uidb64}/{token}/'
                 thread = threading.Thread(
                     target=enviarCorreo, args=(asunto, mensaje, usuario.email))
@@ -1532,3 +1542,4 @@ def cambiarContraseña(request, uidb64, token):
 
 def mostrarMensaje(request):
     return render(request, 'mostrarMensaje.html')
+

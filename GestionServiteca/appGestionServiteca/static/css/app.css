@@ -14,13 +14,14 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
-.grupo-2{
+.grupo-2 {
     display: flex;
     justify-content: space-evenly;
 }
 
-.contenido{
+.contenido {
     min-height: 80vh;
+    margin-top: 80px;
 }
 
 header {
@@ -32,9 +33,76 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 9999;
-    background-color: #000000;
+    z-index: 2;
+    background-color: #000;
+
 }
+
+/* Estilo para el div de fondo */
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black; 
+    display: flex;
+    flex-direction: column; /* Coloca los elementos en columna */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Asegura que el loader esté por encima de todo */
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    display: grid;
+    color: #ffffff;
+    background: radial-gradient(farthest-side, currentColor calc(100% - 6px),#0000 calc(100% - 5px) 0);
+    -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 13px),#000 calc(100% - 12px));
+    border-radius: 50%;
+    animation: l19 2s infinite linear;
+}
+
+.loader::before,
+.loader::after {    
+    content: "";
+    grid-area: 1/1;
+    background:
+        linear-gradient(currentColor 0 0) center,
+        linear-gradient(currentColor 0 0) center;
+    background-size: 100% 10px,10px 100%;
+    background-repeat: no-repeat;
+}
+
+.loader::after {
+    transform: rotate(45deg);
+}
+
+.loading-text {
+    margin-top: 10px; /* Espacio entre la rueda y el texto */
+    color: #ffffff; /* Color del texto */
+    text-align: center; /* Centra el texto horizontalmente */
+    font-size: 16px; /* Tamaño de fuente del texto */
+    font-weight: bold; /* Peso de fuente en negrita */
+    animation: fadeText 2s linear infinite; /* Animación de desvanecimiento */
+}
+
+@keyframes fadeText {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes l19 { 
+    100% { transform: rotate(1turn) }
+}
+
+
 
 /*:::::Pie de Pagina*/
 .pie-pagina {
@@ -43,41 +111,47 @@ header {
     background-color: rgb(0, 0, 0);
     color: #fff;
 }
-.pie-pagina .grupo-1{
+
+.pie-pagina .grupo-1 {
     width: 100%;
     max-width: 1500px;
     margin: auto;
-    display:grid;
+    display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-gap:50px;
+    grid-gap: 50px;
     padding: 30px 0px;
 }
 
 
-.pie-pagina .grupo-1 .box figure{
+.pie-pagina .grupo-1 .box figure {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.pie-pagina .grupo-1 .box figure img{
+
+.pie-pagina .grupo-1 .box figure img {
     width: 250px;
 }
-.pie-pagina .grupo-1 .box{
+
+.pie-pagina .grupo-1 .box {
     display: grid;
     justify-items: center;
 }
-.pie-pagina .grupo-1 .box h2{
+
+.pie-pagina .grupo-1 .box h2 {
     color: #fff;
     margin-bottom: 25px;
     font-size: 20px;
 }
-.pie-pagina .grupo-1 .box p{
+
+.pie-pagina .grupo-1 .box p {
     color: #efefef;
     margin-bottom: 10px;
 }
-.pie-pagina .grupo-1 .red-social #facebook{
+
+.pie-pagina .grupo-1 .red-social #facebook {
     display: inline-block;
     text-decoration: none;
     width: 45px;
@@ -88,7 +162,8 @@ header {
     text-align: center;
     transition: all 300ms ease;
 }
-.pie-pagina .grupo-1 .red-social #facebook{
+
+.pie-pagina .grupo-1 .red-social #facebook {
     display: inline-block;
     text-decoration: none;
     width: 45px;
@@ -101,7 +176,7 @@ header {
     transition: all 300ms ease;
 }
 
-.pie-pagina .grupo-1 .red-social #instagram{
+.pie-pagina .grupo-1 .red-social #instagram {
     display: inline-block;
     text-decoration: none;
     width: 45px;
@@ -115,7 +190,7 @@ header {
     transition: all 300ms ease;
 }
 
-.pie-pagina .grupo-1 .red-social #twitter{
+.pie-pagina .grupo-1 .red-social #twitter {
     display: inline-block;
     text-decoration: none;
     width: 45px;
@@ -131,14 +206,14 @@ header {
 
 
 .pie-pagina .grupo-1 .red-social #facebook:hover {
-    background-color: #ffffff; 
+    background-color: #ffffff;
     color: #1877F2;
 
 }
 
 
 .pie-pagina .grupo-1 .red-social #instagram:hover {
-    background: linear-gradient(45deg,  #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F56040, #F77737, #FCAF45, #FFDC80);
+    background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F56040, #F77737, #FCAF45, #FFDC80);
     color: white;
 }
 
@@ -146,42 +221,44 @@ header {
 
 
 .pie-pagina .grupo-1 .red-social #twitter:hover {
-    background:rgb(34, 144, 255);
-   
+    background: rgb(34, 144, 255);
+
 }
 
 
 
 
 
-.pie-pagina .grupo-2{
+.pie-pagina .grupo-2 {
     background-color: #0b0b0b;
     padding: 15px 10px;
     text-align: center;
     color: #fff;
 }
-.pie-pagina .grupo-2 small{
+
+.pie-pagina .grupo-2 small {
     font-size: 15px;
 }
 
 
 
 
-@media screen and (max-width:980px){
-    .pie-pagina .grupo-1{
+@media screen and (max-width:980px) {
+    .pie-pagina .grupo-1 {
         width: 90%;
         grid-template-columns: repeat(1, 1fr);
-        grid-gap:30px;
+        grid-gap: 30px;
         padding: 35px 0px;
     }
 }
 
-#btnEnviar{
+#btnEnviar {
     border-color: red;
     background: transparent;
     color: red;
 }
-#btnEnviar:hover{
+
+#btnEnviar:hover {
     background: black;
     color: white;
 }
@@ -213,7 +290,7 @@ header {
     padding-left: 5%;
     padding-right: 5%;
     font-weight: bold;
-    background-color: rgb(4, 4, 44);
+
     padding: 0%;
 }
 
@@ -231,10 +308,11 @@ a {
 a:hover {
     color: white;
 }
+
 #iconoxd {
     color: red;
     font-size: 64px;
-  }
+}
 
 #navAsistente {
     position: fixed;
@@ -246,7 +324,7 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     z-index: 9999;
-     background-color: #000000; 
+    background-color: #000000;
 }
 
 #navAsistente a {
@@ -404,18 +482,7 @@ a:hover {
 
 
 
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 3px 100px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 9999;
-    background-color: #000000;
-}
+
 
 .logo {
     font-size: 2em;
@@ -646,7 +713,7 @@ header {
     max-width: 1080px;
     margin: auto;
     padding: 20px;
-    margin-top: 80px;
+    margin-top: 10px;
     text-align: center;
     color: #7a7a7a;
 
@@ -763,6 +830,7 @@ header {
 
 
 }
+
 @media only screen and (min-width: 280px) and (max-width: 413px) {
     .container-card {
         flex-wrap: wrap;
@@ -776,28 +844,32 @@ header {
         height: 350px;
         width: 350px;
     }
-    
-    p{
+
+    p {
         text-align: center;
     }
-   .box {
-    display: grid;
-    place-items: center;
-   }
-   .select-menu{
-    margin-left: -60px;
-   }
-   #iconoxd{
-    margin-right: -60px;
-   }
-   .navbar-collapse {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
 
-    box-sizing: border-box;
-}
+    .box {
+        display: grid;
+        place-items: center;
+    }
+
+    .select-menu {
+        margin-left: -60px;
+    }
+
+    #iconoxd {
+        margin-right: -60px;
+    }
+
+    .navbar-collapse {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        box-sizing: border-box;
+    }
 
 
 
@@ -836,19 +908,23 @@ header {
         margin-right: -90px;
         transition: .5s;
     }
-    p{
+
+    p {
         text-align: center;
     }
-   .box {
-    display: grid;
-    place-items: center;
-   }
-   .select-menu{
-    margin-left: -60px;
-   }
-   #iconoxd{
-    margin-right: -60px;
-   }
+
+    .box {
+        display: grid;
+        place-items: center;
+    }
+
+    .select-menu {
+        margin-left: -60px;
+    }
+
+    #iconoxd {
+        margin-right: -60px;
+    }
 
 
 }
@@ -1011,7 +1087,7 @@ header {
         transition: .5s;
     }
 
-    
+
 }
 
 
@@ -1055,7 +1131,7 @@ header {
         transition: .5s;
     }
 
-   
+
 
 
 
@@ -1202,19 +1278,22 @@ header {
         height: 500px;
     }
 
-    p{
+    p {
         text-align: center;
     }
-   .box {
-    display: grid;
-    place-items: center;
-   }
-   .select-menu{
-    margin-left: -60px;
-   }
-   #iconoxd{
-    margin-right: -60px;
-   }
+
+    .box {
+        display: grid;
+        place-items: center;
+    }
+
+    .select-menu {
+        margin-left: -60px;
+    }
+
+    #iconoxd {
+        margin-right: -60px;
+    }
 
 
 
@@ -1234,7 +1313,7 @@ header {
         width: 60%;
     }
 
-   
+
 
     #logo {
         width: 120px;
@@ -1267,19 +1346,23 @@ header {
         margin-right: -95px;
         transition: .5s;
     }
-    p{
+
+    p {
         text-align: center;
     }
-   .box {
-    display: grid;
-    place-items: center;
-   }
-   .select-menu{
-    margin-left: -60px;
-   }
-   #iconoxd{
-    margin-right: -60px;
-   }
+
+    .box {
+        display: grid;
+        place-items: center;
+    }
+
+    .select-menu {
+        margin-left: -60px;
+    }
+
+    #iconoxd {
+        margin-right: -60px;
+    }
 
 }
 
