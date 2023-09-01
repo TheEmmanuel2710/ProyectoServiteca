@@ -323,7 +323,7 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 9999;
+    z-index: 2;
     background-color: #000000;
 }
 
@@ -364,7 +364,7 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 9999;
+    z-index: 2;
     background-color: #000000;
 }
 
@@ -448,7 +448,7 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 9999;
+    z-index: 2;
     background-color: #000000;
 }
 
