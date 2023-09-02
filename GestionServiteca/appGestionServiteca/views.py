@@ -27,7 +27,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib import messages
 from django.utils import timezone
-
+from django.db.models import Count
 
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
@@ -303,10 +303,8 @@ def consultarFactura(request, id):
         servicio_prestado = factura.facServicioPrestado
         cliente = servicio_prestado.serpCli
         persona = cliente.cliPersona
-        nombres_servicios_prestados = [
-            detalle.detServicio.serNombre for detalle in servicio_prestado.detalleservicioprestado_set.all()]
-        costos_servicios_prestados = [
-            detalle.detServicio.serCosto for detalle in servicio_prestado.detalleservicioprestado_set.all()]
+        detalles_servicios_prestados = DetalleServicioPrestado.objects.filter(detServicioPrestado=servicio_prestado)
+        
         datos_persona = {
             "perNombres": persona.perNombres,
             "perApellidos": persona.perApellidos,
@@ -316,15 +314,27 @@ def consultarFactura(request, id):
             "persona": datos_persona,
         }
 
-        total_costo = sum(costos_servicios_prestados)
+        servicios_con_empleados = []
+        total_costo = 0
+
+        for detalle in detalles_servicios_prestados:
+            servicio = detalle.detServicio
+            empleado = detalle.detEmpleado
+            servicio_con_empleado = {
+                "serNombre": servicio.serNombre,
+                "serCosto": servicio.serCosto,
+                "nombreEmpleado": empleado.empPersona.perNombres,  
+                "apellidoEmpleado": empleado.empPersona.perApellidos,
+            }
+            servicios_con_empleados.append(servicio_con_empleado)
+            total_costo += servicio.serCosto
 
         datos_factura = {
             "facTotal": total_costo,
             "facEstado": factura.facEstado,
             "facCodigo": factura.facCodigo,
             "facFecha": factura.facFecha.strftime("%Y-%m-%d %H:%M:%S"),
-            "nombresServiciosPrestados": nombres_servicios_prestados,
-            "costosServiciosPrestados": costos_servicios_prestados,
+            "nombresServiciosPrestados": servicios_con_empleados,
         }
 
         return JsonResponse({"cliente": datos_cliente, "factura": datos_factura})
@@ -1297,19 +1307,32 @@ def deshabilitarUsuario(request, user_id):
         try:
             usuario = User.objects.get(pk=user_id)
 
-            if usuario.is_superuser:
-                raise Exception("No se puede deshabilitar a un superusuario.")
+            if user.groups.filter(name='Administrador').exists() and user.is_superuser:
+                if usuario.groups.filter(name='Administrador').exists() and usuario.is_superuser:
+                    return JsonResponse({'success': False, 'error': 'No puedes deshabilitar a otro administrador y superusuario.'})
+                
+                usuario.is_active = False
+                usuario.save()
+                
+                return JsonResponse({'success': True})
 
-            usuario.is_active = False
-            usuario.save()
+            if user.groups.filter(name='Administrador').exists():
+                if usuario.groups.filter(name='Administrador').exists() or usuario.is_superuser:
+                    return JsonResponse({'success': False, 'error': 'No tienes permisos para deshabilitar este usuario.'})
+                
+                usuario.is_active = False
+                usuario.save()
+                
+                return JsonResponse({'success': True})
 
-            return JsonResponse({
-                'success': True
-            })
+            return JsonResponse({'success': False, 'error': 'No tienes permisos para deshabilitar usuarios.'})
+
+        except User.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'El usuario no existe.'})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
-
-    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+    
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta URL."
 
     if user.groups.filter(name='Asistente').exists():
         return render(request, "asistente/inicio.html", {"mensaje": mensaje})
@@ -1318,7 +1341,6 @@ def deshabilitarUsuario(request, user_id):
         return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
-
 
 def habilitarUsuario(request, user_id):
     try:
@@ -1363,26 +1385,139 @@ class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
 
 def mostrarGrafica1(request):
     matplotlib.use('Agg')
+    todos_servicios = Servicio.objects.all()
+    if DetalleServicioPrestado.objects.exists():
+        servicios_con_registros = Servicio.objects.filter(detalleservicioprestado__isnull=False).distinct()
 
-    categorias = ['A', 'B', 'C', 'D', 'E']
-    valores = [25, 50, 75, 100, 125]
+        servicios_con_cantidad = servicios_con_registros.annotate(cantidad_solicitudes=Count('detalleservicioprestado'))
 
-    grafica = plt.bar(categorias, valores)
+        cantidad_solicitudes_dict = {servicio.id: 0 for servicio in servicios_con_registros}
 
-    plt.xlabel('Categorías')
-    plt.ylabel('Valores')
-    plt.title('Gráfica de Barras')
+        for servicio in servicios_con_cantidad:
+            cantidad_solicitudes_dict[servicio.id] = int(servicio.cantidad_solicitudes)
+
+        nombresS = [servicio.serNombre for servicio in servicios_con_registros]
+
+        valores = [cantidad_solicitudes_dict[servicio.id] for servicio in servicios_con_registros]
+    else:
+        nombresS = [servicio.serNombre for servicio in todos_servicios]
+        valores = [0] * len(todos_servicios)
+        
+    plt.figure(figsize=(10, 6))
+    plt.bar(nombresS, valores)
+    plt.xlabel('Servicios')
+    plt.ylabel('Cantidad de Solicitudes')
+    plt.title('Cantidad de Solicitudes por Servicio')
 
     ruta_grafica = os.path.join(
-        settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras.png')
+        settings.MEDIA_ROOT, 'graficas', 'grafica_de_servicios.png')
+
+    plt.xticks(rotation=45) 
+
+    if valores:
+        plt.yticks(range(min(valores), max(valores) + 1))
+
+    plt.tight_layout() 
 
     plt.savefig(ruta_grafica)
 
-    generarFacturapdf(request)
     retorno = {
         "ruta_grafica": ruta_grafica
     }
     return render(request, "administrador/vistaGraficas.html", retorno)
+
+
+
+def mostrarGrafica2(request):
+    matplotlib.use('Agg')
+
+    if DetalleServicioPrestado.objects.exists():
+        empleados_con_registros = Empleado.objects.filter(detalleservicioprestado__isnull=False).distinct()
+
+        empleados_con_cantidad = empleados_con_registros.annotate(cantidad_servicios_prestados=Count('detalleservicioprestado'))
+
+        cantidad_servicios_dict = {empleado.id: 0 for empleado in empleados_con_registros}
+
+        for empleado in empleados_con_cantidad:
+            cantidad_servicios_dict[empleado.id] = int(empleado.cantidad_servicios_prestados)
+
+        nombres_empleados = [empleado.empPersona.perNombres for empleado in empleados_con_registros]
+
+        cantidad_servicios = [cantidad_servicios_dict[empleado.id] for empleado in empleados_con_registros]
+    else:
+        todos_empleados = Empleado.objects.all()
+        nombres_empleados = [empleado.empPersona.perNombres for empleado in todos_empleados]
+        cantidad_servicios = [0] * len(todos_empleados)
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(nombres_empleados, cantidad_servicios)
+    plt.xlabel('Empleados')
+    plt.ylabel('Cantidad de Servicios Prestados')
+    plt.title('Cantidad de Servicios Prestados por Empleado')
+
+    ruta_grafica = os.path.join(
+        settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras_empleados.png')
+
+    plt.xticks(rotation=45)  
+
+    if cantidad_servicios:
+        plt.yticks(range(min(cantidad_servicios), max(cantidad_servicios) + 1))
+
+    plt.tight_layout()  
+
+    plt.savefig(ruta_grafica)
+
+    retorno = {
+        "ruta_grafica": ruta_grafica
+    }
+    return render(request, "administrador/vistaGraficas.html", retorno)
+
+
+def mostrarGrafica3(request):
+    matplotlib.use('Agg')
+
+    todos_clientes = Cliente.objects.all()
+
+    if ServicioPrestado.objects.exists():
+        clientes_con_cantidad = Cliente.objects.filter(servicioprestado__isnull=False).annotate(cantidad_servicios_prestados=Count('servicioprestado'))
+
+        nombres_clientes = [cliente.cliPersona.perNombres for cliente in clientes_con_cantidad]
+
+        cantidad_servicios = [int(cliente.cantidad_servicios_prestados) for cliente in clientes_con_cantidad]
+    else:
+        nombres_clientes = [cliente.cliPersona.perNombres for cliente in todos_clientes]
+        cantidad_servicios = [0] * len(todos_clientes)
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(nombres_clientes, cantidad_servicios)
+    plt.xlabel('Clientes')
+    plt.ylabel('Cantidad de Solicitudes de Servicios Prestados')
+    plt.title('Cantidad de Servicios Prestados a Clientes')
+
+    ruta_grafica = os.path.join(
+        settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras_clientes.png')
+
+    plt.xticks(rotation=45)  
+
+    if cantidad_servicios:
+        plt.yticks(range(min(cantidad_servicios), max(cantidad_servicios) + 1))
+
+    plt.tight_layout()  
+
+    plt.savefig(ruta_grafica)
+
+    retorno = {
+        "ruta_grafica": ruta_grafica
+    }
+    return render(request, "administrador/vistaGraficas.html", retorno)
+
+
+
+def mostrarGraficas(request):
+    mostrarGrafica1(request)
+    mostrarGrafica2(request)
+    mostrarGrafica3(request)
+    return render(request,"administrador/vistaGraficas.html")
 
 
 class PDF(FPDF):

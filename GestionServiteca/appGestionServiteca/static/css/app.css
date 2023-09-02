@@ -45,12 +45,14 @@ header {
     left: 0;
     width: 100%;
     height: 100%;
-    background: black; 
+    background: black;
     display: flex;
-    flex-direction: column; /* Coloca los elementos en columna */
+    flex-direction: column;
+    /* Coloca los elementos en columna */
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Asegura que el loader esté por encima de todo */
+    z-index: 9999;
+    /* Asegura que el loader esté por encima de todo */
 }
 
 /* HTML: <div class="loader"></div> */
@@ -59,20 +61,20 @@ header {
     aspect-ratio: 1;
     display: grid;
     color: #ffffff;
-    background: radial-gradient(farthest-side, currentColor calc(100% - 6px),#0000 calc(100% - 5px) 0);
-    -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 13px),#000 calc(100% - 12px));
+    background: radial-gradient(farthest-side, currentColor calc(100% - 6px), #0000 calc(100% - 5px) 0);
+    -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 13px), #000 calc(100% - 12px));
     border-radius: 50%;
     animation: l19 2s infinite linear;
 }
 
 .loader::before,
-.loader::after {    
+.loader::after {
     content: "";
     grid-area: 1/1;
     background:
         linear-gradient(currentColor 0 0) center,
         linear-gradient(currentColor 0 0) center;
-    background-size: 100% 10px,10px 100%;
+    background-size: 100% 10px, 10px 100%;
     background-repeat: no-repeat;
 }
 
@@ -81,25 +83,36 @@ header {
 }
 
 .loading-text {
-    margin-top: 10px; /* Espacio entre la rueda y el texto */
-    color: #ffffff; /* Color del texto */
-    text-align: center; /* Centra el texto horizontalmente */
-    font-size: 16px; /* Tamaño de fuente del texto */
-    font-weight: bold; /* Peso de fuente en negrita */
-    animation: fadeText 2s linear infinite; /* Animación de desvanecimiento */
+    margin-top: 10px;
+    /* Espacio entre la rueda y el texto */
+    color: #ffffff;
+    /* Color del texto */
+    text-align: center;
+    /* Centra el texto horizontalmente */
+    font-size: 16px;
+    /* Tamaño de fuente del texto */
+    font-weight: bold;
+    /* Peso de fuente en negrita */
+    animation: fadeText 2s linear infinite;
+    /* Animación de desvanecimiento */
 }
 
 @keyframes fadeText {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0;
     }
 }
 
-@keyframes l19 { 
-    100% { transform: rotate(1turn) }
+@keyframes l19 {
+    100% {
+        transform: rotate(1turn)
+    }
 }
 
 
@@ -269,8 +282,19 @@ header {
 }
 
 
-#img-grafica {
+#img-graficaS {
     height: 600px;
+    width: 50%;
+}
+
+#img-graficaE {
+    height: 600px;
+    width: 50%;
+}
+
+#img-graficaC {
+    height: 600px;
+    width: 50%;
 }
 
 .grafica {

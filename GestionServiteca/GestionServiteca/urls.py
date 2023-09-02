@@ -21,7 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin-panel/', admin.site.urls),
     path('', include('appGestionServiteca.urls')),
     path('', views.inicio),
     path('inicioAdministrador/', views.inicioAdministrador),
@@ -66,7 +66,7 @@ urlpatterns = [
     path('ActualizarUsuTe/', views.actualizarUsuarioTecnico),
     path('habilitar_usuario/<int:user_id>/', views.habilitarUsuario),
     path('deshabilitar_usuario/<int:user_id>/', views.deshabilitarUsuario),
-    path('vistaGraficas/', views.mostrarGrafica1),
+    path('vistaGraficas/', views.mostrarGraficas),
     path('vistaCorreoForgot/', views.vistaCorreoForgot),
     path('registrarPeticionForgot/', views.registrarPeticionForgot),
     path('vistaCambiarContraseña/', views.vistaCambiarContraseña),

@@ -184,6 +184,7 @@
                         <tr>
                             <th>Servicio</th>
                             <th>Costo</th>
+                            <th>Empleado</th>
                         </tr>
                     </thead>
                     <tbody id="tablaDetalles">
@@ -277,16 +278,25 @@
                 if (data && data.factura && data.factura.nombresServiciosPrestados) {
                     var detalles = data.factura.nombresServiciosPrestados;
                     var detallesHtml = "";
-
-                    for (var i = 0; i < detalles.length; i++) {
+    
+                    for (var i = 0; i < detalles.length; i+=2) {
+                        var campoServicio = detalles[i].serNombre;
+                        var campoCosto = detalles[i].serCosto;
+                        var campoEmpleado = detalles[i].nombreEmpleado + " " + detalles[i].apellidoEmpleado;
+                        if ((i + 1) < detalles.length) {
+                            campoServicio +="<br>"+ detalles[i+1].serNombre;
+                            campoCosto += "<br>"+detalles[i+1].serCosto;
+                            campoEmpleado += "<br>"+detalles[i+1].nombreEmpleado + " " + detalles[i+1].apellidoEmpleado;
+                        }
                         detallesHtml += "<tr>";
-                        detallesHtml += "<td>" + detalles[i] + "</td>";
-                        detallesHtml += "<td>$" + data.factura.costosServiciosPrestados[i] + "</td>";
+                        detallesHtml += "<td>" + campoServicio + "</td>";
+                        detallesHtml += "<td>$" + campoCosto + "</td>";
+                        detallesHtml += "<td>" + campoEmpleado + "</td>";
                         detallesHtml += "</tr>";
                     }
-
+    
                     $("#tablaDetalles").html(detallesHtml);
-
+    
                     // Mostrar el modal
                     $('#DetalleServicio').modal('show');
                 } else {
@@ -299,6 +309,7 @@
             }
         });
     }
+    
 </script>
 {% if mensaje %}
 {% if estado %}
