@@ -152,7 +152,7 @@
                         </div>
                         <div class="mb-3 col-lg-12">
                             <label for="txtTotal" class="fw-bold" style="color: black;">Total:</label>
-                            <input type="number" class="form-control" id="txtTotal" name="txtTotal"
+                            <input type="text" class="form-control" id="txtTotal" name="txtTotal"
                                 placeholder="Total de la factura" readonly />
                             <div class="invalid-feedback">Por favor ingrese el total de la factura</div>
                         </div>
@@ -231,25 +231,18 @@
             dataType: 'json',
             success: function (data) {
                 // Rellenar el formulario de la modal con los datos obtenidos
-                $("#txtTotal").val(data.factura.facTotal);
+                var totalConSimbolo = "$" + data.factura.facTotal; 
+                $("#txtTotal").val(totalConSimbolo);
                 $("#cbEstado").val(data.factura.facEstado);
                 $("#txtCodigo").val(data.factura.facCodigo);
                 $("#txtFecha").val(data.factura.facFecha);
                 $("#txtNombres").val(data.cliente.persona.perNombres);
                 $("#txtApellidos").val(data.cliente.persona.perApellidos);
                 $("#idFactura").val(id);
-
-                var costos_servicios_prestados = data.factura.costosServiciosPrestados;
-
-                if (costos_servicios_prestados && costos_servicios_prestados.length > 0) {
-                    var totalCosto = costos_servicios_prestados.reduce((sum, costo) => sum + costo, 0);
-                    $("#txtTotal").val(totalCosto);
-                } else {
-                    $("#txtTotal").val(0);
-                }
+    
                 var form = $('#ActualizarFac').find('.needs-validation')[0];
                 form.classList.remove('was-validated');
-
+    
                 $('#ActualizarFac').modal('show');
             },
             error: function (error) {
@@ -258,6 +251,7 @@
             }
         });
     }
+    
 
     $('#ActualizarFac').on('hide.bs.modal', function (event) {
         var form = $(this).find('.needs-validation')[0];
@@ -278,15 +272,15 @@
                 if (data && data.factura && data.factura.nombresServiciosPrestados) {
                     var detalles = data.factura.nombresServiciosPrestados;
                     var detallesHtml = "";
-    
-                    for (var i = 0; i < detalles.length; i+=2) {
+
+                    for (var i = 0; i < detalles.length; i += 2) {
                         var campoServicio = detalles[i].serNombre;
                         var campoCosto = detalles[i].serCosto;
                         var campoEmpleado = detalles[i].nombreEmpleado + " " + detalles[i].apellidoEmpleado;
                         if ((i + 1) < detalles.length) {
-                            campoServicio +="<br>"+ detalles[i+1].serNombre;
-                            campoCosto += "<br>"+detalles[i+1].serCosto;
-                            campoEmpleado += "<br>"+detalles[i+1].nombreEmpleado + " " + detalles[i+1].apellidoEmpleado;
+                            campoServicio += "<br>" + detalles[i + 1].serNombre;
+                            campoCosto += "<br>$" + detalles[i + 1].serCosto;
+                            campoEmpleado += "<br>" + detalles[i + 1].nombreEmpleado + " " + detalles[i + 1].apellidoEmpleado;
                         }
                         detallesHtml += "<tr>";
                         detallesHtml += "<td>" + campoServicio + "</td>";
@@ -294,9 +288,9 @@
                         detallesHtml += "<td>" + campoEmpleado + "</td>";
                         detallesHtml += "</tr>";
                     }
-    
+
                     $("#tablaDetalles").html(detallesHtml);
-    
+
                     // Mostrar el modal
                     $('#DetalleServicio').modal('show');
                 } else {
@@ -309,7 +303,7 @@
             }
         });
     }
-    
+
 </script>
 {% if mensaje %}
 {% if estado %}

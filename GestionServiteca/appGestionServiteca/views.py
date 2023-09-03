@@ -316,7 +316,7 @@ def consultarFactura(request, id):
         }
 
         servicios_con_empleados = []
-        total_costo = 0
+        total_costo = 0 
 
         for detalle in detalles_servicios_prestados:
             servicio = detalle.detServicio
@@ -328,10 +328,10 @@ def consultarFactura(request, id):
                 "apellidoEmpleado": empleado.empPersona.perApellidos,
             }
             servicios_con_empleados.append(servicio_con_empleado)
-            total_costo += servicio.serCosto
+            total_costo += servicio.serCosto  
 
         datos_factura = {
-            "facTotal": total_costo,
+            "facTotal": total_costo,  
             "facEstado": factura.facEstado,
             "facCodigo": factura.facCodigo,
             "facFecha": factura.facFecha.strftime("%Y-%m-%d %H:%M:%S"),

@@ -217,18 +217,20 @@
                 var detalles = data.detalles;
                 var detallesHtml = "";
 
-                for (var i = 0; i < detalles.length; i+=2) {
+                for (var i = 0; i < detalles.length; i += 2) {
                     var campoServicio = detalles[i].servicio.serNombre;
-                    var campoCosto = detalles[i].servicio.serCosto;
+                    var campoCosto = "$" + detalles[i].servicio.serCosto;
                     var campoEmpleado = detalles[i].empleado.perNombres + " " + detalles[i].empleado.perApellidos;
+
                     if ((i + 1) < detalles.length) {
-                        campoServicio +="<br>"+ detalles[i+1].servicio.serNombre;
-                        campoCosto += "<br>"+detalles[i+1].servicio.serCosto;
-                        campoEmpleado += "<br>"+detalles[i+1].empleado.perNombres + " " + detalles[i+1].empleado.perApellidos;
+                        campoServicio += "<br>" + detalles[i + 1].servicio.serNombre;
+                        campoCosto += "<br>$" + detalles[i + 1].servicio.serCosto;
+                        campoEmpleado += "<br>" + detalles[i + 1].empleado.perNombres + " " + detalles[i + 1].empleado.perApellidos;
                     }
+
                     detallesHtml += "<tr>";
                     detallesHtml += "<td>" + campoServicio + "</td>";
-                    detallesHtml += "<td>$" + campoCosto + "</td>";
+                    detallesHtml += "<td>" + campoCosto + "</td>";
                     detallesHtml += "<td>" + campoEmpleado + "</td>";
                     detallesHtml += "</tr>";
                 }
@@ -243,7 +245,8 @@
                 alert("Hubo un error al cargar los datos del detalle.");
             }
         });
-    }   
+    }
+
 </script>
 
 
