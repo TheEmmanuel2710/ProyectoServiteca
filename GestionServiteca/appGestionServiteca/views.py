@@ -12,10 +12,11 @@ import json
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 import threading
+from django.http import Http404
 from django.http import JsonResponse
 from smtplib import SMTPException
 from rest_framework import generics
-from appGestionServiteca.serializers import PersonaSerializer, ClienteSerializer
+from appGestionServiteca.serializers import PersonaSerializer, ClienteSerializer,ServicioPrestadoSerializer,DetalleServicioPrestadoSerializer
 import matplotlib.pyplot as plt
 import matplotlib
 from fpdf import FPDF
@@ -1381,6 +1382,29 @@ class ClienteList(generics.ListCreateAPIView):
 class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
+
+    def get_object(self):
+        perIdentificacion = self.kwargs.get('perIdentificacion')
+        try:
+            return Cliente.objects.get(cliPersona__perIdentificacion=perIdentificacion)
+        except Cliente.DoesNotExist:
+            raise Http404
+
+class ServicioPrestadoList(generics.ListCreateAPIView):
+    queryset = ServicioPrestado.objects.all()
+    serializer_class = ServicioPrestadoSerializer
+
+
+class ServicioPrestadoDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ServicioPrestado.objects.all()
+    serializer_class = ServicioPrestadoSerializer
+
+class DetalleServicioPrestadoList(generics.ListCreateAPIView):
+    serializer_class = DetalleServicioPrestadoSerializer
+
+    def get_queryset(self):
+        id_servicio_prestado = self.kwargs.get('id')
+        return DetalleServicioPrestado.objects.filter(detServicioPrestado=id_servicio_prestado)
 
 
 def mostrarGrafica1(request):

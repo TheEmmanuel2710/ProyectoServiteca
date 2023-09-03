@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from appGestionServiteca.models import Cliente, Persona
+from appGestionServiteca.models import Cliente, Persona, ServicioPrestado, DetalleServicioPrestado
 
 
 class PersonaSerializer(serializers.ModelSerializer):
@@ -10,8 +10,19 @@ class PersonaSerializer(serializers.ModelSerializer):
 
 
 class ClienteSerializer(serializers.ModelSerializer):
-    cliDireccion = PersonaSerializer
-
     class Meta:
         model = Cliente
         fields = ('id', 'cliDireccion', 'cliPersona')
+
+
+class ServicioPrestadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServicioPrestado
+        fields = ('id', 'serpCli', 'serpVehi', 'serpEstado',
+                  'serpObservaciones', 'serpFechaServicio')
+
+
+class DetalleServicioPrestadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetalleServicioPrestado
+        fields = ('id', 'detServicio', 'detServicioPrestado', 'detEmpleado')

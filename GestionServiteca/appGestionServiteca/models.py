@@ -71,6 +71,9 @@ class Persona(models.Model):
     perNumeroCelular = models.CharField(
         max_length=10, unique=True, db_comment="Numero de celular de la persona")
 
+    def __str__(self):
+        return f"Identificacion:{self.perIdentificacion} -Nombres: {self.perNombres} -Apellidos:{self.perApellidos} -Correo:{self.perCorreo} -Celular:{self.perNumeroCelular}"
+
 
 class PeticionForgot(models.Model):
     id_user = models.ForeignKey(
@@ -79,6 +82,9 @@ class PeticionForgot(models.Model):
         auto_now_add=True, db_comment="Fecha y hora del registro de la peticion forgot")
     estado = models.CharField(max_length=27, choices=estadoPeticionForgot,
                               default='Activa', db_comment="Estado de la peticion forgot")
+
+    def __str__(self):
+        return f"Usuario: {self.id_user}"
 
 
 class Cliente(models.Model):
@@ -137,7 +143,7 @@ class ServicioPrestado(models.Model):
     serpVehi = models.ForeignKey(
         Vehiculo, on_delete=models.PROTECT, db_comment="Hace relación al vehiculo FK")
     serpEstado = models.CharField(
-        max_length=10, choices=estadoServicioPrestado,null=True, db_comment="Estado del servicio prestado")
+        max_length=10, choices=estadoServicioPrestado, null=True, db_comment="Estado del servicio prestado")
     serpObservaciones = models.TextField(
         null=True, db_comment="Novedad acerca del servicio prestado realizado")
     serpFechaServicio = models.DateTimeField(
