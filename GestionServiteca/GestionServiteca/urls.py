@@ -72,7 +72,7 @@ urlpatterns = [
     path('vistaCambiarContraseña/', views.vistaCambiarContraseña),
     path('cambiarContrasena/<str:uidb64>/<str:token>/', views.cambiarContraseña),
     path('mostrarMensaje/', views.mostrarMensaje),
-    path('<str:texto>/', views.urlValidacion)
+    path('<str:texto>/', views.urlValidacion),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
