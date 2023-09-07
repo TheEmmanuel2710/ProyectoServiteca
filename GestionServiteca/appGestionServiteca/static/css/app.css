@@ -19,6 +19,10 @@ body {
     justify-content: space-evenly;
 }
 
+.au{
+    background: red;
+}
+
 .contenido {
     min-height: 80vh;
     margin-top: 80px;

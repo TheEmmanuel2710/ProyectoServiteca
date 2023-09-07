@@ -17,34 +17,107 @@
 <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
     <table id="tblSolicitudesVehiculos" class="table table-bordered table-hover">
         <thead>
-            <tr class="text-center bg-dark text-white">
-                <th class="text-center" style="background-color: black;">Cliente</th>
-                <th class="text-center" style="background-color: black;">Placa Vehiculo</th>
-                <th class="text-center" style="background-color: black;">Servicio Solicitado</th>
-                <th class="text-center" style="background-color: black;">Observaciones</th>
-                <th class="text-center" style="background-color: black;">Acción</th>
+            <tr class="text-center text-white">
+                <th style="background-color:black ;">Observaciones</th>
+                <th style="background-color:black ;">Fecha y Hora</th>
+                <th style="background-color:black ;">Cliente</th>
+                <th style="background-color:black ;">Vehiculo</th>
+                <th style="background-color:black ;">Estado</th>
+                <th style="background-color:black ;">Acción</th>
             </tr>
         </thead>
         <tbody>
-            {% for servicio_prestado in servicios_prestados %}
+            {% for servicioP in serviciosPrestados %}
             <tr>
-                <td class="text-center">{{ servicio_prestado.serpCli }}</td>
-                <td class="text-center">{{ servicio_prestado.serpVehi.vehPlaca }}</td>
-                <td class="text-center">{{ servicio_prestado.serpObservaciones }}</td>
+                <td>{{ servicioP.serpObservaciones }}</td>
+                <td>{{ servicioP.serpFechaServicio }}</td>
+                <td>{{ servicioP.serpCli.cliPersona.perNombres }} {{ servicioP.serpCli.cliPersona.perApellidos }}</td>
+                <td>{{ servicioP.serpVehi.vehPlaca }}</td>
+                <td>{{ servicioP.serpEstado }}</td>
                 <td class="text-center">
-                    {% for detalle in detalles_servicios %}
-                    {% if detalle.detServicioPrestado == servicio_prestado %}
-                    {{ detalle.detServicio.detServicio }} - {{ detalle.detServicioPrestado.serpEmp }}
-                    {% endif %}
-                    {% endfor %}
+                    <a onclick="abrirModalActualizarServicioPrestado('{{ servicioP.id }}')">
+                        <i class="bi bi-check-circle" title="Atender" style="font-size: 2rem;"></i>
+                    </a>
+                    <a onclick="abrirModalDetalle('{{ servicioP.id }}')">
+                        <i class="bi bi-eye" title="ver detalle" style="font-size: 2rem;"></i>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
-
+    </table>
     </table>
 </div>
+<!-- The Modal -->
+<div class="modal" id="DetalleServicio" style="margin-top: 5%;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header tituloModal">
+                <h4 class="modal-title">Detalle Servicio</h4>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Servicio</th>
+                            <th>Costo</th>
+                            <th>Empleado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaDetalles">
+                    </tbody>
+                </table>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function abrirModalDetalle(id) {
+        $.ajax({
+            url: "/consultarSP/" + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var detalles = data.detalles;
+                var detallesHtml = "";
 
+                for (var i = 0; i < detalles.length; i += 2) {
+                    var campoServicio = detalles[i].servicio.serNombre;
+                    var campoCosto = "$" + detalles[i].servicio.serCosto;
+                    var campoEmpleado = detalles[i].empleado.perNombres + " " + detalles[i].empleado.perApellidos;
+
+                    if ((i + 1) < detalles.length) {
+                        campoServicio += "<br>" + detalles[i + 1].servicio.serNombre;
+                        campoCosto += "<br>$" + detalles[i + 1].servicio.serCosto;
+                        campoEmpleado += "<br>" + detalles[i + 1].empleado.perNombres + " " + detalles[i + 1].empleado.perApellidos;
+                    }
+
+                    detallesHtml += "<tr>";
+                    detallesHtml += "<td>" + campoServicio + "</td>";
+                    detallesHtml += "<td>" + campoCosto + "</td>";
+                    detallesHtml += "<td>" + campoEmpleado + "</td>";
+                    detallesHtml += "</tr>";
+                }
+
+                $("#tablaDetalles").html(detallesHtml);
+
+                // Mostrar el modal
+                $('#DetalleServicio').modal('show');
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Hubo un error al cargar los datos del detalle.");
+            }
+        });
+    }
+</script>
 <script>
     cargarDataTable($("#tblSolicitudesVehiculos"), "LISTADO SOLICITUDES VEHICULOS", 4);
 </script>

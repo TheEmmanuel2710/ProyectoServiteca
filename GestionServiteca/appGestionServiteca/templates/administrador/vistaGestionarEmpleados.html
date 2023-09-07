@@ -22,6 +22,7 @@
                 <th style="background-color: black;">Identificación</th>
                 <th style="background-color: black;">Nombre Completo</th>
                 <th style="background-color: black;">Correo</th>
+                <th style="background-color: black;">Tipo</th>
                 <th style="background-color: black;">Numero Celular</th>
                 <th style="background-color: black;">Cargo</th>
                 <th style="background-color: black;">Sueldo</th>
@@ -30,17 +31,18 @@
             </tr>
         </thead>
         <tbody>
-            {% for empleado in empleados %}
+            {% for usuario in usuarios %}
             <tr>
-                <td>{{ empleado.empPersona.perIdentificacion }}</td>
-                <td>{{ empleado.empPersona.perNombres }} {{ empleado.empPersona.perApellidos }}</td>
-                <td>{{ empleado.empPersona.perCorreo }}</td>
-                <td>{{ empleado.empPersona.perNumeroCelular }}</td>
-                <td>{{ empleado.empCargo }}</td>
-                <td>{{ empleado.empSueldo }}</td>
-                <td>{{ empleado.empEstado }}</td>
+                <td>{{ usuario.userEmpleado.empPersona.perIdentificacion }}</td>
+                <td>{{usuario.first_name}} {{usuario.last_name}}</td>
+                <td>{{usuario.email}}</td>
+                <td>{{usuario.userTipo}}</td>
+                <td>{{ usuario.userEmpleado.empPersona.perNumeroCelular }}</td>
+                <td>{{ usuario.userEmpleado.empCargo }}</td>
+                <td>${{ usuario.userEmpleado.empSueldo }}</td>
+                <td>{{ usuario.userEmpleado.empEstado }}</td>
                 <td class="text-center">
-                    <a onclick="abrirModalActualizarEmpleado('{{empleado.id}}')">
+                    <a onclick="abrirModalActualizarEmpleado('{{usuario.id}}')">
                         <i class="fa fa-edit text-body" title="ver/editar" style="font-size: 2rem;"></i>
                     </a>
                 </td>
@@ -50,7 +52,7 @@
     </table>
 </div>
 <!-- The Modal -->
-<div class="modal" id="ActualizarEmpl" style="margin-top: 5%;">
+<div class="modal" id="ActualizarEmpl">
     <div class="modal-dialog">
         <div class="modal-content">
             <!-- Modal Header -->
@@ -63,7 +65,7 @@
                 <form action="/ActualizarEmp/" method="post" enctype="multipart/form-data" class="needs-validation"
                     novalidate>
                     {% csrf_token %}
-                    <input type="hidden" name="idEmpleado" id="idEmpleado" value="">
+                    <input type="hidden" name="idUsuario" id="idUsuario" value="">
                     <div class="form-group row">
                         <div class="mb-3 col-lg-6">
                             <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación:</label>
@@ -160,22 +162,24 @@
 </script>
 <script>
     function abrirModalActualizarEmpleado(id) {
-        // Funcion AJAX para obtener los datos del cliente por ID
+        // Funcion AJAX para obtener los datos del empleado por ID
         $.ajax({
-            url: "/consultarE/" + id, //URL para obtener los datos del cliente por ID
+            url: "/consultarU/" + id, // URL de la vista de Django para consultar usuarios y empleados
             type: 'GET',
             dataType: 'json',
             success: function (data) {
-                // Rellenar el formulario de la modal con los datos obtenidos
-                $("#txtIdentificacion").val(data.empleado.empPersona.perIdentificacion);
-                $("#txtNombres").val(data.empleado.empPersona.perNombres);
-                $("#txtApellidos").val(data.empleado.empPersona.perApellidos);
-                $("#txtCorreo").val(data.empleado.empPersona.perCorreo);
-                $("#txtNumeroC").val(data.empleado.empPersona.perNumeroCelular);
-                $("#txtCargo").val(data.empleado.empCargo);
-                $("#txtSueldo").val(data.empleado.empSueldo);
-                $("#cbEstado").val(data.empleado.empEstado);
-                $("#idEmpleado").val(id);
+
+                $("#txtIdentificacion").val(data.usuario.persona.perIdentificacion);
+                $("#txtNombres").val(data.usuario.usuario.first_name);
+                $("#txtApellidos").val(data.usuario.usuario.last_name);
+                $("#txtCorreo").val(data.usuario.usuario.email);
+                $("#txtNumeroC").val(data.usuario.persona.perNumeroCelular);
+
+                $("#txtCargo").val(data.usuario.empleado.empCargo);
+                $("#txtSueldo").val(data.usuario.empleado.empSueldo);
+                $("#cbEstado").val(data.usuario.empleado.empEstado);
+
+                $("#idUsuario").val(id);
 
                 var form = $('#ActualizarEmpl').find('.needs-validation')[0];
                 form.classList.remove('was-validated');

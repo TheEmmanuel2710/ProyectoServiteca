@@ -11,12 +11,13 @@ import urllib
 import json
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
+from django.db.models import Sum
 import threading
 from django.http import Http404
 from django.http import JsonResponse
 from smtplib import SMTPException
 from rest_framework import generics
-from appGestionServiteca.serializers import PersonaSerializer, ClienteSerializer,ServicioPrestadoSerializer,DetalleServicioPrestadoSerializer
+from appGestionServiteca.serializers import PersonaSerializer, ClienteSerializer, ServicioPrestadoSerializer, DetalleServicioPrestadoSerializer
 import matplotlib.pyplot as plt
 import matplotlib
 from fpdf import FPDF
@@ -30,10 +31,23 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count
 
+
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
 
 def urlValidacion(request, texto):
+    """
+    Esta vista valida la autenticación del usuario y su grupo, y redirige a diferentes
+    plantillas HTML con un mensaje de error si la URL ingresada no es válida.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+        texto (str): El texto que se va a validar en la URL.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza una plantilla HTML apropiada.
+    """
+
     mensaje2 = "Nuestro sistema detecta que la ulr ingresada no es valida,por favor verifique."
     if not request.user.is_authenticated:
         return render(request, "inicio.html", {"mensaje2": mensaje2})
@@ -46,10 +60,30 @@ def urlValidacion(request, texto):
 
 
 def inicio(request):
+    """
+    Esta vista renderiza la página de inicio.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página de inicio (inicio.html).
+    """
     return render(request, 'inicio.html')
 
 
 def inicioAdministrador(request):
+    """
+    Esta vista verifica si el usuario está autenticado y tiene el rol de "Administrador".
+    Si es así, muestra la página de inicio del administrador. Si no, muestra un mensaje de error.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página de inicio adecuada o muestra un mensaje de error.
+    """
+
     if not request.user.is_authenticated:
         mensaje = "Debe iniciar sesión."
         return render(request, "inicio.html", {"mensaje": mensaje})
@@ -67,6 +101,17 @@ def inicioAdministrador(request):
 
 
 def inicioAsistente(request):
+    """
+    Esta vista verifica si el usuario está autenticado y tiene el rol de "Asistente".
+    Si es así, muestra la página de inicio del asistente. Si no, muestra un mensaje de error.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página de inicio adecuada o muestra un mensaje de error.
+    """
+
     if not request.user.is_authenticated:
         mensaje = "Debe iniciar sesión."
         return render(request, "inicio.html", {"mensaje": mensaje})
@@ -84,6 +129,17 @@ def inicioAsistente(request):
 
 
 def inicioTecnico(request):
+    """
+    Esta vista verifica si el usuario está autenticado y tiene el rol de "Técnico".
+    Si es así, muestra la página de inicio del técnico. Si no, muestra un mensaje de error.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página de inicio adecuada o muestra un mensaje de error.
+    """
+
     if not request.user.is_authenticated:
         mensaje = "Debe iniciar sesión."
         return render(request, "inicio.html", {"mensaje": mensaje})
@@ -101,6 +157,18 @@ def inicioTecnico(request):
 
 
 def vistaGestionarUsuarios(request):
+    """
+    Esta vista permite la gestión de usuarios según el rol del usuario que realiza la solicitud.
+    Los administradores pueden ver y gestionar todos los usuarios, mientras que otros roles
+    obtienen un mensaje de error o son redirigidos a sus respectivas páginas de inicio.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página adecuada o muestra un mensaje de error.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Administrador').exists():
@@ -118,12 +186,24 @@ def vistaGestionarUsuarios(request):
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
-def vistaRegistrarUsuario(request):
+def vistaRegistrarEmpleado(request):
+    """
+    Esta vista permite el registro de empleados en el sistema según el rol del usuario que realiza la solicitud.
+    Los administradores pueden acceder a la página de registro de empleados, mientras que otros roles
+    obtienen un mensaje de error o son redirigidos a sus respectivas páginas de inicio.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página adecuada o muestra un mensaje de error.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Administrador').exists():
         roles = Group.objects.all()
-        return render(request, "administrador/frmRegistrarUsuario.html", {"roles": roles, "tipoUsuario": tipoUsuario, "user": user})
+        return render(request, "administrador/frmRegistrarEmpleado.html", {"roles": roles, "tipoUsuario": tipoUsuario, "estadoEmpl": estadoEmpleados, "user": user})
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
@@ -135,23 +215,59 @@ def vistaRegistrarUsuario(request):
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
-def registrarUsuario(request):
+def registrarEmpleado(request):
+    """
+    Esta vista permite registrar nuevos empleados en el sistema. El registro de empleados está condicionado
+    por la validación de datos, como identificación, correo electrónico y número de celular, para evitar
+    duplicados. Luego, se crea una instancia de usuario y se envía un correo electrónico con las credenciales
+    de ingreso al empleado registrado.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página de registro de empleado con un mensaje
+        de éxito o error.
+    """
     estado = False
     mensaje1 = ""
 
     try:
+        identificacion = request.POST.get("txtIdentificacion")
         correo = request.POST.get("txtCorreo")
-
-        if User.objects.filter(email=correo).exists():
-            mensaje1 = "Error: Correo electrónico ya está registrado en otro usuario."
+        numeroC = request.POST.get("txtNumeroC")
+        if User.objects.filter(email=correo).exists() or Persona.objects.filter(perCorreo=correo):
+            mensaje1 = "Error: El Correo electrónico ya está registrado en otro empleado."
+        elif Persona.objects.filter(perIdentificacion=identificacion).exists():
+            mensaje1 = "Error: La Identificación ya está registrada en otro empleado."
+        elif Persona.objects.filter(perNumeroCelular=numeroC).exists():
+            mensaje1 = "Error: El Número de celular ya está registrado en otro empleado."
         else:
             nombres = request.POST.get("txtNombres")
             apellidos = request.POST.get("txtApellidos")
+            cargo = request.POST.get("txtCargo")
+            sueldo = request.POST.get("txtSueldo")
+            estadoE = request.POST.get("cbEstado")
             tipo = request.POST.get("cbTipo")
             foto = request.FILES.get("fileFoto", False)
             idRol = int(request.POST.get("cbRol"))
 
             with transaction.atomic():
+                persona = Persona(
+                    perIdentificacion=identificacion,
+                    perNombres=nombres,
+                    perApellidos=apellidos,
+                    perNumeroCelular=numeroC,
+                    perCorreo=correo
+                )
+                persona.save()
+                empleado = Empleado(
+                    empCargo=cargo,
+                    empSueldo=sueldo,
+                    empEstado=estadoE,
+                    empPersona=persona
+                )
+                empleado.save()
                 user = User(
                     username=correo,
                     first_name=nombres,
@@ -159,6 +275,7 @@ def registrarUsuario(request):
                     email=correo,
                     userTipo=tipo,
                     userFoto=foto,
+                    userEmpleado=empleado
                 )
                 user.save()
 
@@ -172,7 +289,7 @@ def registrarUsuario(request):
                 user.set_password(passwordGenerado)
                 user.save()
 
-                mensaje1 = "Usuario Agregado Correctamente."
+                mensaje1 = "Empleado Agregado Correctamente."
                 estado = True
 
                 asunto = "Registro Sistema Serviteca"
@@ -188,13 +305,25 @@ def registrarUsuario(request):
                 thread.start()
 
     except Exception as error:
-        mensaje1 = f"Error al registrar usuario: {error}."
+        mensaje1 = f"Error al registrar empleado: {error}."
 
     retorno = {"mensaje1": mensaje1, "estado": estado}
-    return render(request, "administrador/frmRegistrarUsuario.html", retorno)
+    return render(request, "administrador/frmRegistrarEmpleado.html", retorno)
 
 
 def vistaGestionarClientes(request):
+    """
+    Esta vista permite la gestión de clientes en el sistema según el rol del usuario que realiza la solicitud.
+    Los asistentes pueden acceder a la página de gestión de clientes, mientras que otros roles obtienen un
+    mensaje de error o son redirigidos a sus respectivas páginas de inicio.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página adecuada o muestra un mensaje de error.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
@@ -213,6 +342,19 @@ def vistaGestionarClientes(request):
 
 
 def vistaRegistrarClientes(request):
+    """
+    Esta vista permite el registro de nuevos clientes en el sistema. El acceso a la página de registro de clientes
+    está condicionado por el rol del usuario que realiza la solicitud, en este caso, los asistentes pueden acceder
+    a la página de registro de clientes, mientras que otros roles obtienen un mensaje de error o son redirigidos
+    a sus respectivas páginas de inicio.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página adecuada o muestra un mensaje de error.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
@@ -230,6 +372,19 @@ def vistaRegistrarClientes(request):
 
 
 def registrarCliente(request):
+    """
+    Esta vista permite el registro de nuevos clientes en el sistema. Se verifica la existencia de duplicados
+    en la identificación, número de celular y correo electrónico para evitar registros duplicados. Luego,
+    se crea una instancia de persona y cliente asociada al nuevo cliente registrado.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página de registro de cliente con un mensaje
+        de éxito o error.
+    """
+
     estado = False
     mensaje = ""
 
@@ -239,11 +394,11 @@ def registrarCliente(request):
         correo = request.POST.get("txtCorreo")
 
         if Persona.objects.filter(perIdentificacion=identificacion).exists():
-            mensaje = "Error : Identificación ya registrada en otro cliente."
+            mensaje = "Error : La Identificación ya está registrada en otro cliente."
         elif Persona.objects.filter(perNumeroCelular=numeroC).exists():
-            mensaje = "Error : Número de celular ya registrado en otro cliente."
+            mensaje = "Error : El Número de celular ya está registrado en otro cliente."
         elif Persona.objects.filter(perCorreo=correo).exists():
-            mensaje = "Error : Correo electrónico ya registrado en otro cliente."
+            mensaje = "Error : El Correo electrónico ya está registrado en otro cliente."
         else:
             nombres = request.POST.get("txtNombres")
             apellidos = request.POST.get("txtApellidos")
@@ -273,6 +428,19 @@ def registrarCliente(request):
 
 
 def consultarCliente(request, id):
+    """
+    Esta vista permite consultar los detalles de un cliente en el sistema por su ID y devuelve la información
+    en formato JSON.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+        id (int): El ID del cliente que se desea consultar.
+
+    Returns:
+        JsonResponse: Una respuesta JSON que contiene los detalles del cliente o un mensaje de error si el cliente
+        no se encuentra, el ID es inválido o se produce algún otro error.
+    """
+
     try:
         cliente = Cliente.objects.get(pk=int(id))
         persona = cliente.cliPersona
@@ -299,13 +467,29 @@ def consultarCliente(request, id):
 
 
 def consultarFactura(request, id):
+    """
+    Esta vista permite consultar los detalles de una factura en el sistema por su ID y devuelve la información
+    en formato JSON, incluyendo los detalles del cliente asociado, los servicios prestados en la factura y el
+    total de la factura.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+        id (int): El ID de la factura que se desea consultar.
+
+    Returns:
+        JsonResponse: Una respuesta JSON que contiene los detalles de la factura y del cliente asociado, o un
+        mensaje de error si la factura no se encuentra, el cliente o la persona asociada al cliente no se
+        encuentran, el ID es inválido o se produce algún otro error.
+    """
+
     try:
         factura = Factura.objects.get(pk=int(id))
         servicio_prestado = factura.facServicioPrestado
         cliente = servicio_prestado.serpCli
         persona = cliente.cliPersona
-        detalles_servicios_prestados = DetalleServicioPrestado.objects.filter(detServicioPrestado=servicio_prestado)
-        
+        detalles_servicios_prestados = DetalleServicioPrestado.objects.filter(
+            detServicioPrestado=servicio_prestado)
+
         datos_persona = {
             "perNombres": persona.perNombres,
             "perApellidos": persona.perApellidos,
@@ -316,7 +500,7 @@ def consultarFactura(request, id):
         }
 
         servicios_con_empleados = []
-        total_costo = 0 
+        total_costo = 0
 
         for detalle in detalles_servicios_prestados:
             servicio = detalle.detServicio
@@ -324,14 +508,14 @@ def consultarFactura(request, id):
             servicio_con_empleado = {
                 "serNombre": servicio.serNombre,
                 "serCosto": servicio.serCosto,
-                "nombreEmpleado": empleado.empPersona.perNombres,  
+                "nombreEmpleado": empleado.empPersona.perNombres,
                 "apellidoEmpleado": empleado.empPersona.perApellidos,
             }
             servicios_con_empleados.append(servicio_con_empleado)
-            total_costo += servicio.serCosto  
+            total_costo += servicio.serCosto
 
         datos_factura = {
-            "facTotal": total_costo,  
+            "facTotal": total_costo,
             "facEstado": factura.facEstado,
             "facCodigo": factura.facCodigo,
             "facFecha": factura.facFecha.strftime("%Y-%m-%d %H:%M:%S"),
@@ -352,6 +536,18 @@ def consultarFactura(request, id):
 
 
 def ActualizarFac(request):
+    """
+    Esta vista permite actualizar el estado de una factura en el sistema. Se espera una solicitud HTTP POST con el ID de
+    la factura y el nuevo estado. La factura se busca en la base de datos y se actualiza su estado. Luego, se muestra un
+    mensaje de éxito o error y se renderiza la página de gestión de facturas.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página de gestión de facturas con un mensaje de éxito o error.
+    """
+
     estado = False
     mensaje = ""
     if request.method == "POST":
@@ -381,6 +577,18 @@ def ActualizarFac(request):
 
 
 def vistaGestionarVehiculos(request):
+    """
+    Esta vista permite gestionar vehículos en el sistema. El acceso a la página de gestión de vehículos está condicionado
+    por el rol del usuario que realiza la solicitud, en este caso, los asistentes pueden acceder a la página de gestión
+    de vehículos. Otros roles obtienen un mensaje de error o son redirigidos a sus respectivas páginas de inicio.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página adecuada o muestra un mensaje de error.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
@@ -400,6 +608,18 @@ def vistaGestionarVehiculos(request):
 
 
 def vistaRegistrarVehiculos(request):
+    """
+    Esta vista permite registrar vehículos en el sistema. El acceso a la página de registro de vehículos está condicionado
+    por el rol del usuario que realiza la solicitud, en este caso, los asistentes pueden acceder a la página de registro
+    de vehículos. Otros roles obtienen un mensaje de error o son redirigidos a sus respectivas páginas de inicio.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza el formulario de registro de vehículos o muestra un mensaje de error.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
@@ -418,6 +638,18 @@ def vistaRegistrarVehiculos(request):
 
 
 def registrarVehiculo(request):
+    """
+    Esta vista permite registrar un vehículo en el sistema. Se espera una solicitud HTTP POST con los datos del vehículo
+    a registrar, incluyendo la placa, la marca, el modelo y el tipo de vehículo. Se verifica si la placa ya está
+    registrada en otro vehículo y se realiza el registro si la placa no está duplicada.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza el formulario de registro de vehículos con un mensaje de éxito o error.
+    """
+
     estado = False
     mensaje = ""
 
@@ -425,7 +657,7 @@ def registrarVehiculo(request):
         placa = request.POST.get("txtPlaca")
 
         if Vehiculo.objects.filter(vehPlaca=placa).exists():
-            mensaje = "Error : Placa ya registrada en otro vehiculo."
+            mensaje = "Error : La Placa ya está registrada en otro vehiculo."
         else:
             marca = request.POST.get("cbMarca")
             modelo = request.POST.get("txtModelo")
@@ -450,8 +682,21 @@ def registrarVehiculo(request):
 
 
 def consultarVehiculo(request, id):
+    """
+    Esta vista permite consultar la información de un vehículo en el sistema utilizando su ID. Se espera una solicitud HTTP
+    GET con el ID del vehículo a consultar. La vista busca el vehículo en la base de datos y devuelve los datos del
+    vehículo en formato JSON.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+        id (int): El ID del vehículo a consultar.
+
+    Returns:
+        JsonResponse: Una respuesta JSON que contiene los datos del vehículo o un mensaje de error si el vehículo no se encuentra.
+    """
+
     try:
-        vehiculo = Vehiculo.objects.get(id=id)  # Buscar vehiculo por su id
+        vehiculo = Vehiculo.objects.get(id=id)
         datos_vehiculo = {
             "id": vehiculo.id,
             "vehPlaca": vehiculo.vehPlaca,
@@ -487,11 +732,24 @@ def generarPassword():
 
 
 def vistaGestionarEmpleados(request):
+    """
+    Esta vista permite gestionar empleados en el sistema. El acceso a la página de gestión de empleados está condicionado
+    por el rol del usuario que realiza la solicitud. Los administradores pueden acceder a la página de gestión de empleados
+    y ver una lista de usuarios registrados en el sistema. Otros roles obtienen un mensaje de error o son redirigidos a sus
+    respectivas páginas de inicio.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página adecuada o muestra un mensaje de error.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Administrador').exists():
-        empleados = Empleado.objects.all()
-        retorno = {"empleados": empleados,
+        usuarios = User.objects.all()
+        retorno = {"usuarios": usuarios,
                    "estadoEmpl": estadoEmpleados, "user": user}
         return render(request, "administrador/vistaGestionarEmpleados.html", retorno)
 
@@ -506,108 +764,89 @@ def vistaGestionarEmpleados(request):
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
-def vistaRegistrarEmpleados(request):
-    user = request.user
+def consultarUsuario(request, id):
+    """
+    Esta vista permite consultar la información de un usuario en el sistema utilizando su ID. Se espera una solicitud HTTP
+    GET con el ID del usuario a consultar. La vista busca el usuario en la base de datos y devuelve los datos del usuario
+    en formato JSON, incluyendo información del empleado y la persona asociados si existen.
 
-    if user.groups.filter(name='Administrador').exists():
-        retorno = {"user": user, "estadoEmpl": estadoEmpleados}
-        return render(request, "administrador/frmRegistrarEmpleado.html", retorno)
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+        id (int): El ID del usuario a consultar.
 
-    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
-
-    if user.groups.filter(name='Asistente').exists():
-        return render(request, "asistente/inicio.html", {"mensaje": mensaje})
-
-    if user.groups.filter(name='Tecnico').exists():
-        return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
-
-    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
-
-
-def registrarEmpleado(request):
-    estado = False
-    mensaje = ""
+    Returns:
+        JsonResponse: Una respuesta JSON que contiene los datos del usuario o un mensaje de error si el usuario no se encuentra.
+    """
 
     try:
-        identificacion = request.POST.get("txtIdentificacion")
-        numeroC = request.POST.get("txtNumeroC")
-        correo = request.POST.get("txtCorreo")
+        usuario = User.objects.get(pk=id)
 
-        if Persona.objects.filter(perIdentificacion=identificacion).exists():
-            mensaje = "Error : Identificación ya registrada en un empleado."
-        elif Persona.objects.filter(perNumeroCelular=numeroC).exists():
-            mensaje = "Error : Número de celular ya registrado en un empleado."
-        elif Persona.objects.filter(perCorreo=correo).exists():
-            mensaje = "Error : Correo electrónico ya registrado en un empleado."
+        empleado = usuario.userEmpleado
+        if empleado:
+            persona = empleado.empPersona
+
+            datos_usuario = {
+                "usuario": {
+                    "id": usuario.id,
+                    "first_name": usuario.first_name,
+                    "last_name": usuario.last_name,
+                    "email": usuario.email,
+                },
+                "empleado": {
+                    "empCargo": empleado.empCargo,
+                    "empSueldo": empleado.empSueldo,
+                    "empEstado": empleado.empEstado,
+                },
+                "persona": {
+                    "perIdentificacion": persona.perIdentificacion,
+                    "perNumeroCelular": persona.perNumeroCelular,
+                }
+            }
         else:
-            nombres = request.POST.get("txtNombres")
-            apellidos = request.POST.get("txtApellidos")
-            cargo = request.POST.get("txtCargo")
-            sueldo = request.POST.get("txtSueldo")
-            estadoE = request.POST.get("cbEstado")
+            datos_usuario = {
+                "usuario": {
+                    "id": usuario.id,
+                    "username": usuario.username,
+                    "email": usuario.email,
+                },
+                "empleado": None,
+                "persona": None
+            }
 
-            with transaction.atomic():
-                persona = Persona(
-                    perIdentificacion=identificacion,
-                    perNombres=nombres,
-                    perApellidos=apellidos,
-                    perCorreo=correo,
-                    perNumeroCelular=numeroC
-                )
-                persona.save()
-                empleado = Empleado(
-                    empCargo=cargo,
-                    empSueldo=sueldo,
-                    empEstado=estadoE,
-                    empPersona=persona
-                )
-                empleado.save()
+        return JsonResponse({"usuario": datos_usuario})
 
-            estado = True
-            mensaje = "Empleado Agregado Correctamente."
-
-    except Exception as error:
-        mensaje = f"Error al registrar empleado : {error}."
-
-    retorno = {"mensaje": mensaje, "estado": estado}
-    return render(request, "administrador/frmRegistrarEmpleado.html", retorno)
-
-
-def consultarEmpleado(request, id):
-    try:
-        # Buscar empleado por ID de Persona
-        empleado = Empleado.objects.get(pk=int(id))
-        persona = empleado.empPersona
-
-        datos_empleado = {
-            "id": empleado.id,
-            "empPersona": {
-                "perIdentificacion": persona.perIdentificacion,
-                "perNombres": persona.perNombres,
-                "perApellidos": persona.perApellidos,
-                "perCorreo": persona.perCorreo,
-                "perNumeroCelular": persona.perNumeroCelular,
-            },
-            "empCargo": empleado.empCargo,
-            "empSueldo": empleado.empSueldo,
-            "empEstado": empleado.empEstado,
-        }
-        return JsonResponse({"empleado": datos_empleado})
-    except Empleado.DoesNotExist:
-        return JsonResponse({"error": "Empleado no encontrado."}, status=404)
-    except Persona.DoesNotExist:
-        return JsonResponse({"error": "Persona no encontrada."}, status=404)
-    except ValueError:
-        return JsonResponse({"error": "ID inválido."}, status=400)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "Usuario no encontrado."}, status=404)
     except Exception as error:
         return JsonResponse({"error": str(error)}, status=500)
 
 
 def vistaLogin(request):
+    """
+    Esta vista renderiza la página de inicio de sesión, donde los usuarios pueden ingresar sus credenciales.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página de inicio de sesión.
+    """
     return render(request, "menu.html")
 
 
 def login(request):
+    """
+    Esta vista maneja el proceso de inicio de sesión de los usuarios. Verifica las credenciales del usuario y también
+    valida el reCAPTCHA. Si las credenciales son válidas y el reCAPTCHA se valida correctamente, el usuario se autentica y
+    se redirige a su página de inicio correspondiente. Si no, se muestra un mensaje de error.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que redirige al usuario a su página de inicio o muestra un mensaje de error.
+    """
+
     # validar el recapthcha
     """Begin reCAPTCHA validation"""
     recaptcha_response = request.POST.get('g-recaptcha-response')
@@ -645,12 +884,35 @@ def login(request):
 
 
 def salir(request):
+    """
+    Esta vista maneja el proceso de cierre de sesión de los usuarios. Cuando un usuario cierra la sesión, se lo redirige
+    a la página de inicio y se muestra un mensaje indicando que ha cerrado la sesión.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que redirige al usuario a la página de inicio y muestra un mensaje de cierre de sesión.
+    """
+
     auth.logout(request)
     return render(request, "inicio.html",
                   {"mensaje": "Ha cerrado la sesión."})
 
 
 def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
+    """
+    Esta función se encarga de enviar un correo electrónico a un destinatario dado con un asunto y mensaje específicos.
+
+    Args:
+        asunto (str): El asunto del correo electrónico.
+        mensaje (str): El contenido del correo electrónico.
+        destinatario (str): La dirección de correo electrónico del destinatario.
+
+    Returns:
+        None
+    """
+
     remitente = settings.EMAIL_HOST_USER
     template = get_template('enviarCorreo.html')
     contenido = template.render({
@@ -670,6 +932,17 @@ def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
 
 
 def vistaRegistrarServiciosPrestados(request):
+    """
+    Esta vista renderiza la página para registrar servicios prestados. Dependiendo del rol del usuario autenticado, muestra
+    diferentes opciones y formularios para registrar servicios prestados, empleados, vehículos y clientes.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que renderiza la página para registrar servicios prestados.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
@@ -700,6 +973,14 @@ def vistaRegistrarServiciosPrestados(request):
 
 
 def obtenerSiguienteNumeroFactura():
+    """
+    Esta función se encarga de obtener el siguiente número de factura disponible. Busca la última factura registrada en la base de datos
+    y aumenta el número en 1. Si no hay facturas registradas, devuelve 1 como el primer número de factura.
+
+    Returns:
+        int: El siguiente número de factura disponible.
+    """
+
     ultimaFactura = Factura.objects.last()
     if ultimaFactura:
         ultimoNumero = int(ultimaFactura.facCodigo[-1])
@@ -710,11 +991,36 @@ def obtenerSiguienteNumeroFactura():
 
 
 def generarCodigoFactura():
+    """
+    Genera un código de factura único con el formato 'SVP-XXXXXX'.
+
+    Esta función se utiliza para generar un código de factura único para su posterior uso
+    en la creación de facturas relacionadas con servicios prestados. El código de factura
+    está compuesto por 'SVP-' seguido de un número entero único.
+
+    :return: Una cadena de texto que representa el código de factura generado.
+    :rtype: str
+    """
+
     siguienteNumero = obtenerSiguienteNumeroFactura()
     return f'SVP-{siguienteNumero:06d}'
 
 
 def registrarServicioPrestado(request):
+    """
+    Registra un servicio prestado, crea una factura y notifica a los empleados.
+
+    Esta función permite registrar un servicio prestado, crea una factura asociada a
+    ese servicio y envía notificaciones por correo electrónico a los empleados asignados
+    al servicio y al cliente que solicitó el servicio.
+
+    :param request: La solicitud HTTP que contiene los datos del servicio prestado.
+    :type request: HttpRequest
+
+    :return: Un objeto JsonResponse con el estado de la operación y un mensaje.
+    :rtype: JsonResponse
+    """
+
     estado = False
     mensaje = ""
 
@@ -809,6 +1115,22 @@ def registrarServicioPrestado(request):
 
 
 def consultarServicioPrestado(request, id):
+    """
+    Consulta los detalles de un servicio prestado y devuelve la información en formato JSON.
+
+    Esta función busca un servicio prestado por su ID en la base de datos y recopila información relacionada,
+    incluyendo detalles del cliente, detalles del vehículo y detalles de los servicios asignados y empleados asignados.
+
+    :param request: La solicitud HTTP que contiene el ID del servicio prestado a consultar.
+    :type request: HttpRequest
+
+    :param id: El ID del servicio prestado a consultar.
+    :type id: int
+
+    :return: Un objeto JsonResponse con los detalles del servicio prestado.
+    :rtype: JsonResponse
+    """
+
     try:
         servicioPrestado = ServicioPrestado.objects.get(id=id)
 
@@ -864,7 +1186,20 @@ def consultarServicioPrestado(request, id):
         return JsonResponse({"error": str(error)}, status=500)
 
 
-def actualizarSericioPrestado(request):
+def actualizarServicioPrestado(request):
+    """
+    Actualiza el estado de un servicio prestado y, si corresponde, notifica a los clientes mediante correos electrónicos.
+
+    Esta función permite cambiar el estado de un servicio prestado, como "Solicitado," "En Progreso," "Terminado" o "Cancelado".
+    En caso de que el estado se actualice a "Terminado" o "Cancelado," se envían correos electrónicos a los clientes para notificarlos.
+
+    :param request: La solicitud HTTP que contiene el ID del servicio prestado y el nuevo estado.
+    :type request: HttpRequest
+
+    :return: Una respuesta HTTP con la vista de gestión de servicios prestados actualizada.
+    :rtype: HttpResponse
+    """
+
     estado = False
     mensaje = ""
 
@@ -874,7 +1209,7 @@ def actualizarSericioPrestado(request):
 
         try:
             servicioPrestado = ServicioPrestado.objects.get(pk=servicioP_id)
-            
+
             if nuevo_estado == "Cancelado":
                 # Enviar correo al cliente notificando la cancelación
                 cliente = servicioPrestado.serpCli
@@ -914,8 +1249,20 @@ def actualizarSericioPrestado(request):
     return render(request, "asistente/vistaGestionarServicioPrestados.html", retorno)
 
 
-
 def vistaGestionarServiciosPrestados(request):
+    """
+    Muestra una vista de gestión de servicios prestados según el rol del usuario.
+
+    Esta función verifica el rol del usuario y muestra una vista de gestión de servicios prestados apropiada.
+    Los asistentes pueden ver y gestionar servicios prestados, mientras que otros roles no tienen acceso.
+
+    :param request: La solicitud HTTP del usuario.
+    :type request: HttpRequest
+
+    :return: Una vista HTML con la gestión de servicios prestados correspondiente al rol del usuario.
+    :rtype: HttpResponse
+    """
+
     user = request.user
     if user.groups.filter(name='Asistente').exists():
         serviciosPrestados = ServicioPrestado.objects.all()
@@ -937,6 +1284,19 @@ def vistaGestionarServiciosPrestados(request):
 
 
 def vistaGestionarFacturas(request):
+    """
+    Muestra una vista de gestión de facturas según el rol del usuario asistente.
+
+    Esta función verifica el rol del usuario y muestra una vista de gestión de facturas adaptada a los asistentes.
+    Los asistentes pueden ver y gestionar facturas de servicios prestados.
+
+    :param request: La solicitud HTTP del usuario.
+    :type request: HttpRequest
+
+    :return: Una vista HTML con la gestión de facturas correspondiente al rol del usuario asistente.
+    :rtype: HttpResponse
+    """
+
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
@@ -968,10 +1328,26 @@ def vistaGestionarFacturas(request):
 
 
 def vistaGestionarSolicitudesV(request):
+    """
+    Renderiza la página de gestión de solicitudes de vehículos según el rol del usuario.
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de gestión de solicitudes de vehículos.
+    """
+
     user = request.user
 
     if user.groups.filter(name='Tecnico').exists():
-        return render(request, "tecnico/vistaGestionarSolicitudesVehiculos.html")
+        serviciosPrestados = ServicioPrestado.objects.all()
+        vehiculos = Vehiculo.objects.all()
+        clientes = Cliente.objects.all()
+        retorno = {"serviciosPrestados": serviciosPrestados,
+                   "estadoServicioPrestado": estadoServicioPrestado, "vehiculos": vehiculos, "clientes": clientes}
+
+        return render(request, "tecnico/vistaGestionarSolicitudesVehiculos.html", retorno)
 
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
@@ -984,33 +1360,17 @@ def vistaGestionarSolicitudesV(request):
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
-def existeCliente(request):
-    id_identificacion = request.POST.get("txtIdentificacion", None)
-    mensaje = ""
-    persona = None
-    estado = False
-
-    try:
-        if id_identificacion:
-            persona = Persona.objects.get(perIdentificacion=id_identificacion)
-            mensaje = "Cliente consultado de manera exitosa."
-            estado = True
-        else:
-            mensaje = "Por favor, ingrese una identificación."
-    except Persona.DoesNotExist:
-        mensaje = "No se encontró un cliente con esa identificación."
-    except Exception as error:
-        mensaje = f"Problemas -> {error}."
-
-    retorno = {
-        "mensaje": mensaje,
-        "persona": persona,
-        "estado": estado,
-    }
-    return render(request, "cliente/vistaGestionarConsultasC.html", retorno)
-
-
 def actualizarVehiculo(request):
+    """
+    Actualiza la información de un vehículo en la base de datos.
+
+    Args:
+        request: El objeto de solicitud de Django que contiene los datos de actualización.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de gestión de vehículos actualizada.
+    """
+
     estado = False
     mensaje = ""
 
@@ -1025,7 +1385,7 @@ def actualizarVehiculo(request):
             vehiculo = Vehiculo.objects.select_for_update().get(pk=idVehiculo)
 
             if Vehiculo.objects.filter(vehPlaca=placa).exclude(pk=idVehiculo).exists():
-                mensaje = "La placa ya está en uso por otro vehículo."
+                mensaje = "La nueva placa ya está en uso por otro vehículo."
             else:
                 vehiculo.vehPlaca = placa
                 vehiculo.vehMarca = marca
@@ -1053,6 +1413,16 @@ def actualizarVehiculo(request):
 
 
 def actualizarCliente(request):
+    """
+    Actualiza la información de un cliente en la base de datos.
+
+    Args:
+        request: El objeto de solicitud de Django que contiene los datos de actualización.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de gestión de clientes actualizada.
+    """
+
     estado = False
     mensaje = ""
 
@@ -1070,11 +1440,11 @@ def actualizarCliente(request):
             persona = cliente.cliPersona
 
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
-                mensaje = "La identificación ya está en uso por otro cliente."
+                mensaje = "La nueva identificación ya está en uso por otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
-                mensaje = "El correo electrónico ya está en uso por otro cliente."
+                mensaje = "El nuevo correo electrónico ya está en uso por otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
-                mensaje = "El número de celular ya está en uso por otro cliente."
+                mensaje = "El nuevo número de celular ya está en uso por otro cliente."
             else:
                 persona.perIdentificacion = identificacion
                 persona.perNombres = nombres
@@ -1104,11 +1474,21 @@ def actualizarCliente(request):
 
 
 def actualizarEmpleado(request):
+    """
+    Actualiza la información de un empleado en la base de datos.
+
+    Args:
+        request: El objeto de solicitud de Django que contiene los datos de actualización.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de gestión de empleados actualizada.
+    """
+
     estado = False
     mensaje = ""
 
     try:
-        idEmpleado = int(request.POST.get("idEmpleado"))
+        idUsuario = int(request.POST.get("idUsuario"))
         identificacion = request.POST.get("txtIdentificacion")
         nombres = request.POST.get("txtNombres")
         apellidos = request.POST.get("txtApellidos")
@@ -1119,15 +1499,16 @@ def actualizarEmpleado(request):
         numero = request.POST.get("txtNumeroC")
 
         with transaction.atomic():
-            empleado = Empleado.objects.select_for_update().get(pk=idEmpleado)
+            usuario = User.objects.select_for_update().get(pk=idUsuario)
+            empleado = usuario.userEmpleado
             persona = empleado.empPersona
 
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
-                mensaje = "La identificación ya está en uso por otro empleado."
-            elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
-                mensaje = "El correo electrónico ya está en uso por otro empleado."
+                mensaje = "La  nueva identificación ya está en uso por otro empleado."
+            elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists() or User.objects.filter(email=correo).exists():
+                mensaje = "El nuevo correo electrónico ya está en uso por otro empleado."
             elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
-                mensaje = "El número de celular ya está en uso por otro empleado."
+                mensaje = "El nuevo número de celular ya está en uso por otro empleado."
             else:
                 persona.perIdentificacion = identificacion
                 persona.perNombres = nombres
@@ -1136,29 +1517,46 @@ def actualizarEmpleado(request):
                 persona.perNumeroCelular = numero
                 persona.save()
 
+                usuario.first_name = nombres
+                usuario.last_name = apellidos
+                usuario.email = correo
+                usuario.save()
+
                 empleado.empCargo = cargo
                 empleado.empSueldo = sueldo
                 empleado.empEstado = estadoE
                 empleado.save()
                 estado = True
                 mensaje = "Empleado actualizado correctamente."
+    except User.DoesNotExist:
+        mensaje = "El Usuario no existe."
     except Empleado.DoesNotExist:
         mensaje = "El Empleado no existe."
     except Exception as error:
         transaction.rollback()
-        mensaje = f"Error,{error}"
+        mensaje = f"Error: {error}"
 
-    empleados = Empleado.objects.all()
+    usuarios = User.objects.all()
     retorno = {
         "mensaje": mensaje,
         "estado": estado,
-        "empleados": empleados,
+        "usuarios": usuarios,
     }
 
     return render(request, "administrador/vistaGestionarEmpleados.html", retorno)
 
 
 def vistaEdicionPerfilAsistente(request):
+    """
+    Muestra una página de edición de perfil para un usuario con el rol de "Asistente".
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de edición de perfil.
+    """
+
     user = request.user
     if user.groups.filter(name='Asistente').exists():
         roles = Group.objects.all()
@@ -1176,6 +1574,16 @@ def vistaEdicionPerfilAsistente(request):
 
 
 def vistaEdicionPerfilAdministrador(request):
+    """
+    Muestra una página de edición de perfil para un usuario con el rol de "Administrador".
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de edición de perfil.
+    """
+
     user = request.user
     if user.groups.filter(name='Administrador').exists():
         roles = Group.objects.all()
@@ -1193,6 +1601,16 @@ def vistaEdicionPerfilAdministrador(request):
 
 
 def vistaEdicionPerfilTecnico(request):
+    """
+    Muestra una página de edición de perfil para un usuario con el rol de "Tecnico".
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de edición de perfil.
+    """
+
     user = request.user
     if user.groups.filter(name='Tecnico').exists():
         roles = Group.objects.all()
@@ -1210,6 +1628,16 @@ def vistaEdicionPerfilTecnico(request):
 
 
 def actualizarUsuarioAdmin(request):
+    """
+    Actualiza la información del usuario administrador, incluyendo nombre, apellidos, correo electrónico y foto de perfil.
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de edición de perfil del usuario.
+    """
+
     estado = False
     mensaje = ""
     try:
@@ -1217,17 +1645,27 @@ def actualizarUsuarioAdmin(request):
         apellidos = request.POST.get('txtApellidos')
         correo = request.POST.get('txtCorreo')
         nueva_imagen = request.FILES.get('fileFoto')
+
         with transaction.atomic():
             if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
-                mensaje = "El correo electrónico ya está en uso por otro usuario."
+                mensaje = "El nuevo correo electrónico ya está en uso por otro empleado."
             else:
                 usuario = request.user
+                empleado = usuario.userEmpleado
+                persona = empleado.empPersona
+
+                persona.perNombres = nombres
+                persona.perApellidos = apellidos
+                persona.perCorreo = correo
+                persona.save()
+
+                usuario.email = correo
                 usuario.first_name = nombres
                 usuario.last_name = apellidos
-                usuario.email = correo
                 if nueva_imagen:
                     usuario.userFoto = nueva_imagen
                 usuario.save()
+
                 estado = True
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
@@ -1241,6 +1679,16 @@ def actualizarUsuarioAdmin(request):
 
 
 def actualizarUsuarioAsistente(request):
+    """
+    Actualiza la información del usuario asistente, incluyendo nombre, apellidos, correo electrónico y foto de perfil.
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de edición de perfil del usuario.
+    """
+
     estado = False
     mensaje = ""
     try:
@@ -1248,17 +1696,27 @@ def actualizarUsuarioAsistente(request):
         apellidos = request.POST.get('txtApellidos')
         correo = request.POST.get('txtCorreo')
         nueva_imagen = request.FILES.get('fileFoto')
+
         with transaction.atomic():
             if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
-                mensaje = "El correo electrónico ya está en uso por otro usuario."
+                mensaje = "El nuevo correo electrónico ya está en uso por otro empleado."
             else:
                 usuario = request.user
+                empleado = usuario.userEmpleado
+                persona = empleado.empPersona
+
+                persona.perNombres = nombres
+                persona.perApellidos = apellidos
+                persona.perCorreo = correo
+                persona.save()
+
+                usuario.email = correo
                 usuario.first_name = nombres
                 usuario.last_name = apellidos
-                usuario.email = correo
                 if nueva_imagen:
                     usuario.userFoto = nueva_imagen
                 usuario.save()
+
                 estado = True
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
@@ -1272,6 +1730,16 @@ def actualizarUsuarioAsistente(request):
 
 
 def actualizarUsuarioTecnico(request):
+    """
+    Actualiza la información del usuario tecnico, incluyendo nombre, apellidos, correo electrónico y foto de perfil.
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        HttpResponse: Una respuesta HTTP que representa la página de edición de perfil del usuario.
+    """
+
     estado = False
     mensaje = ""
     try:
@@ -1279,17 +1747,27 @@ def actualizarUsuarioTecnico(request):
         apellidos = request.POST.get('txtApellidos')
         correo = request.POST.get('txtCorreo')
         nueva_imagen = request.FILES.get('fileFoto')
+
         with transaction.atomic():
             if User.objects.exclude(id=request.user.id).filter(email=correo).exists():
-                mensaje = "El correo electrónico ya está en uso por otro usuario."
+                mensaje = "El nuevo correo electrónico ya está en uso por otro usuario."
             else:
                 usuario = request.user
+                empleado = usuario.userEmpleado
+                persona = empleado.empPersona
+
+                persona.perNombres = nombres
+                persona.perApellidos = apellidos
+                persona.perCorreo = correo
+                persona.save()
+
+                usuario.email = correo
                 usuario.first_name = nombres
                 usuario.last_name = apellidos
-                usuario.email = correo
                 if nueva_imagen:
                     usuario.userFoto = nueva_imagen
                 usuario.save()
+
                 estado = True
                 mensaje = "Usuario actualizado correctamente."
     except Exception as error:
@@ -1303,6 +1781,17 @@ def actualizarUsuarioTecnico(request):
 
 
 def deshabilitarUsuario(request, user_id):
+    """
+    Deshabilita un usuario en función de los permisos y el rol del usuario que realiza la solicitud.
+
+    Args:
+        request: El objeto de solicitud de Django.
+        user_id: El ID del usuario que se desea deshabilitar.
+
+    Returns:
+        JsonResponse: Una respuesta JSON que indica si se ha deshabilitado con éxito el usuario.
+    """
+
     user = request.user
     if user.groups.filter(name='Administrador').exists():
         try:
@@ -1311,19 +1800,19 @@ def deshabilitarUsuario(request, user_id):
             if user.groups.filter(name='Administrador').exists() and user.is_superuser:
                 if usuario.groups.filter(name='Administrador').exists() and usuario.is_superuser:
                     return JsonResponse({'success': False, 'error': 'No puedes deshabilitar a otro administrador y superusuario.'})
-                
+
                 usuario.is_active = False
                 usuario.save()
-                
+
                 return JsonResponse({'success': True})
 
             if user.groups.filter(name='Administrador').exists():
                 if usuario.groups.filter(name='Administrador').exists() or usuario.is_superuser:
                     return JsonResponse({'success': False, 'error': 'No tienes permisos para deshabilitar este usuario.'})
-                
+
                 usuario.is_active = False
                 usuario.save()
-                
+
                 return JsonResponse({'success': True})
 
             return JsonResponse({'success': False, 'error': 'No tienes permisos para deshabilitar usuarios.'})
@@ -1332,7 +1821,7 @@ def deshabilitarUsuario(request, user_id):
             return JsonResponse({'success': False, 'error': 'El usuario no existe.'})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
-    
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta URL."
 
     if user.groups.filter(name='Asistente').exists():
@@ -1343,7 +1832,19 @@ def deshabilitarUsuario(request, user_id):
 
     return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
+
 def habilitarUsuario(request, user_id):
+    """
+    Habilita un usuario previamente deshabilitado.
+
+    Args:
+        request: El objeto de solicitud de Django.
+        user_id: El ID del usuario que se desea habilitar.
+
+    Returns:
+        JsonResponse: Una respuesta JSON que indica si se ha habilitado con éxito el usuario.
+    """
+
     try:
         user = get_object_or_404(User, pk=user_id)
         user.is_active = True
@@ -1390,6 +1891,7 @@ class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
         except Cliente.DoesNotExist:
             raise Http404
 
+
 class ServicioPrestadoList(generics.ListCreateAPIView):
     queryset = ServicioPrestado.objects.all()
     serializer_class = ServicioPrestadoSerializer
@@ -1398,6 +1900,7 @@ class ServicioPrestadoList(generics.ListCreateAPIView):
 class ServicioPrestadoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ServicioPrestado.objects.all()
     serializer_class = ServicioPrestadoSerializer
+
 
 class DetalleServicioPrestadoList(generics.ListCreateAPIView):
     serializer_class = DetalleServicioPrestadoSerializer
@@ -1408,25 +1911,40 @@ class DetalleServicioPrestadoList(generics.ListCreateAPIView):
 
 
 def mostrarGrafica1(request):
+    """
+    Genera y muestra una gráfica de barras que representa la cantidad de solicitudes por servicio.
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        render: Una respuesta de renderización de Django que muestra la gráfica en una vista.
+    """
+
     matplotlib.use('Agg')
     todos_servicios = Servicio.objects.all()
     if DetalleServicioPrestado.objects.exists():
-        servicios_con_registros = Servicio.objects.filter(detalleservicioprestado__isnull=False).distinct()
+        servicios_con_registros = Servicio.objects.filter(
+            detalleservicioprestado__isnull=False).distinct()
 
-        servicios_con_cantidad = servicios_con_registros.annotate(cantidad_solicitudes=Count('detalleservicioprestado'))
+        servicios_con_cantidad = servicios_con_registros.annotate(
+            cantidad_solicitudes=Count('detalleservicioprestado'))
 
-        cantidad_solicitudes_dict = {servicio.id: 0 for servicio in servicios_con_registros}
+        cantidad_solicitudes_dict = {
+            servicio.id: 0 for servicio in servicios_con_registros}
 
         for servicio in servicios_con_cantidad:
-            cantidad_solicitudes_dict[servicio.id] = int(servicio.cantidad_solicitudes)
+            cantidad_solicitudes_dict[servicio.id] = int(
+                servicio.cantidad_solicitudes)
 
         nombresS = [servicio.serNombre for servicio in servicios_con_registros]
 
-        valores = [cantidad_solicitudes_dict[servicio.id] for servicio in servicios_con_registros]
+        valores = [cantidad_solicitudes_dict[servicio.id]
+                   for servicio in servicios_con_registros]
     else:
         nombresS = [servicio.serNombre for servicio in todos_servicios]
         valores = [0] * len(todos_servicios)
-        
+
     plt.figure(figsize=(10, 6))
     plt.bar(nombresS, valores)
     plt.xlabel('Servicios')
@@ -1436,12 +1954,12 @@ def mostrarGrafica1(request):
     ruta_grafica = os.path.join(
         settings.MEDIA_ROOT, 'graficas', 'grafica_de_servicios.png')
 
-    plt.xticks(rotation=45) 
+    plt.xticks(rotation=45)
 
     if valores:
         plt.yticks(range(min(valores), max(valores) + 1))
 
-    plt.tight_layout() 
+    plt.tight_layout()
 
     plt.savefig(ruta_grafica)
 
@@ -1451,26 +1969,42 @@ def mostrarGrafica1(request):
     return render(request, "administrador/vistaGraficas.html", retorno)
 
 
-
 def mostrarGrafica2(request):
+    """
+    Genera y muestra una gráfica de barras que representa la cantidad de servicios prestados por cada empleado.
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        render: Una respuesta de renderización de Django que muestra la gráfica en una vista.
+    """
+
     matplotlib.use('Agg')
 
     if DetalleServicioPrestado.objects.exists():
-        empleados_con_registros = Empleado.objects.filter(detalleservicioprestado__isnull=False).distinct()
+        empleados_con_registros = Empleado.objects.filter(
+            detalleservicioprestado__isnull=False).distinct()
 
-        empleados_con_cantidad = empleados_con_registros.annotate(cantidad_servicios_prestados=Count('detalleservicioprestado'))
+        empleados_con_cantidad = empleados_con_registros.annotate(
+            cantidad_servicios_prestados=Count('detalleservicioprestado'))
 
-        cantidad_servicios_dict = {empleado.id: 0 for empleado in empleados_con_registros}
+        cantidad_servicios_dict = {
+            empleado.id: 0 for empleado in empleados_con_registros}
 
         for empleado in empleados_con_cantidad:
-            cantidad_servicios_dict[empleado.id] = int(empleado.cantidad_servicios_prestados)
+            cantidad_servicios_dict[empleado.id] = int(
+                empleado.cantidad_servicios_prestados)
 
-        nombres_empleados = [empleado.empPersona.perNombres for empleado in empleados_con_registros]
+        nombres_empleados = [
+            empleado.empPersona.perNombres for empleado in empleados_con_registros]
 
-        cantidad_servicios = [cantidad_servicios_dict[empleado.id] for empleado in empleados_con_registros]
+        cantidad_servicios = [cantidad_servicios_dict[empleado.id]
+                              for empleado in empleados_con_registros]
     else:
         todos_empleados = Empleado.objects.all()
-        nombres_empleados = [empleado.empPersona.perNombres for empleado in todos_empleados]
+        nombres_empleados = [
+            empleado.empPersona.perNombres for empleado in todos_empleados]
         cantidad_servicios = [0] * len(todos_empleados)
 
     plt.figure(figsize=(10, 6))
@@ -1482,12 +2016,12 @@ def mostrarGrafica2(request):
     ruta_grafica = os.path.join(
         settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras_empleados.png')
 
-    plt.xticks(rotation=45)  
+    plt.xticks(rotation=45)
 
     if cantidad_servicios:
         plt.yticks(range(min(cantidad_servicios), max(cantidad_servicios) + 1))
 
-    plt.tight_layout()  
+    plt.tight_layout()
 
     plt.savefig(ruta_grafica)
 
@@ -1498,18 +2032,32 @@ def mostrarGrafica2(request):
 
 
 def mostrarGrafica3(request):
+    """
+    Genera y muestra una gráfica de barras que representa la cantidad de solicitudes de servicios prestados por cada cliente.
+
+    Args:
+        request: El objeto de solicitud de Django.
+
+    Returns:
+        render: Una respuesta de renderización de Django que muestra la gráfica en una vista.
+    """
+
     matplotlib.use('Agg')
 
     todos_clientes = Cliente.objects.all()
 
     if ServicioPrestado.objects.exists():
-        clientes_con_cantidad = Cliente.objects.filter(servicioprestado__isnull=False).annotate(cantidad_servicios_prestados=Count('servicioprestado'))
+        clientes_con_cantidad = Cliente.objects.filter(servicioprestado__isnull=False).annotate(
+            cantidad_servicios_prestados=Count('servicioprestado'))
 
-        nombres_clientes = [cliente.cliPersona.perNombres for cliente in clientes_con_cantidad]
+        nombres_clientes = [
+            cliente.cliPersona.perNombres for cliente in clientes_con_cantidad]
 
-        cantidad_servicios = [int(cliente.cantidad_servicios_prestados) for cliente in clientes_con_cantidad]
+        cantidad_servicios = [int(cliente.cantidad_servicios_prestados)
+                              for cliente in clientes_con_cantidad]
     else:
-        nombres_clientes = [cliente.cliPersona.perNombres for cliente in todos_clientes]
+        nombres_clientes = [
+            cliente.cliPersona.perNombres for cliente in todos_clientes]
         cantidad_servicios = [0] * len(todos_clientes)
 
     plt.figure(figsize=(10, 6))
@@ -1521,12 +2069,12 @@ def mostrarGrafica3(request):
     ruta_grafica = os.path.join(
         settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras_clientes.png')
 
-    plt.xticks(rotation=45)  
+    plt.xticks(rotation=45)
 
     if cantidad_servicios:
         plt.yticks(range(min(cantidad_servicios), max(cantidad_servicios) + 1))
 
-    plt.tight_layout()  
+    plt.tight_layout()
 
     plt.savefig(ruta_grafica)
 
@@ -1536,12 +2084,12 @@ def mostrarGrafica3(request):
     return render(request, "administrador/vistaGraficas.html", retorno)
 
 
-
 def mostrarGraficas(request):
     mostrarGrafica1(request)
     mostrarGrafica2(request)
     mostrarGrafica3(request)
-    return render(request,"administrador/vistaGraficas.html")
+    generarFacturapdf(request)
+    return render(request, "administrador/vistaGraficas.html")
 
 
 class PDF(FPDF):
@@ -1563,62 +2111,70 @@ def generarFacturapdf(request):
         pdf = FPDF()
         pdf.add_page()
 
-        # Encabezado
-        pdf.set_font('Arial', 'B', 18)
-        pdf.set_text_color(255, 0, 0)
-        pdf.cell(0, 10, 'Factura', 0, 1, 'L')
-
-        pdf.image(settings.MEDIA_ROOT +
-                  '/fotos/LogoNegro.png', x=160, y=10, w=40)
-
-        pdf.set_text_color(0, 0, 0)
-        pdf.set_font('Arial', '', 12)
-        pdf.cell(0, 10, 'Serviteca Opita', 0, 1, 'L')
-        pdf.cell(0, 10, 'El impulso que necesita tu vehiculo', 0, 1, 'L')
-        pdf.cell(0, 10, 'Calle 4 #7', 0, 1, 'L')
-        pdf.ln(10)
-
-        # Encabezado tabla
-        pdf.set_fill_color(255, 0, 0)
-        pdf.set_text_color(255, 255, 255)
-        pdf.set_font('Arial', 'B', 12)
-        ancho_columnas = [20, 40, 60, 30, 30, 30]
-        pdf.cell(ancho_columnas[0], 10, 'Codigo',
-                 border=1, ln=False, fill=True)
-        pdf.cell(ancho_columnas[1], 10, 'Cliente',
-                 border=1, ln=False, fill=True)
-        pdf.cell(ancho_columnas[2], 10, 'Servicio Prestado',
-                 border=1, ln=False, fill=True)
-        pdf.cell(ancho_columnas[3], 10, 'Estado',
-                 border=1, ln=False, fill=True)
-        pdf.cell(ancho_columnas[4], 10, 'Fecha', border=1, ln=False, fill=True)
-        pdf.cell(ancho_columnas[5], 10, 'Total', border=1, ln=True, fill=True)
-        pdf.set_fill_color(255, 255, 255)
-        pdf.set_text_color(0, 0, 0)
-
         facturas = Factura.objects.all()
         for factura in facturas:
-            pdf.set_font('Arial', '', 5)
-            pdf.cell(ancho_columnas[0], 5, str(factura.facCodigo), border=1)
-            pdf.cell(ancho_columnas[1], 5, str(
-                factura.facServicioPrestado.serpCli), border=1)
+            # Encabezado
+            pdf.set_font('Arial', '', 12)
+            pdf.cell(0, 10, 'Factura', 0, 1, 'L')
+            pdf.image(settings.MEDIA_ROOT +
+                      '/fotos/LogoNegro.png', x=160, y=10, w=40)
+            pdf.set_text_color(0, 0, 0)
 
-            service_names = ", ".join(
-                [str(detalle.detServicio) for detalle in factura.facServicioPrestado.detalleservicioprestado_set.all()])
-            pdf.cell(ancho_columnas[2], 5, service_names, border=1)
-            pdf.cell(ancho_columnas[3], 5, str(factura.facEstado), border=1)
-            pdf.cell(ancho_columnas[4], 5, str(factura.facFecha), border=1)
-            pdf.cell(ancho_columnas[5], 5, str(factura.facTotal), border=1)
+            # Código de la factura
+            pdf.cell(0, 10, 'Código de la Factura: ' +
+                     str(factura.facCodigo), 0, 1, 'L')
+
+            # Fecha de la factura
+            fecha_formateada = factura.facFecha.strftime('%d/%m/%Y')
+            pdf.cell(0, 10, 'Fecha: ' + fecha_formateada, 0, 1, 'L')
+
+            # Datos del cliente
+            cliente = factura.facServicioPrestado.serpCli
+            pdf.cell(0, 10, str(cliente), 0, 1, 'L')
+
+            pdf.ln(10)
+
+            # Encabezado de la tabla
+            pdf.set_fill_color(255, 255, 255)
+            pdf.set_text_color(0, 0, 0)
+            pdf.set_font('Arial', '', 12)
+            ancho_columnas = [80, 40, 40]
+            pdf.cell(
+                ancho_columnas[0], 10, 'Servicio', border=1, ln=False, fill=True)
+            pdf.cell(ancho_columnas[1], 10, 'Costo Unitario',
+                     border=1, ln=False, fill=True)
+            pdf.cell(ancho_columnas[2], 10, 'Cantidad',
+                     border=1, ln=True, fill=True)
+            pdf.set_font('Arial', '', 12)
+
+            servicios_prestados = factura.facServicioPrestado.detalleservicioprestado_set.all()
+            total_costo = servicios_prestados.aggregate(total_costo=Sum('detServicio__serCosto'))['total_costo']
+
+            for servicio_prestado in servicios_prestados:
+                try:
+                    pdf.cell(ancho_columnas[0], 10, str(
+                        servicio_prestado.detServicio), border=1)
+                    pdf.cell(ancho_columnas[1], 10, '$'+ str(
+                        servicio_prestado.detServicio.serCosto), border=1)
+                    pdf.cell(ancho_columnas[2], 10, str(1), border=1)
+                    pdf.ln()
+                except Exception as e:
+                    print("Error al procesar detalles de servicios:", str(e))
+
+            # Mostrar el total de costo en una fila
+            pdf.cell(ancho_columnas[0], 10, 'Total', border=1)
+            pdf.cell(ancho_columnas[1], 10, '$'+ str(total_costo), border=1)
             pdf.ln()
 
-        # Footer
-        pdf.set_y(-15)
-        pdf.set_font('Arial', 'I', 8)
-        pdf.cell(0, 10, 'Hola', 0, 0, 'L')
-        pdf.cell(0, 10, 'Pagina ' + str(pdf.page_no()), 0, 0, 'C')
-        pdf.cell(0, 10, 'Gracias por su compra', 0, 0, 'R')
+            # Pie de página
+            pdf.set_y(-15)
+            pdf.set_font('Arial', 'I', 8)
+            pdf.cell(0, 10, 'Página ' + str(pdf.page_no()), 0, 0, 'C')
 
-        rutaPdf = settings.MEDIA_ROOT + '/pdf/Facturas.pdf'
+        # Ruta
+        rutaPdf = settings.MEDIA_ROOT + '/pdf/Factura.pdf'
+
+        # Guardar el PDF en la ubicación especificada
         pdf.output(rutaPdf)
 
         return HttpResponse("PDF generado y guardado correctamente.")
@@ -1627,10 +2183,30 @@ def generarFacturapdf(request):
 
 
 def vistaCorreoForgot(request):
+    """
+    Vista para mostrar un formulario de solicitud de recuperación de contraseña por correo electrónico.
+
+    Parameters:
+    - request: El objeto de solicitud HTTP que se recibe al acceder a esta vista.
+
+    Returns:
+    - HttpResponse: Una respuesta HTTP que representa la página HTML con el formulario de recuperación de contraseña.
+    """
+
     return render(request, "vistaCorreoForgot.html")
 
 
 def registrarPeticionForgot(request):
+    """
+    Vista para registrar una solicitud de restablecimiento de contraseña por correo electrónico.
+
+    Parameters:
+    - request: El objeto de solicitud HTTP que se recibe al enviar el formulario de solicitud de restablecimiento de contraseña.
+
+    Returns:
+    - HttpResponse: Una respuesta HTTP que representa la página de respuesta después de registrar la solicitud.
+    """
+
     if request.method == 'POST':
         correo = request.POST.get('txtCorreo')
         try:
@@ -1662,10 +2238,32 @@ def registrarPeticionForgot(request):
 
 
 def vistaCambiarContraseña(request):
+    """
+    Vista para mostrar el formulario de cambio de contraseña.
+
+    Parameters:
+    - request: El objeto de solicitud HTTP.
+
+    Returns:
+    - HttpResponse: Una respuesta HTTP que representa la página de cambio de contraseña.
+    """
+
     return render(request, "cambiarContraseña.html")
 
 
 def cambiarContraseña(request, uidb64, token):
+    """
+    Vista para cambiar la contraseña de un usuario que ha solicitado restablecerla.
+
+    Parameters:
+    - request: El objeto de solicitud HTTP.
+    - uidb64 (str): El ID de usuario codificado en base64.
+    - token (str): El token de seguridad generado para el usuario.
+
+    Returns:
+    - HttpResponse: Una respuesta HTTP que representa la página de cambio de contraseña.
+    """
+
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -1700,5 +2298,14 @@ def cambiarContraseña(request, uidb64, token):
 
 
 def mostrarMensaje(request):
-    return render(request, 'mostrarMensaje.html')
+    """
+    Vista para mostrar un mensaje de éxito después de que el usuario ha cambiado su contraseña con éxito.
 
+    Parameters:
+    - request: El objeto de solicitud HTTP.
+
+    Returns:
+    - HttpResponse: Una respuesta HTTP que representa la página de mensaje de éxito.
+    """
+
+    return render(request, 'mostrarMensaje.html')

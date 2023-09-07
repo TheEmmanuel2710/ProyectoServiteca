@@ -45,20 +45,6 @@ tiposMarcas = [
 ]
 
 
-class User(AbstractUser):
-    userFoto = models.FileField(
-        upload_to=f"fotos/", null=True, blank=True, db_comment="Foto del Usuario")
-    userTipo = models.CharField(
-        max_length=15, choices=tipoUsuario, db_comment="Nombre Tipo de usuario")
-    fechaHoraCreacion = models.DateTimeField(
-        auto_now_add=True, db_comment="Fecha y hora del registro")
-    fechaHoraActualizacion = models.DateTimeField(
-        auto_now=True, db_comment="Fecha y hora última actualización")
-
-    def __str__(self):
-        return f"{self.username}"
-
-
 class Persona(models.Model):
     perIdentificacion = models.CharField(
         max_length=10, unique=True, db_comment="Identificacion de la persona")
@@ -73,6 +59,35 @@ class Persona(models.Model):
 
     def __str__(self):
         return f"Identificacion:{self.perIdentificacion} -Nombres: {self.perNombres} -Apellidos:{self.perApellidos} -Correo:{self.perCorreo} -Celular:{self.perNumeroCelular}"
+
+
+class Empleado(models.Model):
+    empCargo = models.CharField(
+        max_length=30, unique=True, db_comment="Cargo del empleado")
+    empSueldo = models.IntegerField(db_comment="Suelo del empleado")
+    empEstado = models.CharField(
+        max_length=8, null=True, choices=estadoEmpleados, db_comment="Estado del empleado")
+    empPersona = models.ForeignKey(
+        Persona, on_delete=models.PROTECT, db_comment="Hace relación a la persona FK")
+
+    def __str__(self):
+        return f"Empleado: {self.empPersona.perNombres} {self.empPersona.perApellidos}"
+
+
+class User(AbstractUser):
+    userFoto = models.FileField(
+        upload_to=f"fotos/", null=True, blank=True, db_comment="Foto del Usuario")
+    userTipo = models.CharField(
+        max_length=15, choices=tipoUsuario, db_comment="Nombre Tipo de usuario")
+    userEmpleado = models.OneToOneField(
+        Empleado, on_delete=models.PROTECT, null=True, blank=True, db_comment="Hace referencia al empleado PK")
+    fechaHoraCreacion = models.DateTimeField(
+        auto_now_add=True, db_comment="Fecha y hora del registro")
+    fechaHoraActualizacion = models.DateTimeField(
+        auto_now=True, db_comment="Fecha y hora última actualización")
+
+    def __str__(self):
+        return f"{self.username}"
 
 
 class PeticionForgot(models.Model):
@@ -109,19 +124,6 @@ class Vehiculo(models.Model):
 
     def __str__(self):
         return f"Vehiculo: {self.vehPlaca}"
-
-
-class Empleado(models.Model):
-    empCargo = models.CharField(
-        max_length=30, unique=True, db_comment="Cargo del empleado")
-    empSueldo = models.IntegerField(db_comment="Suelo del empleado")
-    empEstado = models.CharField(
-        max_length=8, null=True, choices=estadoEmpleados, db_comment="Estado del empleado")
-    empPersona = models.ForeignKey(
-        Persona, on_delete=models.PROTECT, db_comment="Hace relación a la persona FK")
-
-    def __str__(self):
-        return f"Empleado: {self.empPersona.perNombres} {self.empPersona.perApellidos}"
 
 
 class Servicio(models.Model):
