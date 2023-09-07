@@ -3,10 +3,14 @@
 {% include "menu.html" %}
 {%endblock %}
 {% block contenido %}
-<div class="au">
-    <h1>404 - Página no encontrada</h1>
+{% load static %}
+<div class="error404">
+    <h1 id="e404">404</h1>
+    <h1>Página no encontrada </h1>
     <p>La página que buscas no existe. Por favor, verifica la URL que ingresaste.</p>
+    <button class="btn btn-dark"><a href="/">Ir al Inicio</a></button>
 </div>
+
 {%endblock %}
 {% block piePagina %}
 {% include "piePagina.html" %}

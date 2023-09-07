@@ -19,9 +19,27 @@ body {
     justify-content: space-evenly;
 }
 
-.au{
-    background: red;
+.error404{
+    display: grid;
+    place-items: center;
+    width: 100%;
+    position: absolute;
+    transform: translateY(50%);
+    text-align: center
 }
+
+#e404{
+    font-family: 'NuevaFuente', sans-serif;
+    font-size: 160px;
+    margin: 0;
+    font-weight: 1000;
+    letter-spacing: 20px;
+    background-image: url('../img/Car3.jpg');
+    background-repeat: no-repeat;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
 
 .contenido {
     min-height: 80vh;

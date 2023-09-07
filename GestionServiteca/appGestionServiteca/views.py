@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from appGestionServiteca.models import *
 from django.contrib.auth.models import Group
@@ -23,16 +24,22 @@ import matplotlib
 from fpdf import FPDF
 from datetime import datetime
 import os
-from django.http import HttpResponse
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count
-
+from io import BytesIO
+from django.core.mail import EmailMessage
+from email.mime.base import MIMEBase
+from email import encoders
 
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
+
+
+def error_404(request, exception):
+    return render(request, '404.html', {}, status=404)
 
 
 def urlValidacion(request, texto):
@@ -1008,17 +1015,14 @@ def generarCodigoFactura():
 
 def registrarServicioPrestado(request):
     """
-    Registra un servicio prestado, crea una factura y notifica a los empleados.
+    Esta funcion permite registrar un serivicioPrestado a la base de datos,
+    tambien
 
-    Esta función permite registrar un servicio prestado, crea una factura asociada a
-    ese servicio y envía notificaciones por correo electrónico a los empleados asignados
-    al servicio y al cliente que solicitó el servicio.
+    Args:
+        request (_type_): _description_
 
-    :param request: La solicitud HTTP que contiene los datos del servicio prestado.
-    :type request: HttpRequest
-
-    :return: Un objeto JsonResponse con el estado de la operación y un mensaje.
-    :rtype: JsonResponse
+    Returns:
+        _type_: _description_
     """
 
     estado = False
@@ -1077,6 +1081,9 @@ def registrarServicioPrestado(request):
                 )
                 factura.save()
 
+                # Llama a generarFacturaPdf con el objeto de factura
+                factura_pdf = generarFacturaPdf(servicioPrestado, factura)
+
                 # Enviar correos a los empleados implicados en el detalle servicio
                 for empleado, servicios_asignados in empleados_notificados.items():
                     vehiculo_placa = servicioPrestado.serpVehi.vehPlaca
@@ -1094,14 +1101,27 @@ def registrarServicioPrestado(request):
                         target=enviarCorreo, args=(asunto_empleado, mensaje_empleado, empleado.empPersona.perCorreo))
                     thread_empleado.start()
 
-                # Enviar correo al cliente con los servicios y costos
+                # Enviar correo al cliente con los servicios, costos y el PDF adjunto
                 servicios_cliente_str = ", ".join(
                     [f"{Servicio.objects.get(id=int(detalle['idServicio'])).serNombre}: ${Servicio.objects.get(id=int(detalle['idServicio'])).serCosto}" for detalle in detalleServicioPrestado_lista])
                 asunto_cliente = 'Registro de Servicios Solicitados'
                 mensaje_cliente = f"Estimado(a) {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, reciba un cordial saludo,nos complace informarle que su servicio ha sido registrado con los siguientes detalles: {servicios_cliente_str}. Agradecemos su confianza en nuestros servicios y quedamos a su disposición para cualquier consulta adicional."
-                thread_cliente = threading.Thread(
-                    target=enviarCorreo, args=(asunto_cliente, mensaje_cliente, cliente.cliPersona.perCorreo))
-                thread_cliente.start()
+
+                # Crear el objeto de correo electrónico
+                correo_cliente = EmailMessage(
+                    asunto_cliente, mensaje_cliente, settings.EMAIL_HOST_USER, [cliente.cliPersona.perCorreo])
+
+                # Adjuntar el PDF a través de un MIMEBase
+                if factura_pdf:
+                    pdf_attachment = MIMEBase('application', 'octet-stream')
+                    pdf_attachment.set_payload(factura_pdf.getvalue())
+                    encoders.encode_base64(pdf_attachment)
+                    pdf_attachment.add_header('Content-Disposition',
+                                              'attachment; filename=Factura.pdf')
+                    correo_cliente.attach(pdf_attachment)
+
+                # Enviar el correo al cliente
+                correo_cliente.send()
 
                 estado = True
                 mensaje = "Se ha registrado el servicio prestado y generado la factura correctamente."
@@ -1864,6 +1884,7 @@ def habilitarUsuario(request, user_id):
     })
 
 
+# -----INICIO API-----
 class PersonaList(generics.ListCreateAPIView):
     queryset = Persona.objects.all()
     serializer_class = PersonaSerializer
@@ -1908,6 +1929,9 @@ class DetalleServicioPrestadoList(generics.ListCreateAPIView):
     def get_queryset(self):
         id_servicio_prestado = self.kwargs.get('id')
         return DetalleServicioPrestado.objects.filter(detServicioPrestado=id_servicio_prestado)
+
+
+# -----FIN API -----
 
 
 def mostrarGrafica1(request):
@@ -2088,7 +2112,6 @@ def mostrarGraficas(request):
     mostrarGrafica1(request)
     mostrarGrafica2(request)
     mostrarGrafica3(request)
-    generarFacturapdf(request)
     return render(request, "administrador/vistaGraficas.html")
 
 
@@ -2106,80 +2129,78 @@ class PDF(FPDF):
         self.cell(0, 10, 'El impulso que necesita tu vehículo', 0, 0, 'R')
 
 
-def generarFacturapdf(request):
+def generarFacturaPdf(servicioPrestado, factura):
     try:
         pdf = FPDF()
         pdf.add_page()
 
-        facturas = Factura.objects.all()
-        for factura in facturas:
-            # Encabezado
-            pdf.set_font('Arial', '', 12)
-            pdf.cell(0, 10, 'Factura', 0, 1, 'L')
-            pdf.image(settings.MEDIA_ROOT +
-                      '/fotos/LogoNegro.png', x=160, y=10, w=40)
-            pdf.set_text_color(0, 0, 0)
+        # Encabezado
+        pdf.set_font('Arial', '', 12)
+        pdf.cell(0, 10, 'Factura', 0, 1, 'L')
+        pdf.image(settings.MEDIA_ROOT +
+                  '/fotos/LogoNegro.png', x=160, y=10, w=40)
+        pdf.set_text_color(0, 0, 0)
 
-            # Código de la factura
-            pdf.cell(0, 10, 'Código de la Factura: ' +
-                     str(factura.facCodigo), 0, 1, 'L')
+        # Código de la factura
+        pdf.cell(0, 10, 'Código de la Factura: ' +
+                 str(factura.facCodigo), 0, 1, 'L')
 
-            # Fecha de la factura
-            fecha_formateada = factura.facFecha.strftime('%d/%m/%Y')
-            pdf.cell(0, 10, 'Fecha: ' + fecha_formateada, 0, 1, 'L')
+        # Fecha de la factura
+        fecha_formateada = factura.facFecha.strftime('%d/%m/%Y')
+        pdf.cell(0, 10, 'Fecha: ' + fecha_formateada, 0, 1, 'L')
 
-            # Datos del cliente
-            cliente = factura.facServicioPrestado.serpCli
-            pdf.cell(0, 10, str(cliente), 0, 1, 'L')
+        # Datos del cliente
+        cliente = servicioPrestado.serpCli
+        pdf.cell(0, 10, str(cliente), 0, 1, 'L')
 
-            pdf.ln(10)
+        pdf.ln(10)
 
-            # Encabezado de la tabla
-            pdf.set_fill_color(255, 255, 255)
-            pdf.set_text_color(0, 0, 0)
-            pdf.set_font('Arial', '', 12)
-            ancho_columnas = [80, 40, 40]
-            pdf.cell(
-                ancho_columnas[0], 10, 'Servicio', border=1, ln=False, fill=True)
-            pdf.cell(ancho_columnas[1], 10, 'Costo Unitario',
-                     border=1, ln=False, fill=True)
-            pdf.cell(ancho_columnas[2], 10, 'Cantidad',
-                     border=1, ln=True, fill=True)
-            pdf.set_font('Arial', '', 12)
+        # Encabezado de la tabla
+        pdf.set_fill_color(255, 255, 255)
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font('Arial', '', 12)
+        ancho_columnas = [80, 40, 40]
+        pdf.cell(
+            ancho_columnas[0], 10, 'Servicio', border=1, ln=False, fill=True)
+        pdf.cell(ancho_columnas[1], 10, 'Costo Unitario',
+                 border=1, ln=False, fill=True)
+        pdf.cell(ancho_columnas[2], 10, 'Cantidad',
+                 border=1, ln=True, fill=True)
+        pdf.set_font('Arial', '', 12)
 
-            servicios_prestados = factura.facServicioPrestado.detalleservicioprestado_set.all()
-            total_costo = servicios_prestados.aggregate(total_costo=Sum('detServicio__serCosto'))['total_costo']
+        servicios_prestados = servicioPrestado.detalleservicioprestado_set.all()
+        total_costo = servicios_prestados.aggregate(
+            total_costo=Sum('detServicio__serCosto'))['total_costo']
 
-            for servicio_prestado in servicios_prestados:
-                try:
-                    pdf.cell(ancho_columnas[0], 10, str(
-                        servicio_prestado.detServicio), border=1)
-                    pdf.cell(ancho_columnas[1], 10, '$'+ str(
-                        servicio_prestado.detServicio.serCosto), border=1)
-                    pdf.cell(ancho_columnas[2], 10, str(1), border=1)
-                    pdf.ln()
-                except Exception as e:
-                    print("Error al procesar detalles de servicios:", str(e))
+        for servicio_prestado in servicios_prestados:
+            try:
+                pdf.cell(ancho_columnas[0], 10,
+                         str(servicio_prestado.detServicio), border=1)
+                pdf.cell(ancho_columnas[1], 10,
+                         '$'+str(servicio_prestado.detServicio.serCosto), border=1)
+                pdf.cell(ancho_columnas[2], 10, str(1), border=1)
+                pdf.ln()
+            except Exception as e:
+                print("Error al procesar detalles de servicios:", str(e))
 
-            # Mostrar el total de costo en una fila
-            pdf.cell(ancho_columnas[0], 10, 'Total', border=1)
-            pdf.cell(ancho_columnas[1], 10, '$'+ str(total_costo), border=1)
-            pdf.ln()
+        # Mostrar el total de costo en una fila
+        pdf.cell(ancho_columnas[0], 10, 'Total', border=1)
+        pdf.cell(ancho_columnas[1], 10, '$'+str(total_costo), border=1)
+        pdf.ln()
 
-            # Pie de página
-            pdf.set_y(-15)
-            pdf.set_font('Arial', 'I', 8)
-            pdf.cell(0, 10, 'Página ' + str(pdf.page_no()), 0, 0, 'C')
+        # Pie de página
+        pdf.set_y(-15)
+        pdf.set_font('Arial', 'I', 8)
+        pdf.cell(0, 10, 'Página ' + str(pdf.page_no()), 0, 0, 'C')
 
-        # Ruta
-        rutaPdf = settings.MEDIA_ROOT + '/pdf/Factura.pdf'
+        # Crear un objeto BytesIO para almacenar el PDF en memoria
+        pdf_output = BytesIO()
+        pdf_output.write(pdf.output(dest='S').encode('latin1'))
 
-        # Guardar el PDF en la ubicación especificada
-        pdf.output(rutaPdf)
-
-        return HttpResponse("PDF generado y guardado correctamente.")
+        return pdf_output  # Devuelve el PDF en forma de BytesIO
     except Exception as e:
-        return HttpResponse("Error al generar el PDF: " + str(e))
+        print("Error al generar el PDF:", str(e))
+        return False  # Indica que hubo un error al generar el PDF
 
 
 def vistaCorreoForgot(request):
