@@ -7,6 +7,7 @@ import random
 import string
 from django.contrib.auth import authenticate
 from django.contrib import auth
+from rest_framework.response import Response
 from django.conf import settings
 import urllib
 import json
@@ -34,6 +35,7 @@ from io import BytesIO
 from django.core.mail import EmailMessage
 from email.mime.base import MIMEBase
 from email import encoders
+from rest_framework import status
 
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
@@ -1918,9 +1920,40 @@ class ServicioPrestadoList(generics.ListCreateAPIView):
     serializer_class = ServicioPrestadoSerializer
 
 
-class ServicioPrestadoDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ServicioPrestado.objects.all()
+class ServicioPrestadoDetalladoList(generics.ListCreateAPIView):
     serializer_class = ServicioPrestadoSerializer
+
+    def get_queryset(self): 
+        perIdentificacion = self.kwargs['perIdentificacion']
+
+        # Verificar si la identificación pertenece a un cliente
+        cliente = Cliente.objects.filter(
+            cliPersona__perIdentificacion=perIdentificacion).first()
+
+        if cliente:
+            # Si es un cliente, obtener los servicios prestados asociados al cliente
+            queryset = ServicioPrestado.objects.filter(serpCli=cliente)
+        else:
+            # Si no es un cliente, retornar una lista vacía
+            queryset = ServicioPrestado.objects.none()
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if queryset.exists():
+            # Si hay servicios prestados, serializar y devolver la respuesta
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            # Si no hay servicios prestados, enviar un mensaje de error
+            return Response({"detail": "No se encontraron servicios prestados."})
+
+
+# class ServicioPrestadoDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = ServicioPrestado.objects.all()
+#     serializer_class = ServicioPrestadoSerializer
 
 
 class DetalleServicioPrestadoList(generics.ListCreateAPIView):
@@ -1929,6 +1962,12 @@ class DetalleServicioPrestadoList(generics.ListCreateAPIView):
     def get_queryset(self):
         id_servicio_prestado = self.kwargs.get('id')
         return DetalleServicioPrestado.objects.filter(detServicioPrestado=id_servicio_prestado)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = DetalleServicioPrestadoSerializer(queryset, many=True)
+        data = serializer.data
+        return Response(data)
 
 
 # -----FIN API -----

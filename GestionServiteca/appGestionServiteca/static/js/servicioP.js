@@ -12,11 +12,21 @@ $(function () {
         }
     });
     $("#btnAgregarDetalleServicioP").click(function () {
-        agregarDetalleServicioPrestados();
+        if (validarCamposDetalleServicioP()) {
+            agregarDetalleServicioPrestados();
+        } else {
+            Swal.fire("Registro Servicio Prestado", "Por favor, complete todos los campos del formulario.", "error");
+        }
     });
+
     $("#btnRegistrarServicioP").click(function () {
-        registroServivicioPrestado();
+        if (validarCamposRegistroServicioP()) {
+            registroServivicioPrestado();
+        } else {
+            Swal.fire("Registro Servicio Prestado", "Por favor, complete todos los campos del formulario.", "error");
+        }
     });
+
     $("#cbServicio").change(function () {
         idServicio = $("#cbServicio").val();
         posServicio = servicios.findIndex(servicio => servicio.id == idServicio);
@@ -24,6 +34,19 @@ $(function () {
         $("#txtCosto").val("$" + costoServicio);
     });
 })
+
+/**
+ * Validacion del formulario
+ */
+function validarCamposDetalleServicioP() {
+    return ($("#cbCliente").val() !== "" && $("#cbVehiculo").val() !== "" && $("#cbEmpleado").val() !== "" && $("#cbServicio").val() !== "");
+}
+
+
+function validarCamposRegistroServicioP() {
+    return ($("#cbCliente").val() !== "" && $("#cbVehiculo").val() !== "" && $("#txtObservaciones").val() !== "" && serviciosPrestados.length > 0);
+}
+
 
 /**
  * Funcion utilizada para hacer peticiones ajax
@@ -70,20 +93,38 @@ function registroServivicioPrestado() {
                 frmDatosGenerales.reset();
                 serviciosPrestados.length = 0;
                 mostrarDatosTabla();
+                Swal.fire({
+                    title: 'Registro de Servicio Prestado',
+                    text: resultado.mensaje,
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "/vistaGestionarServiciosPrestados/"
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error en el registro',
+                    text: resultado.mensaje,
+                    icon: 'error',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar'
+                });
             }
+        },
+        error: function (error) {
+            console.error(error);
             Swal.fire({
-                title: 'Registro de Servicio Prestado',
-                text: resultado.mensaje,
-                icon: 'success',
+                title: 'Error en la petición',
+                text: 'Ha ocurrido un error en la petición AJAX.',
+                icon: 'error',
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'Aceptar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    location.href = "/vistaGestionarServiciosPrestados/"
-                }
             });
         }
-    })
+    });
 }
 
 /**

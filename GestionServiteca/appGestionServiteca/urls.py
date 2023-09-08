@@ -7,6 +7,6 @@ urlpatterns = [
     path('cliente', views.ClienteList.as_view()),
     path('cliente/<str:perIdentificacion>', views.ClienteDetail.as_view()),
     path('servicioPrestado', views.ServicioPrestadoList.as_view()),
-    path('servicioPrestado/<int:pk>', views.ServicioPrestadoDetail.as_view()),
+    path('servicioPrestado/<int:perIdentificacion>', views.ServicioPrestadoDetalladoList.as_view()),
     path('detalleServicioPrestado/<int:id>', views.DetalleServicioPrestadoList.as_view()),
 ]

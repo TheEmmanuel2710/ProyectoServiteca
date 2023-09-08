@@ -23,6 +23,9 @@ class ServicioPrestadoSerializer(serializers.ModelSerializer):
 
 
 class DetalleServicioPrestadoSerializer(serializers.ModelSerializer):
+    detServicio = serializers.CharField(source='detServicio.serNombre', read_only=True)
+    detEmpleado = serializers.CharField(source='detEmpleado.empPersona.perNombres', read_only=True)
+
     class Meta:
         model = DetalleServicioPrestado
-        fields = ('id', 'detServicio', 'detServicioPrestado', 'detEmpleado')
+        fields = ('id', 'detServicio', 'detEmpleado')
