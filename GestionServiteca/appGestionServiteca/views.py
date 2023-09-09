@@ -1923,18 +1923,15 @@ class ServicioPrestadoList(generics.ListCreateAPIView):
 class ServicioPrestadoDetalladoList(generics.ListCreateAPIView):
     serializer_class = ServicioPrestadoSerializer
 
-    def get_queryset(self): 
+    def get_queryset(self):
         perIdentificacion = self.kwargs['perIdentificacion']
 
-        # Verificar si la identificación pertenece a un cliente
         cliente = Cliente.objects.filter(
             cliPersona__perIdentificacion=perIdentificacion).first()
 
         if cliente:
-            # Si es un cliente, obtener los servicios prestados asociados al cliente
             queryset = ServicioPrestado.objects.filter(serpCli=cliente)
         else:
-            # Si no es un cliente, retornar una lista vacía
             queryset = ServicioPrestado.objects.none()
 
         return queryset
@@ -1943,11 +1940,9 @@ class ServicioPrestadoDetalladoList(generics.ListCreateAPIView):
         queryset = self.get_queryset()
 
         if queryset.exists():
-            # Si hay servicios prestados, serializar y devolver la respuesta
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
         else:
-            # Si no hay servicios prestados, enviar un mensaje de error
             return Response({"detail": "No se encontraron servicios prestados."})
 
 
@@ -2154,45 +2149,34 @@ def mostrarGraficas(request):
     return render(request, "administrador/vistaGraficas.html")
 
 
-class PDF(FPDF):
-    def header(self):
-        self.image('./media/fotos/Toji.jpg', 10, 10, 25)
-
-    def footer(self):
-        self.set_xy(10, -15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Fecha de creación: ' +
-                  datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 0, 0, 'L')
-
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'El impulso que necesita tu vehículo', 0, 0, 'R')
-
-
 def generarFacturaPdf(servicioPrestado, factura):
     try:
         pdf = FPDF()
         pdf.add_page()
-
+        total_paginas = pdf.page_no()
         # Encabezado
         pdf.set_font('Arial', '', 12)
         pdf.cell(0, 10, 'Factura', 0, 1, 'L')
         pdf.image(settings.MEDIA_ROOT +
-                  '/fotos/LogoNegro.png', x=160, y=10, w=40)
+                  '/fotos/LogoNegroSF.png', x=160, y=10, w=40)
         pdf.set_text_color(0, 0, 0)
 
         # Código de la factura
         pdf.cell(0, 10, 'Código de la Factura: ' +
                  str(factura.facCodigo), 0, 1, 'L')
 
-        # Fecha de la factura
-        fecha_formateada = factura.facFecha.strftime('%d/%m/%Y')
-        pdf.cell(0, 10, 'Fecha: ' + fecha_formateada, 0, 1, 'L')
-
-        # Datos del cliente
+        # Cliente y Fecha
         cliente = servicioPrestado.serpCli
-        pdf.cell(0, 10, str(cliente), 0, 1, 'L')
+        fecha_formateada = factura.facFecha.strftime('%d/%m/%Y')
+        cliente_fecha = f'{str(cliente)}            Fecha: {fecha_formateada}'
+        pdf.cell(0, 10, cliente_fecha, 0, 1, 'L')
 
         pdf.ln(10)
+        
+        imagen_y = pdf.get_y() 
+        nueva_posicion_imagen = imagen_y + 70 
+        pdf.image(settings.MEDIA_ROOT + '/fotos/Firma.png',
+                  x=10, y=nueva_posicion_imagen, w=200, h=150)
 
         # Encabezado de la tabla
         pdf.set_fill_color(255, 255, 255)
@@ -2222,24 +2206,31 @@ def generarFacturaPdf(servicioPrestado, factura):
             except Exception as e:
                 print("Error al procesar detalles de servicios:", str(e))
 
-        # Mostrar el total de costo en una fila
         pdf.cell(ancho_columnas[0], 10, 'Total', border=1)
         pdf.cell(ancho_columnas[1], 10, '$'+str(total_costo), border=1)
         pdf.ln()
 
-        # Pie de página
-        pdf.set_y(-15)
-        pdf.set_font('Arial', 'I', 8)
-        pdf.cell(0, 10, 'Página ' + str(pdf.page_no()), 0, 0, 'C')
+        pdf.set_line_width(0.5)
+        y_linea = nueva_posicion_imagen + 78
+        pdf.line(10, y_linea, 200, y_linea)
 
-        # Crear un objeto BytesIO para almacenar el PDF en memoria
+        pdf.set_font('Arial', '', 12)
+        nueva_posicion_texto = y_linea + 8
+        pdf.set_y(nueva_posicion_texto)
+        pdf.cell(0, 10, 'Emmanuel Gonzalez - Gerencia', 0, 1, 'C')
+
+        # Pie de página
+        pdf.set_y(1)
+        pdf.set_font('Arial', 'I', 8)
+        pdf.cell(0, 10, f'Página {pdf.page_no()} de {total_paginas}', 0, 0, 'C')
+        
         pdf_output = BytesIO()
         pdf_output.write(pdf.output(dest='S').encode('latin1'))
 
-        return pdf_output  # Devuelve el PDF en forma de BytesIO
+        return pdf_output  
     except Exception as e:
         print("Error al generar el PDF:", str(e))
-        return False  # Indica que hubo un error al generar el PDF
+        return False  
 
 
 def vistaCorreoForgot(request):
