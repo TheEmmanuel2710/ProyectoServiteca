@@ -1,6 +1,6 @@
 let tiempoInactividad = 0;
 const tiempoSesionInactiva = 300;
-sesionCerrada = false;
+let sesionCerrada = false;
 
 function reiniciarTemporizador() {
     tiempoInactividad = 0;
@@ -11,7 +11,7 @@ function cerrarSesion() {
         sesionCerrada = true;
         Swal.fire({
             title: 'Sistema Serviteca',
-            text: 'Inactividad detectada,Sesión Cerrada.',
+            text: 'Inactividad detectada, Sesión Cerrada.',
             icon: 'info',
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Aceptar'
@@ -29,11 +29,19 @@ function verificarInactividad() {
     }
 }
 
+function handleVisibilityChange() {
+    if (document.visibilityState === 'hidden') {
+        reiniciarTemporizador();
+    }
+}
+
 window.onload = function () {
     document.onmousemove = reiniciarTemporizador;
     document.onkeypress = reiniciarTemporizador;
     document.addEventListener("click", reiniciarTemporizador);
     document.addEventListener("mousemove", reiniciarTemporizador);
-};
 
-setInterval(verificarInactividad, 1000);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    setInterval(verificarInactividad, 1000);
+};
