@@ -17,19 +17,19 @@
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
                 <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificacion:</label>
-                <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
+                <input type="number" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
                     placeholder="Identificacion del cliente" required>
                 <div class="invalid-feedback">Por favor ingrese la identificacion del cliente</div>
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
-                <input type="text" name="txtNombres" class="form-control" id="txtNombres"
+                <input type="text" pattern="[A-Za-z]{1,15}" name="txtNombres" class="form-control" id="txtNombres"
                     placeholder="Nombres del cliente" required>
                 <div class="invalid-feedback">Por favor ingrese el nombre del cliente</div>
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos</label>
-                <input type="text" name="txtApellidos" class="form-control" id="txtApellidos"
+                <input type="text" name="txtApellidos" pattern="[A-Za-z]{1,15}" class="form-control" id="txtApellidos"
                     placeholder="Apellidos del cliente" required>
                 <div class="invalid-feedback">Por favor ingrese el apellido del cliente</div>
             </div>

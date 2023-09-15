@@ -130,6 +130,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+SESSION_COOKIE_AGE = 8 * 60 * 60
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 STATIC_URL = os.path.join(BASE_DIR, '/static/')
 # para guardar archivos de multimedia

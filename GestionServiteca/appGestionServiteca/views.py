@@ -35,7 +35,7 @@ from io import BytesIO
 from django.core.mail import EmailMessage
 from email.mime.base import MIMEBase
 from email import encoders
-from rest_framework import status
+
 
 datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
@@ -46,7 +46,7 @@ def error_404(request, exception):
 
 def urlValidacion(request, texto):
     """
-    Esta vista valida la autenticación del usuario y su grupo, y redirige a diferentes
+    Esta es una funcion cuyo fin es la autenticación del usuario y su grupo, y redirige a diferentes
     plantillas HTML con un mensaje de error si la URL ingresada no es válida.
 
     Args:
@@ -167,7 +167,7 @@ def inicioTecnico(request):
 
 def vistaGestionarUsuarios(request):
     """
-    Esta vista permite la gestión de usuarios según el rol del usuario que realiza la solicitud.
+    Esta función muestra una vista que permite la gestión de usuarios según el rol del usuario que realiza la solicitud.
     Los administradores pueden ver y gestionar todos los usuarios, mientras que otros roles
     obtienen un mensaje de error o son redirigidos a sus respectivas páginas de inicio.
 
@@ -2172,9 +2172,9 @@ def generarFacturaPdf(servicioPrestado, factura):
         pdf.cell(0, 10, cliente_fecha, 0, 1, 'L')
 
         pdf.ln(10)
-        
-        imagen_y = pdf.get_y() 
-        nueva_posicion_imagen = imagen_y + 70 
+
+        imagen_y = pdf.get_y()
+        nueva_posicion_imagen = imagen_y + 70
         pdf.image(settings.MEDIA_ROOT + '/fotos/Firma.png',
                   x=10, y=nueva_posicion_imagen, w=200, h=150)
 
@@ -2222,15 +2222,16 @@ def generarFacturaPdf(servicioPrestado, factura):
         # Pie de página
         pdf.set_y(1)
         pdf.set_font('Arial', 'I', 8)
-        pdf.cell(0, 10, f'Página {pdf.page_no()} de {total_paginas}', 0, 0, 'C')
-        
+        pdf.cell(
+            0, 10, f'Página {pdf.page_no()} de {total_paginas}', 0, 0, 'C')
+
         pdf_output = BytesIO()
         pdf_output.write(pdf.output(dest='S').encode('latin1'))
 
-        return pdf_output  
+        return pdf_output
     except Exception as e:
         print("Error al generar el PDF:", str(e))
-        return False  
+        return False
 
 
 def vistaCorreoForgot(request):
