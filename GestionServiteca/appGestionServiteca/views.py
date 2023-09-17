@@ -314,6 +314,7 @@ def registrarEmpleado(request):
                 thread.start()
 
     except Exception as error:
+        transaction.rollback()
         mensaje1 = f"Error al registrar empleado: {error}."
 
     retorno = {"mensaje1": mensaje1, "estado": estado}
@@ -430,10 +431,15 @@ def registrarCliente(request):
             mensaje = "Cliente Agregado Correctamente."
 
     except Exception as error:
+        transaction.rollback()
         mensaje = f"Error al registrar cliente: {error}."
 
-    retorno = {"mensaje": mensaje, "estado": estado, "user": request.user}
-    return render(request, "asistente/frmRegistrarCliente.html", retorno)
+    retorno = {"mensaje": mensaje, "estado": estado,
+               "user": request.user if not request.user.is_anonymous else None}
+    if "application/json" in request.META.get("HTTP_ACCEPT", ""):
+        return JsonResponse(retorno)
+    else:
+        return render(request, "asistente/frmRegistrarCliente.html", retorno)
 
 
 def consultarCliente(request, id):
@@ -684,10 +690,15 @@ def registrarVehiculo(request):
             estado = True
             mensaje = "Vehículo Agregado Correctamente."
     except Exception as error:
+        transaction.rollback()
         mensaje = f"Error al registrar vehículo : {error}."
 
-    retorno = {"mensaje": mensaje, "estado": estado, "user": request.user}
-    return render(request, "asistente/frmRegistrarVehiculo.html", retorno)
+    retorno = {"mensaje": mensaje, "estado": estado,
+               "user": request.user if not request.user.is_anonymous else None}
+    if "application/json" in request.META.get("HTTP_ACCEPT", ""):
+        return JsonResponse(retorno)
+    else:
+        return render(request, "asistente/frmRegistrarVehiculo.html", retorno)
 
 
 def consultarVehiculo(request, id):
@@ -1018,7 +1029,10 @@ def generarCodigoFactura():
 def registrarServicioPrestado(request):
     """
     Esta funcion permite registrar un serivicioPrestado a la base de datos,
-    tambien
+    tambien manda un correo electronico al cliente asociado al servicio prestado y tambien envia en
+    un correo electronico a los empleados que esten asociados al detalle servicio prestado,por otra
+    parte tambien genera un factura en pdf con los datos del servicio prestado y el detalle servicio
+    prestado. 
 
     Args:
         request (_type_): _description_
@@ -1031,6 +1045,7 @@ def registrarServicioPrestado(request):
     mensaje = ""
 
     if request.method == 'POST':
+        rollback_requerido = False
         try:
             with transaction.atomic():
                 idCliente = int(request.POST['idCliente'])
@@ -1128,10 +1143,14 @@ def registrarServicioPrestado(request):
                 estado = True
                 mensaje = "Se ha registrado el servicio prestado y generado la factura correctamente."
 
+        except Cliente.DoesNotExist:
+            mensaje = "El cliente no existe."
+            rollback_requerido = False
         except Exception as error:
+            rollback_requerido = True
+            mensaje = f"Error,{error}"
+        if rollback_requerido:
             transaction.rollback()
-            mensaje = str(error)
-
     retorno = {"estado": estado, "mensaje": mensaje}
     return JsonResponse(retorno)
 

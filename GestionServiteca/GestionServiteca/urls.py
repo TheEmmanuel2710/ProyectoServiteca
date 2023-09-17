@@ -21,7 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import handler404
 
-handler404 = 'appGestionServiteca.views.error_404'  
+handler404 = 'appGestionServiteca.views.error_404'
 
 
 urlpatterns = [
@@ -38,19 +38,21 @@ urlpatterns = [
     path('inicioAsistente/', views.inicioAsistente),
     path('vistaGestionarClientes/', views.vistaGestionarClientes),
     path('vistaRegistrarCliente/', views.vistaRegistrarClientes),
-    path('registrarCliente/', views.registrarCliente),
+    path('registrarCliente/', views.registrarCliente, name='registrarCliente'),
     path('consultarC/<int:id>/', views.consultarCliente),
-    path('ActualizarC/', views.actualizarCliente),
+    path('ActualizarC/', views.actualizarCliente, name='actualizarCliente'),
     path('vistaGestionarVehiculos/', views.vistaGestionarVehiculos),
     path('vistaRegistrarVehiculo/', views.vistaRegistrarVehiculos),
-    path('registrarVehiculo/', views.registrarVehiculo),
+    path('registrarVehiculo/', views.registrarVehiculo, name='registrarVehiculo'),
     path('consultarV/<int:id>/', views.consultarVehiculo),
     path('ActualizarV/', views.actualizarVehiculo),
-    path('registrarServicioPrestado/', views.registrarServicioPrestado),
+    path('registrarServicioPrestado/', views.registrarServicioPrestado,
+         name='registrarServicioPrestado'),
     path('vistaRegistrarServiciosP/', views.vistaRegistrarServiciosPrestados),
-    path('vistaGestionarServiciosPrestados/', views.vistaGestionarServiciosPrestados),
+    path('vistaGestionarServiciosPrestados/',
+         views.vistaGestionarServiciosPrestados),
     path('consultarSP/<int:id>/', views.consultarServicioPrestado),
-    path('ActualizarSP/', views.actualizarServicioPrestado),
+    path('ActualizarSP/', views.actualizarServicioPrestado,name='actualizarServicioPrestado'),
     path('vistaGestionarFacturas/', views.vistaGestionarFacturas),
     path('consultarFac/<int:id>', views.consultarFactura),
     path("ActualizarFac/", views.ActualizarFac),
