@@ -2412,10 +2412,10 @@ def atenderServicio(request, id):
         for asistente in asistentes:
             try:
                 enviarCorreo(
-                    asunto="Notificación de Servicio Prestado",
+                    asunto="Notificación de Tecnico",
                     mensaje=f"Estimado/a {asistente.username},\n\n"
                             f"Le informo que me comprometo a cumplir con la prestación del servicio de hoy en adelante al cliente "
-                            f"{servicio.serpCli.cliPersona.perNombres} {servicio.serpCli.cliPersona.perApellidos}. El vehículo asignado es: {vehiculo.vehPlaca}.\n\n"
+                            f"{servicio.serpCli.cliPersona.perNombres} {servicio.serpCli.cliPersona.perApellidos}.Quien es propietario del vehiculo con placa: {vehiculo.vehPlaca}.\n\n"
                             f"Atentamente,\n"
                             f"{request.user.first_name} {request.user.last_name}",
                     destinatario=asistente.email

@@ -36,10 +36,14 @@
                 <td>{{ servicioP.serpEstado }}</td>
                 <td class="text-center">
                     <a onclick="atenderServicio('{{ servicioP.id }}')">
-                        <i class="bi bi-clipboard-check" id="iconoAtender" title="Atender" style="font-size: 2rem;"></i>
+                        <i class="bi bi-clipboard-check" id="iconoAtender" title="Atender Servicio" style="font-size: 2rem;"></i>
+                    </a>
+                    <a onclick="finalizarServicio('{{ servicioP.id }}')">
+                        <i class="bi bi-flag" id="iconoFinalizar" title="Finalizar Servicio"
+                            style="font-size: 2rem;"></i>
                     </a>
                     <a onclick="abrirModalDetalle('{{ servicioP.id }}')">
-                        <i class="bi bi-eye" title="ver detalle" style="font-size: 2rem;"></i>
+                        <i class="bi bi-eye" title="Ver Detalle" style="font-size: 2rem;"></i>
                     </a>
                 </td>
             </tr>
@@ -86,8 +90,6 @@
             dataType: 'json',
             success: function (data) {
                 if (data.success) {
-                    $("#iconoAtender").removeClass("bi-clipboard-check").addClass("bi-check-circle");
-
                     Swal.fire({
                         title: 'Envio Correo',
                         text: 'El correo fue enviado a los asistentes de manera satisfactoria',
@@ -119,8 +121,12 @@
             }
         });
     }
-    
 
+</script>
+<script>
+    function finalizarServicio(id) {
+        alert("Holaaaaaa");
+    }
 </script>
 <script>
     function abrirModalDetalle(id) {
