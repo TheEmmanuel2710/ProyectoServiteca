@@ -28,6 +28,8 @@ urlpatterns = [
     path('admin-panel/', admin.site.urls),
     path('', include('appGestionServiteca.urls')),
     path('', views.inicio),
+    path('NuestrosServicios/', views.NuestrosServicios),
+    path('HorariosDeAtencion/', views.HorarioDeAtencion),
     path('inicioAdministrador/', views.inicioAdministrador),
     path('vistaRegistrarEmpleado/', views.vistaRegistrarEmpleado),
     path('vistaGestionarUsuarios/', views.vistaGestionarUsuarios),
@@ -52,7 +54,8 @@ urlpatterns = [
     path('vistaGestionarServiciosPrestados/',
          views.vistaGestionarServiciosPrestados),
     path('consultarSP/<int:id>/', views.consultarServicioPrestado),
-    path('ActualizarSP/', views.actualizarServicioPrestado,name='actualizarServicioPrestado'),
+    path('ActualizarSP/', views.actualizarServicioPrestado,
+         name='actualizarServicioPrestado'),
     path('vistaGestionarFacturas/', views.vistaGestionarFacturas),
     path('consultarFac/<int:id>', views.consultarFactura),
     path("ActualizarFac/", views.ActualizarFac),
@@ -76,6 +79,7 @@ urlpatterns = [
     path('vistaCambiarContraseña/', views.vistaCambiarContraseña),
     path('cambiarContrasena/<str:uidb64>/<str:token>/', views.cambiarContraseña),
     path('mostrarMensaje/', views.mostrarMensaje),
+    path('atenderServicio/<int:id>/', views.atenderServicio),
     path('<str:texto>/', views.urlValidacion),
 ]
 if settings.DEBUG:

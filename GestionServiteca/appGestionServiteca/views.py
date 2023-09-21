@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from appGestionServiteca.models import *
 from django.contrib.auth.models import Group
@@ -42,6 +41,14 @@ datosSesion = {"user": None, "rutaFoto": None, "rol": None}
 
 def error_404(request, exception):
     return render(request, '404.html', {}, status=404)
+
+
+def NuestrosServicios(request):
+    return render(request, 'NuestrosServicios.html')
+
+
+def HorarioDeAtencion(request):
+    return render(request, 'horariodeatencion.html')
 
 
 def urlValidacion(request, texto):
@@ -1382,15 +1389,25 @@ def vistaGestionarSolicitudesV(request):
     user = request.user
 
     if user.groups.filter(name='Tecnico').exists():
-        serviciosPrestados = ServicioPrestado.objects.all()
+
+        empleadoSesion = user.userEmpleado
+
+        serviciosPrestados = ServicioPrestado.objects.filter(
+            detalleservicioprestado__detEmpleado=empleadoSesion
+        ).distinct()
+
         vehiculos = Vehiculo.objects.all()
         clientes = Cliente.objects.all()
-        retorno = {"serviciosPrestados": serviciosPrestados,
-                   "estadoServicioPrestado": estadoServicioPrestado, "vehiculos": vehiculos, "clientes": clientes}
+        retorno = {
+            "serviciosPrestados": serviciosPrestados,
+            "estadoServicioPrestado": estadoServicioPrestado,
+            "vehiculos": vehiculos,
+            "clientes": clientes
+        }
 
         return render(request, "tecnico/vistaGestionarSolicitudesVehiculos.html", retorno)
 
-    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta URL."
 
     if user.groups.filter(name='Administrador').exists():
         return render(request, "administrador/inicio.html", {"mensaje": mensaje})
@@ -2380,3 +2397,33 @@ def mostrarMensaje(request):
     """
 
     return render(request, 'mostrarMensaje.html')
+
+
+def atenderServicio(request, id):
+    if request.method == 'GET':
+        servicio = get_object_or_404(ServicioPrestado, pk=id)
+
+        vehiculo = servicio.serpVehi
+
+        asistente_group = Group.objects.get(name='Asistente')
+
+        asistentes = User.objects.filter(groups=asistente_group)
+
+        for asistente in asistentes:
+            try:
+                enviarCorreo(
+                    asunto="Notificación de Servicio Prestado",
+                    mensaje=f"Estimado/a {asistente.username},\n\n"
+                            f"Le informo que me comprometo a cumplir con la prestación del servicio de hoy en adelante al cliente "
+                            f"{servicio.serpCli.cliPersona.perNombres} {servicio.serpCli.cliPersona.perApellidos}. El vehículo asignado es: {vehiculo.vehPlaca}.\n\n"
+                            f"Atentamente,\n"
+                            f"{request.user.first_name} {request.user.last_name}",
+                    destinatario=asistente.email
+                )
+            except Exception as e:
+                print(
+                    f"Error al enviar el correo a {asistente.username}: {str(e)}")
+
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
