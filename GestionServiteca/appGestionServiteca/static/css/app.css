@@ -90,24 +90,27 @@ section #slogan{
 section #btn{
     text-decoration: none;
     display: inline-block;
+    border-color: red !important;
     padding: 8px 30px;
-    color: #fff;
+    color: #000000;
     font-size: 1.2em;
     font-weight: 500;
     letter-spacing: 2px;
-    background: #110011;
+    background: transparent;
     border-radius: 20px; 
     transform: translateY(20px); 
     transform: translateX(60px); 
 }
 section #btn:hover{
-    background: #3d003d;
+    background: #000000;
+    color: white;
 }
 
 .sec{
     background: #1c0522;
     position: relative;
     padding: 80px;
+ 
 }
 
 .sec h2{
@@ -465,6 +468,11 @@ a:hover {
 #iconoxd {
     color: red;
     font-size: 64px;
+}
+#iconoxdMenu {
+    color: red;
+    font-size: 64px;
+    margin-right: 40px;
 }
 
 
@@ -916,7 +924,7 @@ a:hover {
 }
 
 
-.card .contenido-card #btn-card {
+.card .contenido-card .button2 {
     display: inline-block;
     background: #000000;
     justify-content: center;
@@ -932,7 +940,7 @@ a:hover {
    margin-left: 100px;
 }
 
-.card .contenido-card #btn-card:hover {
+.card .contenido-card .button2:hover {
     background: #ff000d;
     color: #fff;
 }
@@ -997,6 +1005,21 @@ a:hover {
     .container-card {
         flex-wrap: wrap;
     }
+    .card .contenido-card .button2 {
+        display: inline-block;
+        background: #000000;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        margin-top: 10px;
+        text-decoration: none;
+        color: #ffffff;
+        border: 1px solid #ff0000;
+        border-radius: 15px;
+        transition: all 400ms ease;
+        margin-bottom: 5px;
+       margin-left: 117px !important;
+    }
 
     .card {
         margin: 15px;
@@ -1022,12 +1045,12 @@ a:hover {
     #iconoxd {
         margin-left: -60px;
     }
-    #logo{
-        margin-left: -80px;
+    #iconoxdMenu{
+        margin-left: -70px;
     }
-    .container-fluid{
-        justify-content: space-between;
-    }
+ 
+  
+   
     .navbar-collapse {
         display: flex;
         flex-wrap: wrap;
@@ -1193,10 +1216,24 @@ a:hover {
 }
 
 
-@media only screen and (min-width:768px) {
+@media only screen and (max-width:768px) {
 
   
-
+    .card .contenido-card .button2 {
+        display: inline-block;
+        background: #000000;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        margin-top: 10px;
+        text-decoration: none;
+        color: #ffffff;
+        border: 1px solid #ff0000;
+        border-radius: 15px;
+        transition: all 400ms ease;
+        margin-bottom: 5px;
+       margin-left: 176px;
+    }
     .navigation a {
         position: relative;
         font-size: 1.5em;
@@ -1554,3 +1591,141 @@ a:hover {
 
 
 }
+
+  
+.button2 {
+    font-size: 1rem;
+    padding: 0.8em 2em;
+    background-color: #000;
+    border: 3px solid red;
+    border-radius: 1em;
+    color: #fff;
+    font-weight: bolder;
+    transition: cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s;
+    box-shadow: -5px 5px 0px 0px rgb(255, 0, 0);
+  }
+  
+.button2:hover {
+    transform: translate(5px, -5px);
+  }
+
+.btn3 {
+    margin-top: auto; /* Empuja el botón hacia la parte inferior del contenedor */
+}
+.card2 {
+    width: 17em;
+    height: 22.5em;
+    background: #171717;
+    transition: 1s ease-in-out;
+    clip-path: polygon(30px 0%, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0% 30px);
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card2 span {
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    display: block;
+    font-size: 1em;
+  }
+  
+  .card2 .info {
+    font-weight: 400;
+    color: white;
+    display: block;
+    text-align: center;
+    font-size: 0.72em;
+    margin: 1em;
+  }
+  
+  .card2 .img {
+    width: 10.8em;
+    height: 10.8em;
+    background: white;
+    border-radius: 15px;
+    margin: auto;
+  }
+  
+  .card2 .share {
+    margin-top: 1em;
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+  }
+  
+  .card2 a {
+    color: white;
+    transition: .4s ease-in-out;
+  }
+  
+  .card2 a:hover {
+    color: red;
+  }
+  
+  .card2 button {
+    padding: 0.8em 1.7em;
+    display: block;
+    margin: auto;
+    border-radius: 25px;
+    border: none;
+    font-weight: bold;
+
+    transition: .4s ease-in-out;
+  }
+  
+  .card2 button:hover {
+    background: rgb(0, 0, 0);
+    color: white;
+    cursor: pointer;
+  }
+
+.imagenes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Muestra hasta 3 elementos por fila */
+    gap: 20px; /* Espacio entre elementos */
+}
+
+.card2 {
+    border: 1px solid #ccc;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .imagenes {
+        grid-template-columns: repeat(auto-fit, minmax(100%, 1fr)); /* Elementos apilados uno debajo del otro */
+    }
+
+    .card2 .img {
+        width: 10.8em;
+        height: 10.8em;
+        background: white;
+        border-radius: 15px;
+        margin: auto;
+      }
+    
+    .card2 {
+        width: 100%; 
+    }
+    
+#img22 {
+    width: 20.8em !important;
+    height: 10.8em !important;
+    background: rgb(255, 255, 255) !important;
+    border-radius: 15px;
+    margin: auto;
+  }
+}
+
+
+#img22 {
+    width: 10.8em;
+    height: 10.8em;
+    background: white;
+    border-radius: 15px;
+    margin: auto;
+  }

@@ -35,13 +35,18 @@
                 <td>{{ servicioP.serpVehi.vehPlaca }}</td>
                 <td>{{ servicioP.serpEstado }}</td>
                 <td class="text-center">
+                    {% if servicioP.serpEstado == "Solicitado" %}
                     <a onclick="atenderServicio('{{ servicioP.id }}')">
-                        <i class="bi bi-clipboard-check" id="iconoAtender" title="Atender Servicio" style="font-size: 2rem;"></i>
+                        <i class="bi bi-clipboard-check" id="iconoAtender" title="Atender Servicio"
+                            style="font-size: 2rem;"></i>
                     </a>
+                    {% endif %}
+                    {% if servicioP.serpEstado == "En Proceso" %}
                     <a onclick="finalizarServicio('{{ servicioP.id }}')">
                         <i class="bi bi-flag" id="iconoFinalizar" title="Finalizar Servicio"
                             style="font-size: 2rem;"></i>
                     </a>
+                    {% endif %}
                     <a onclick="abrirModalDetalle('{{ servicioP.id }}')">
                         <i class="bi bi-eye" title="Ver Detalle" style="font-size: 2rem;"></i>
                     </a>

@@ -1402,7 +1402,8 @@ def vistaGestionarSolicitudesV(request):
             "serviciosPrestados": serviciosPrestados,
             "estadoServicioPrestado": estadoServicioPrestado,
             "vehiculos": vehiculos,
-            "clientes": clientes
+            "clientes": clientes,
+            "estadoServicioPrestado":estadoServicioPrestado
         }
 
         return render(request, "tecnico/vistaGestionarSolicitudesVehiculos.html", retorno)
@@ -2402,7 +2403,8 @@ def mostrarMensaje(request):
 def atenderServicio(request, id):
     if request.method == 'GET':
         servicio = get_object_or_404(ServicioPrestado, pk=id)
-
+        servicio.serpEstado='En Proceso'
+        servicio.save()    
         vehiculo = servicio.serpVehi
 
         asistente_group = Group.objects.get(name='Asistente')
