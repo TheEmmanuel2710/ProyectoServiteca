@@ -274,6 +274,7 @@ class ActualizarClienteTestCase(TestCase):
     def tearDown(self):
         pass
 
+
 class ActualizarServicioPrestadoTestCase(unittest.TestCase):
     def setUp(self):
         self.factory = RequestFactory()
@@ -317,14 +318,15 @@ class ActualizarServicioPrestadoTestCase(unittest.TestCase):
         response = actualizarServicioPrestado(request)
 
         self.assertEqual(response.status_code, 200)
-        servicio_actualizado = ServicioPrestado.objects.get(pk=self.servicioPrestado.pk)
+        servicio_actualizado = ServicioPrestado.objects.get(
+            pk=self.servicioPrestado.pk)
         self.assertEqual(servicio_actualizado.serpEstado, 'Terminado')
 
-    
     def tearDown(self):
         self.servicioPrestado.delete()
         self.vehiculo.delete()
         self.user.delete()
+
 
 if __name__ == '__main__':
     unittest.main()

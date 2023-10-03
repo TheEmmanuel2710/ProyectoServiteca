@@ -27,7 +27,8 @@ estadoFactura = [
 estadoServicioPrestado = [
     ('Cancelado', 'Cancelado'), ('Solicitado',
                                  'Solicitado'), ('Terminado', 'Terminado'),
-    ('Entregado', 'Entregado'),('En Proceso','En Proceso'),('Realizado','Realizado')
+    ('Entregado', 'Entregado'), ('En Proceso',
+                                 'En Proceso'), ('Finalizado', 'Finalizado')
 ]
 
 tiposMarcas = [

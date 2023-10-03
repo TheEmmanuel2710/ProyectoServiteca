@@ -77,14 +77,16 @@ section img{
 
 section #slogan{
     position: absolute;
-    color: #110011;
+   
     font-size: 3vmax;
     text-align: center;
     font-family: 'Rancho', sans-serif;
     line-height: 0.8em;
     white-space: nowrap;
     transform: translateY(-200px);
-    margin-left: 10vw;   
+    margin-left: 10vw;  
+    color: rgb(12, 12, 12);
+    font-family: 'Anton', sans-serif; 
 }
 
 section #btn{
@@ -107,7 +109,7 @@ section #btn:hover{
 }
 
 .sec{
-    background: #1c0522;
+    background: #fff;
     position: relative;
     padding: 80px;
  
@@ -115,29 +117,35 @@ section #btn:hover{
 
 .sec h2{
     font-size: 3.5vw;
-    color: #fff;
+    color: black;
     margin-bottom: 10px;
     text-transform: uppercase;
 }
 
 .sec h3{
     font-size: 2vw;
-    color: #fff;
+    color: black;
     margin-bottom: 10px;
 }
 
-.sec p{
-    font-size: 1.2em;
-    color: #fff;
-}
 
 /* AHORA HAREMOS EL RESPONSIVO */
 @media (max-width: 991px){
     .sec{
         padding: 60px;
     }
-    .sec p{
-        font-size: 1em;
+   
+    .sec h2{
+        font-size: 23px;
+        color: #fff;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+    
+    .sec h3{
+        font-size: 20px;
+        color: #fff;
+        margin-bottom: 10px;
     }
    
 }
@@ -496,8 +504,8 @@ a:hover {
     font-size: 15px;
     color: #fff;
     text-decoration: none;
-    font-weight: 500;
-    margin-left: 40px;
+    font-weight: 500 !important;
+    margin-left: 40px !important;
     
 }
 
@@ -1039,11 +1047,27 @@ a:hover {
         place-items: center;
     }
 
-    .select-menu {
-        margin-left: -90px;
+    .select-menu{
+        margin-right: -178px;
     }
     #iconoxd {
-        margin-left: -60px;
+        margin-left: -50px;
+  
+    }
+
+    
+    .select-menu .options {
+
+        width: 300px !important;
+        position: absolute !important;
+        padding: 20px !important;
+        margin-top: 24px !important;
+        border-radius: 8px !important;
+        background: #000000 !important;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1) ;
+        display: none;
+        z-index: 9999;
+        margin-left: -209px !important;
     }
     #iconoxdMenu{
         margin-left: -70px;
@@ -1064,20 +1088,13 @@ a:hover {
         margin-top: 150px;
        
     }
-    .select-menu .options {
-        width: 300px;
-        position: absolute;
-        padding: 20px;
-        margin-top: 25px !important;
-        border-radius: 8px;
-        background: #000000;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-        display: none;
-        z-index: 9999;
-        margin-left: -170px !important;
-    }
+    
  
-
+    #logo {
+        width: 120px;
+        height: 50px;
+        margin-left: -80px;
+    }
 
 }
 
@@ -1125,13 +1142,27 @@ a:hover {
     }
 
     .select-menu {
-        margin-left: -60px;
+        margin-right: -178px;
     }
-
     #iconoxd {
-        margin-right: -60px;
+        margin-left: -50px;
+  
     }
 
+    
+    .select-menu .options {
+
+        width: 300px !important;
+        position: absolute !important;
+        padding: 20px !important;
+        margin-top: 24px !important;
+        border-radius: 8px !important;
+        background: #000000 !important;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1) ;
+        display: none;
+        z-index: 9999;
+        margin-left: -209px !important;
+    }
 
 }
 
@@ -1244,6 +1275,7 @@ a:hover {
 
     }
 
+    
     .navigation .btnLogin-popup {
         width: 170px;
         height: 60px;
@@ -1276,44 +1308,37 @@ a:hover {
 
 
 
-@media only screen and (min-width:820px) {
-
-
-
-    .navigation a {
-        position: relative;
-        font-size: 1.5em;
-        color: #fff;
-        text-decoration: none;
-        font-weight: 500;
-        margin-right: -120px;
-
-    }
-
-    .navigation .btnLogin-popup {
-        width: 170px;
-        height: 60px;
-        background: transparent;
-        border: 2px solid #ff0000;
-        outline: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1.5em;
-        color: #fff;
-        font-weight: 500;
-        margin-left: 160px;
-        margin-right: -90px;
-        transition: .5s;
-    }
-
-
-}
 
 
 
 @media only screen and (min-width:1024px) {
 
 
+    #navAsistente a {
+        position: relative;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        
+    }
+
+    #navAdministrador a {
+        position: relative;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        
+    }
+    #navTecnico a {
+        position: relative;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        
+    }
     .navigation a {
         position: relative;
         font-size: 1.2em;
@@ -1567,13 +1592,42 @@ a:hover {
     }
 
     .select-menu {
-        margin-left: -60px;
+        margin-left: -20px;
     }
 
     #iconoxd {
         margin-right: -60px;
     }
 
+    
+#navAsistente a {
+    position: relative;
+    font-size: 15px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    margin-right: -150px;
+    
+}
+
+#navAsistente a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 3px;
+    background: #ff0000;
+    border-radius: 5px;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .5s;
+}
+
+#navAsistente a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
 }
 
 
@@ -1589,7 +1643,13 @@ a:hover {
         width: 60%;
     }
 
-
+    #navAsistente a {
+        position: relative;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;  
+    }
 }
 
   
@@ -1729,3 +1789,17 @@ a:hover {
     border-radius: 15px;
     margin: auto;
   }
+
+.imagenes{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centra horizontalmente las tarjetas */
+    gap: 40px; /* Espacio entre las tarjetas */
+}
+
+#cambiar{ 
+    color: black;
+}
+#cambiar:hover{
+    color: red;
+}

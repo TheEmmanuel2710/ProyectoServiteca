@@ -1,31 +1,9 @@
 {% load static %}
 
 <script src="{%static '../static/js/logOut.js' %}"></script>
-
 <nav class="navbar navbar-expand-sm " id="navAsistente">
   <div class="container-fluid">
     <img src="{% static '../static/img/Logo.png'%}" id="logo" alt="Logo">
-   
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-      <ion-icon name="menu-outline" id="iconoxd"></ion-icon>
-    </button>
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-      <ul class="navbar-nav"> <!-- Dejamos el menú a la izquierda -->
-        <li class="nav-item">
-          <a class="nav-link" href="/vistaGestionarClientes/" style="color: white;">Clientes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/vistaGestionarVehiculos/" style="color: white;" role="button">Vehiculos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/vistaGestionarFacturas/" role="button" style="color: white;">Pagos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/vistaGestionarServiciosPrestados/" role="button" style="color: white;">Servicios Prestados</a>
-        </li>
-      </ul>
-       
-    </div>
     <div class="select-menu">
       <div class="select-btn" title="Opciones">
         {% if user.userFoto != "" and user.userFoto != "False" %}
@@ -40,14 +18,16 @@
           {{user.email}}
         </li>
         <li class="option">
-          <button onclick="asistente()" class="btn btn-outline-danger" title="Inicio" id="btn-1">Inicio Asistente</button>
+          <button onclick="asistente()" class="btn btn-outline-danger" title="Inicio" id="btn-1">Inicio
+            Asistente</button>
         </li>
         <li class="option">
           <button class="btn btn-outline-danger" id="btn-1" title="Ver Perfil" data-bs-toggle="modal"
             data-bs-target="#perfilModal" onclick="redireccionar('/vistaGestionarPerfilAsistente/')">Ver Perfil</button>
         </li>
         <li class="option">
-          <button onclick="salir()" class="btn btn-outline-danger" title="Cerrar Sesión" id="btn-1">Cerrar Sesión</button>
+          <button onclick="salir()" class="btn btn-outline-danger" title="Cerrar Sesión" id="btn-1">Cerrar
+            Sesión</button>
         </li>
       </ul>
 
@@ -83,5 +63,26 @@
         }
       </script>
     </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+      <ion-icon name="menu-outline" id="iconoxd"></ion-icon>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav"> <!-- Dejamos el menú a la izquierda -->
+        <li class="nav-item">
+          <a class="nav-link" href="/vistaGestionarClientes/" style="color: white;">R.Clientes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/vistaGestionarVehiculos/" style="color: white;" role="button">R.Vehiculos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/vistaGestionarFacturas/" role="button" style="color: white;">G.Facturas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/vistaGestionarServiciosPrestados/" role="button" style="color: white;">G.Servicios
+            Prestados</a>
+        </li>
+      </ul>
+    </div>
+
   </div>
 </nav>

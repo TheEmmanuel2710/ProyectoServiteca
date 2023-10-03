@@ -43,6 +43,10 @@ def error_404(request, exception):
     return render(request, '404.html', {}, status=404)
 
 
+def sobreNosotros(request):
+    return render(request, 'sobreNosotros.html')
+
+
 def NuestrosServicios(request):
     return render(request, 'NuestrosServicios.html')
 
@@ -580,7 +584,7 @@ def ActualizarFac(request):
             factura.facEstado = nuevo_estado
             factura.save()
             estado = True
-            mensaje = "Factura actualizado correctamente."
+            mensaje = "Factura actualizada correctamente."
         except Factura.DoesNotExist:
             return JsonResponse({"error": "Factura no encontrada."}, status=404)
         except Exception as error:
@@ -1129,7 +1133,8 @@ def registrarServicioPrestado(request):
                 servicios_cliente_str = ", ".join(
                     [f"{Servicio.objects.get(id=int(detalle['idServicio'])).serNombre}: ${Servicio.objects.get(id=int(detalle['idServicio'])).serCosto}" for detalle in detalleServicioPrestado_lista])
                 asunto_cliente = 'Registro de Servicios Solicitados'
-                mensaje_cliente = f"Estimado(a) {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, reciba un cordial saludo,nos complace informarle que su servicio ha sido registrado con los siguientes detalles: {servicios_cliente_str}. Agradecemos su confianza en nuestros servicios y quedamos a su disposición para cualquier consulta adicional."
+                mensaje_cliente = f"Estimado(a) {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, \
+                reciba un cordial saludo,nos complace informarle que su servicio ha sido registrado con los siguientes detalles: {servicios_cliente_str}. Agradecemos su confianza en nuestros servicios y quedamos a su disposición para cualquier consulta adicional."
 
                 # Crear el objeto de correo electrónico
                 correo_cliente = EmailMessage(
@@ -1403,7 +1408,7 @@ def vistaGestionarSolicitudesV(request):
             "estadoServicioPrestado": estadoServicioPrestado,
             "vehiculos": vehiculos,
             "clientes": clientes,
-            "estadoServicioPrestado":estadoServicioPrestado
+            "estadoServicioPrestado": estadoServicioPrestado
         }
 
         return render(request, "tecnico/vistaGestionarSolicitudesVehiculos.html", retorno)
@@ -1924,6 +1929,7 @@ def habilitarUsuario(request, user_id):
 
 
 # -----INICIO API-----
+
 class PersonaList(generics.ListCreateAPIView):
     queryset = Persona.objects.all()
     serializer_class = PersonaSerializer
@@ -1963,24 +1969,10 @@ class ServicioPrestadoDetalladoList(generics.ListCreateAPIView):
     def get_queryset(self):
         perIdentificacion = self.kwargs['perIdentificacion']
 
-        cliente = Cliente.objects.filter(
-            cliPersona__perIdentificacion=perIdentificacion).first()
-
-        if cliente:
-            queryset = ServicioPrestado.objects.filter(serpCli=cliente)
-        else:
-            queryset = ServicioPrestado.objects.none()
+        queryset = ServicioPrestado.objects.filter(
+            serpCli_cliPersona_perIdentificacion=perIdentificacion)
 
         return queryset
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        if queryset.exists():
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-        else:
-            return Response({"detail": "No se encontraron servicios prestados."})
 
 
 # class ServicioPrestadoDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -2403,8 +2395,8 @@ def mostrarMensaje(request):
 def atenderServicio(request, id):
     if request.method == 'GET':
         servicio = get_object_or_404(ServicioPrestado, pk=id)
-        servicio.serpEstado='En Proceso'
-        servicio.save()    
+        servicio.serpEstado = 'En Proceso'
+        servicio.save()
         vehiculo = servicio.serpVehi
 
         asistente_group = Group.objects.get(name='Asistente')
@@ -2416,10 +2408,39 @@ def atenderServicio(request, id):
                 enviarCorreo(
                     asunto="Notificación de Tecnico",
                     mensaje=f"Estimado/a {asistente.username},\n\n"
-                            f"Le informo que me comprometo a cumplir con la prestación del servicio de hoy en adelante al cliente "
-                            f"{servicio.serpCli.cliPersona.perNombres} {servicio.serpCli.cliPersona.perApellidos}.Quien es propietario del vehiculo con placa: {vehiculo.vehPlaca}.\n\n"
-                            f"Atentamente,\n"
-                            f"{request.user.first_name} {request.user.last_name}",
+                    f"Me complace informarle que me comprometo a cumplir con la prestación del servicio a partir de hoy para el cliente"
+                    f"{servicio.serpCli.cliPersona.perNombres} {servicio.serpCli.cliPersona.perApellidos}, quien es el propietario del vehículo con placa: {vehiculo.vehPlaca}.\n\n"
+                    f"Atentamente,\n"
+                    f"{request.user.first_name} {request.user.last_name}",
+                    destinatario=asistente.email
+                )
+            except Exception as e:
+                print(
+                    f"Error al enviar el correo a {asistente.username}: {str(e)}")
+
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
+
+
+def finalizarServicio(request, id):
+    if request.method == 'GET':
+        servicio = get_object_or_404(ServicioPrestado, pk=id)
+        vehiculo = servicio.serpVehi
+
+        asistente_group = Group.objects.get(name='Asistente')
+
+        asistentes = User.objects.filter(groups=asistente_group)
+
+        for asistente in asistentes:
+            try:
+                enviarCorreo(
+                    asunto="Notificación de Tecnico",
+                    mensaje=f"Estimado/a {asistente.username},\n\n"
+                    f"Me complace informarle que he concluido satisfactoriamente el servicio solicitado por el cliente "
+                    f"{servicio.serpCli.cliPersona.perNombres} {servicio.serpCli.cliPersona.perApellidos}, quien es el propietario del vehículo con placa: {vehiculo.vehPlaca}.\n\n"
+                    f"Atentamente,\n"
+                    f"{request.user.first_name} {request.user.last_name}",
                     destinatario=asistente.email
                 )
             except Exception as e:

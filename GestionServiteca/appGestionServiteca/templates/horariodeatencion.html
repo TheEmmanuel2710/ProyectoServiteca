@@ -1,14 +1,110 @@
 {% extends "index.html" %}
 {% block menu %}
-{% include "menu.html" %}
-{%endblock %}
+{% include "menu.html" %} {%endblock%}
 {% block contenido %}
+<style>
+  .ini {
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+  }
 
-<h1> Holaaa Mundoo x 2</h1>
+  h1 {
+    font-size: 36px;
+  }
 
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
 
+  h2 {
+    font-size: 24px;
+  }
 
-{%endblock %}
-{% block piePagina %}
-{% include "piePagina.html" %}
-{%endblock %}
+  p {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  #map {
+    height: 300px;
+    width: 100%;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    /* Establece un ancho máximo para evitar que la tabla se extienda demasiado en pantallas grandes */
+    margin: 0 auto;
+    /* Centra la tabla horizontalmente en la pantalla */
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 10px 20px;
+    /* Ajusta el espacio según tus preferencias */
+  }
+</style>
+
+<div class="ini">
+  <h1 id="titulo">Serviteca Opita</h1>
+  <p style="color: black;">Tu lugar de confianza para de tu automóvil</p>
+</div>
+
+<div class="container">
+  <h2>Horarios de Atención</h2>
+  <p>A continuación, te presentamos nuestros horarios de atención:</p>
+
+  <table>
+    <tr>
+      <th>Día</th>
+      <th>Horario</th>
+    </tr>
+    <tr>
+      <td>Lunes - Viernes </td>
+      <td>8:00 AM - 6:00 PM</td>
+    </tr>
+    <tr>
+      <td>Sábado</td>
+      <td>9:00 AM - 3:00 PM</td>
+    </tr>
+    <tr>
+      <td>Domingo</td>
+      <td>Cerrado</td>
+    </tr>
+  </table>
+
+  <p>
+    ¡Estamos aquí para servirte! Si tienes alguna pregunta o necesitas programar
+    una cita fuera de nuestro horario regular, no dudes en contactarnos.
+  </p>
+  <p>Estamos ubicados en:</p>
+  <div id="map"></div>
+  <script>
+    function initMap() {
+      var coord = { lat: 2.9273, lng: -75.2819 };
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 10,
+        center: coord
+      });
+      var marker = new google.maps.Marker({
+        position: coord,
+        map: map
+      });
+    }
+  </script>
+
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEslMMKGA6pPeLnZgkv_KZ7XA_mjnUycU&callback=initMap"></script>
+  </body>
+
+  {%endblock %}
+  {% block piePagina %}
+  {% include "piePagina.html" %}
+  {%endblock %}

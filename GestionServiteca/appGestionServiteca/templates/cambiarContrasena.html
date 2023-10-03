@@ -10,11 +10,12 @@
     <form class="needs-validation" method="post" class="needs-validation" novalidate>
         {% csrf_token %}
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="nuevaContraseña" name="nuevaContraseña" required >
+            <input type="text" class="form-control" id="nuevaContraseña" name="nuevaContraseña" required>
             <label for="nuevaContraseña">Nueva Contraseña:</label>
         </div>
-        <br><div style="display: grid; justify-items: center;">
-        <button id="btnEnviar" type="submit" class="btn">Cambio Contraseña</button>
+        <br>
+        <div style="display: grid; justify-items: center;">
+            <button id="btnEnviar" type="submit" class="btn">Cambio Contraseña</button>
         </div>
     </form>
     {% else %}

@@ -10,9 +10,20 @@ class PersonaSerializer(serializers.ModelSerializer):
 
 
 class ClienteSerializer(serializers.ModelSerializer):
+    cliPersona_info = serializers.SerializerMethodField()
+
+    def get_cliPersona_info(self, obj):
+        persona = obj.cliPersona
+        return {
+            'perNombres': persona.perNombres,
+            'perApellidos': persona.perApellidos,
+            'perCorreo': persona.perCorreo,
+            'perNumeroCelular': persona.perNumeroCelular,
+        }
+
     class Meta:
         model = Cliente
-        fields = ('id', 'cliDireccion', 'cliPersona')
+        fields = ('id', 'cliDireccion', 'cliPersona', 'cliPersona_info')
 
 
 class ServicioPrestadoSerializer(serializers.ModelSerializer):
@@ -23,8 +34,10 @@ class ServicioPrestadoSerializer(serializers.ModelSerializer):
 
 
 class DetalleServicioPrestadoSerializer(serializers.ModelSerializer):
-    detServicio = serializers.CharField(source='detServicio.serNombre', read_only=True)
-    detEmpleado = serializers.CharField(source='detEmpleado.empPersona.perNombres', read_only=True)
+    detServicio = serializers.CharField(
+        source='detServicio.serNombre', read_only=True)
+    detEmpleado = serializers.CharField(
+        source='detEmpleado.empPersona.perNombres', read_only=True)
 
     class Meta:
         model = DetalleServicioPrestado

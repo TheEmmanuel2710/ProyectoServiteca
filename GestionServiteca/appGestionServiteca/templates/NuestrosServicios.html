@@ -7,214 +7,409 @@
 <link rel="stylesheet" href="{% static '../static/css/app.css' %}">
 
 <section>
-        <img src="{% static '../static/images/nube1.png' %}" alt="nube1" id="nube1">
-        <img src="{% static '../static/images/fondo_transparente.png' %}" alt="" id="transparente">
-        <img src="{% static '../static/images/nube2.png' %}" alt="nube2" id="nube2">
-        <h2 id="slogan">¡Encuentra tus servicios!</h2>
-        <button class="btn btn-primary"id="btn" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Click Me</button>
+  <img src="{% static '../static/images/nube1.png' %}" alt="nube1" id="nube1">
+  <img src="{% static '../static/images/fondo_transparente.png' %}" alt="" id="transparente">
+  <img src="{% static '../static/images/nube2.png' %}" alt="nube2" id="nube2">
+  <h2 id="slogan">¡Encuentra tus servicios!</h2>
+  <button id="btn">Desplazate</button>
 
-        <img src="{% static '../static/images/fondo.png' %}" alt="fondo" id="fondo">
-        <img src="{% static '../static/images/viento.png' %}" alt="viento" id="viento">
-        <img src="{% static '../static/images/persona.png' %}" alt="persona" id="persona">
-    </section>
+  <img src="{% static '../static/images/fondo.png' %}" alt="fondo" id="fondo">
+  <img src="{% static '../static/images/viento.png' %}" alt="viento" id="viento">
+  <img src="{% static '../static/images/persona.png' %}" alt="persona" id="persona">
+</section>
 
-    <div class="sec">
-        <h2>Servicios que te podemos ofrecer</h2>
-        <h3>Bienvenido</h3>
-        <br>
-        <div class="imagenes">
-          <div class="card2">
-            <div class="img">  <img id="img22" src="{% static '../static/img/Car1.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-            Ver Servicio</button>
-          </div>
-          <div class="card2">
-            <div class="img">  <img id="img22" src="{% static '../static/img/Car2.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">
-            Ver Servicio</button>
-          </div>
+<div class="sec">
+  <h2>Servicios que te podemos ofrecer</h2>
+  <h3>Bienvenido</h3>
+  <br>
+  <div class="imagenes">
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/Car2.jpg' %}" class="img-thumbnail" alt="...">
+      </div>
+      <span>Cambio de aceite</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Ver Servicio</button>
+    </div>
 
-          <div class="card2">
-            <div class="img"> <img id="img22" src="{% static '../static/img/Car3.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">
-            Ver Servicio</button>
-          </div>
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/Car1.jpg' %}" class="img-thumbnail" alt="...">
+      </div>
+      <span>Sincronización</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">
+        Ver Servicio</button>
+    </div>
 
-          <div class="card2">
-            <div class="img">  <img id="img22" src="{% static '../static/img/Car1.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">
-            Ver Servicio</button>
-          </div>
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/revicion_electronica.jpg' %}"
+          class="img-thumbnail" alt="..."></div>
+      <span>Revición electrónica</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">
+        Ver Servicio</button>
+    </div>
 
-          <div class="card2">
-            <div class="img">  <img id="img22" src="{% static '../static/img/Car1.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">
-            Ver Servicio</button>
-          </div>
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/Car3.jpg' %}" class="img-thumbnail" alt="...">
+      </div>
+      <span>Alineación y balanceo</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop4">
+        Ver Servicio</button>
+    </div>
 
-          <div class="card2">
-            <div class="img">  <img id="img22" src="{% static '../static/img/Car1.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">
-            Ver Servicio</button>
-          </div>
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/revision_de_luces.jpg' %}" class="img-thumbnail"
+          alt="..."></div>
+      <span>Revición de luces</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop5">
+        Ver Servicio</button>
+    </div>
 
-          <div class="card2">
-            <div class="img">  <img id="img22" src="{% static '../static/img/Car1.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">
-            Ver Servicio</button>
-          </div>
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/cambio_pastilla_freno.jpg' %}"
+          class="img-thumbnail" alt="..."></div>
+      <span>Cambio de pastillas de freno</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop6">
+        Ver Servicio</button>
+    </div>
 
-          <div class="card2">
-            <div class="img">  <img id="img22" src="{% static '../static/img/Car1.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">
-            Ver Servicio</button>
-          </div>
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/cambiar_amortiguadores.jpg' %}"
+          class="img-thumbnail" alt="..."></div>
+      <span>Cambio de amortiguadores</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop7">
+        Ver Servicio</button>
+    </div>
 
-          <div class="card2">
-            <div class="img">  <img id="img22" src="{% static '../static/img/Car1.jpg' %}" class="img-thumbnail" alt="..."></div>
-            <span>About Me</span>
-            <button  class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">
-            Ver Servicio</button>
-          </div>
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/reparacion_electonica_menores.jpg' %}"
+          class="img-thumbnail" alt="..."></div>
+      <span>Reparación electónica menores</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop8">
+        Ver Servicio</button>
+    </div>
 
-        </div>       
+    <div class="card2">
+      <div class="img"> <img id="img22" src="{% static '../static/img/rectificacion-de-rines.jpg' %}"
+          class="img-thumbnail" alt="..."></div>
+      <span>Rectificación de rines</span>
+      <button class="button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop9">
+        Ver Servicio</button>
+    </div>
+
+  </div>
 </div>
-<!--Modal-->
-  <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Bienvenido señor usuario</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Gracias por elejirnos a la mejor empresa que te brindara tus mejores servicios exclusivo para ti
-        </div>
+<!--Modales-->
+
+<!-- cambio_de_aceite -->
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Cambio de aceite</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        El cambio de aceite en un automóvil
+        es una tarea esencial en el mantenimiento
+        regular del vehículo. Se trata de un proceso
+        mediante el cual se retira el aceite viejo y
+        se reemplaza con aceite nuevo y limpio en el
+        motor del carro. Este procedimiento es fundamental
+        para garantizar el buen funcionamiento del motor y
+        prolongar la vida útil del vehículo.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sincronizacion -->
+
+<div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Sincronización</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        La sincronización en un automóvil se
+        refiere principalmente a la sincronización
+        de las válvulas, también conocida como
+        sincronización del motor. Este proceso es
+        fundamental para asegurar que las válvulas
+        del motor se abran y cierren en el momento
+        adecuado, coordinadas con el movimiento de los
+        pistones. La sincronización incorrecta puede causar
+        daños al motor y una pérdida significativa de potencia y eficiencia.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Revición electrónica -->
+
+<div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Revición electrónica</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        La revisión electrónica de un automóvil
+        se refiere a la inspección y diagnóstico
+        de los sistemas y componentes electrónicos
+        que controlan y monitorean diversas funciones
+        del vehículo. Estos sistemas electrónicos desempeñan
+        un papel crucial en el rendimiento, la eficiencia y
+        la seguridad del automóvil. Aquí hay una descripción
+        general de lo que implica una revisión electrónica de un carro
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Alineacion y balanceo-->
+
+<div class="modal fade" id="staticBackdrop4" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Alineación y balanceo</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        La alineación y el balanceo son dos aspectos clave del mantenimiento de un automóvil que afectan directamente a
+        la estabilidad, el desgaste de los neumáticos y la seguridad al conducir. Aquí te explico en qué consisten ambos
+        procedimientos:
+        <br>
+        <br>
+        Alineación:
+        <br>
+        <br>
+        La alineación de las ruedas se refiere a la posición angular de las ruedas de un vehículo en relación con el
+        chasis y entre sí. Cuando las ruedas no están correctamente alineadas, pueden ocurrir varios problemas, como un
+        desgaste irregular
+        de los neumáticos, una dirección inestable y una menor eficiencia de combustible. El proceso de alineación
+        implica ajustar los ángulos de las ruedas para que estén alineadas correctamente según las especificaciones del
+        fabricante.
+        <br>
+        <br>
+        Balanceo:
+        <br>
+        <br>
+        El balanceo se refiere a la distribución uniforme del peso de las ruedas y neumáticos del automóvil. Cuando una
+        o más ruedas están desequilibradas, pueden generar vibraciones incómodas en el volante y afectar la estabilidad
+        del vehículo, especialmente a velocidades más altas. El balanceo se logra mediante la colocación de pequeños
+        contrapesos en las ruedas para equilibrarlas.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--revición de luces-->
+
+<div class="modal fade" id="staticBackdrop5" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Revición de luces</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        La revisión de las luces del carro es un paso importante en el mantenimiento de tu vehículo, ya que las luces
+        desempeñan un papel crucial en la seguridad
+        vial, tanto para ti como para otros conductores en la carretera.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Cambio de pastillas de freno-->
+
+<div class="modal fade" id="staticBackdrop6" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Cambio de pastilla de freno</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        El cambio de pastillas de freno es una parte importante del mantenimiento de tu vehículo para garantizar un
+        rendimiento de frenado seguro y eficiente. Aquí te presento los pasos generales para llevar a cabo esta tarea,
+        aunque ten en cuenta que los detalles específicos pueden variar según el modelo de tu automóvil, por lo que
+        siempre es recomendable consultar
+        el manual del propietario y seguir las indicaciones del fabricante
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Cambio de amortiguadores-->
+
+<div class="modal fade" id="staticBackdrop7" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Cambio de amortiguadores</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        El cambio de amortiguadores en un automóvil es una tarea importante que puede mejorar significativamente la
+        calidad de la conducción y la seguridad del vehículo. Los amortiguadores son componentes esenciales del sistema
+        de suspensión que ayudan a mantener el control del automóvil y absorben las irregularidades del camino.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Reparacion electronica menores-->
+
+<div class="modal fade" id="staticBackdrop8" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Reparacion electrónica menores</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        La reparación electrónica de problemas menores en un vehículo puede abordarse en casa o con la ayuda de un
+        mecánico, dependiendo de tu nivel de experiencia y conocimiento en electrónica automotriz. Aquí hay algunos
+        ejemplos de problemas menores de reparación electrónica en un carro y cómo abordarlos:
+        <br>
+        <br>
+        1. Fusibles quemados: Si algunos componentes eléctricos no funcionan (como luces, ventanas eléctricas o el
+        sistema de audio), es posible que un fusible esté quemado. Consulta el manual del propietario para localizar la
+        caja de fusibles, identificar el fusible defectuoso y reemplazarlo con uno nuevo del mismo amperaje.
+        <br>
+        <br>
+        2. Bombillas fundidas: Si las luces del tablero, las luces exteriores o las luces interiores no funcionan, es
+        posible que debas reemplazar las bombillas quemadas. Consulta el manual del propietario para obtener
+        instrucciones sobre cómo acceder a las bombillas y reemplazarlas.
+        <br><br>
+        3. Problemas con el sistema de encendido: Si el motor de arranque no funciona o experimentas problemas para
+        encender el motor, verifica la batería, los cables de la batería y las conexiones para asegurarte de que estén
+        en buen estado. También puedes usar un multímetro para verificar el voltaje de la batería.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Rectifiacion de rines-->
+
+<div class="modal fade" id="staticBackdrop9" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Rectifiacion de rines</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        La rectificación de rines se refiere a un proceso de reparación en el que se corrigen las imperfecciones o daños
+        en las llantas o rines de un automóvil. Estos daños pueden incluir abolladuras, raspaduras, golpes,
+        deformaciones o incluso grietas en los rines. La rectificación se realiza para restaurar la forma y la
+        funcionalidad del rin, lo que puede ser esencial para garantizar una conducción segura y evitar problemas con
+        los neumáticos y la suspensión del vehículo.
+        <br>
+        <br>
+        Aquí tienes un resumen de los pasos típicos involucrados en la rectificación de rines:
+        <br>
+        <br>
+        1. Inspección inicial: El proceso comienza con una inspección minuciosa de los rines para identificar los daños
+        y determinar si son reparables. Algunos daños graves o rines extremadamente desgastados pueden no ser candidatos
+        para la rectificación y requerirán reemplazo.
+        <br>
+        <br>
+        2. Desmontaje de los neumáticos: Los neumáticos deben ser retirados de los rines antes de comenzar la
+        rectificación. Esto generalmente se realiza utilizando una máquina de desmontaje de neumáticos.
+        <br>
+        <br>
+        3. Enderezamiento y rectificación: Los rines dañados se colocan en una máquina especializada que utiliza presión
+        hidráulica o mecánica para enderezar cualquier abolladura o deformación. También se pueden usar técnicas de
+        soldadura para reparar rines con grietas o roturas.
         <div class="modal-footer">
-          <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Open second modal</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
         </div>
       </div>
     </div>
   </div>
-  <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Modal 2</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Hide this modal and show the first with the button below.
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Back to first</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Modal2 -->
-  
-  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal3 -->
-  
-  <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Waos</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-   <!-- Modal4 -->
-  
-   <div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Xddddd</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
 
-    
-    <script>
-        let header = document.getElementById('header');
-        let nube1 = document.getElementById('nube1');
-        let transparente = document.getElementById('transparente');
-        let nube2 = document.getElementById('nube2');
-        let slogan = document.getElementById('slogan');
-        let btn = document.getElementById('btn');
-        let viento = document.getElementById('viento');
-        let persona = document.getElementById('persona');
 
-    
-        window.addEventListener('scroll', function() {
-            let value = window.scrollY;
-    
-            transparente.style.marginLeft = value * 0.7 + 'px';
-            nube1.style.left = value * -5 + 'px';
-            nube2.style.left = value * -5 + 'px';
-            btn.style.marginTop = value * 0.7 + 'px';
-            slogan.style.marginBottom = value * -1 + 'px';
-            viento.style.left = value * -5 + 'px';
-            header.style.marginTop = value * 0.4 + 'px';
-            persona.style.marginLeft = value * 4 + 'px';
-        });
-    
-        const navigation = document.querySelector('nav');
-        document.querySelector('.menu').onclick = function() {
-            this.classList.toggle('active');
-            navigation.classList.toggle('active');
-        }
-    </script>
-    
-{% endblock %}
-{% block piePagina %}
-{% include "piePagina.html" %}
-{% endblock %}
+  <script>
+    let header = document.getElementById('header');
+    let nube1 = document.getElementById('nube1');
+    let transparente = document.getElementById('transparente');
+    let nube2 = document.getElementById('nube2');
+    let slogan = document.getElementById('slogan');
+    let btn = document.getElementById('btn');
+    let viento = document.getElementById('viento');
+    let persona = document.getElementById('persona');
+
+
+    window.addEventListener('scroll', function () {
+      let value = window.scrollY;
+
+      transparente.style.marginLeft = value * 0.7 + 'px';
+      nube1.style.left = value * -5 + 'px';
+      nube2.style.left = value * -5 + 'px';
+      btn.style.marginTop = value * 0.7 + 'px';
+      slogan.style.marginBottom = value * -1 + 'px';
+      viento.style.left = value * -5 + 'px';
+      header.style.marginTop = value * 0.4 + 'px';
+      persona.style.marginLeft = value * 4 + 'px';
+    });
+
+    const navigation = document.querySelector('nav');
+    document.querySelector('.menu').onclick = function () {
+      this.classList.toggle('active');
+      navigation.classList.toggle('active');
+    }
+
+
+  </script>
+
+
+
+  {% endblock %}
+  {% block piePagina %}
+  {% include "piePagina.html" %}
+  {% endblock %}

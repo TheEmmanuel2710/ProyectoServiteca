@@ -29,6 +29,7 @@ urlpatterns = [
     path('', include('appGestionServiteca.urls')),
     path('', views.inicio),
     path('NuestrosServicios/', views.NuestrosServicios),
+    path('SobreNosotros/', views.sobreNosotros),
     path('HorariosDeAtencion/', views.HorarioDeAtencion),
     path('inicioAdministrador/', views.inicioAdministrador),
     path('vistaRegistrarEmpleado/', views.vistaRegistrarEmpleado),
@@ -80,6 +81,7 @@ urlpatterns = [
     path('cambiarContrasena/<str:uidb64>/<str:token>/', views.cambiarContraseña),
     path('mostrarMensaje/', views.mostrarMensaje),
     path('atenderServicio/<int:id>/', views.atenderServicio),
+    path('finalizarServicio/<int:id>/', views.finalizarServicio),
     path('<str:texto>/', views.urlValidacion),
 ]
 if settings.DEBUG:

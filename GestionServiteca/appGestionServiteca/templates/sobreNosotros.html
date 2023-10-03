@@ -1,0 +1,88 @@
+{% extends "index.html" %}
+{% block menu %}
+{% include "menu.html" %}
+{%endblock %}
+{% block contenido %}
+
+<style>
+    .ini {
+        color: #fff;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    p {
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+    .mission-vision {
+        margin-top: 30px;
+    }
+
+    .mission-vision h2 {
+        font-size: 24px;
+    }
+
+    .mission-vision p {
+        font-size: 16px;
+    }
+</style>
+</head>
+
+<body>
+    <div class="ini">
+        <h1 id="titulo">Serviteca Opita</h1>
+        <p style="color: black">Tu lugar de confianza para el cuidado de tu automóvil</p>
+    </div>
+
+    <div class="container">
+        <h2>Sobre Nosotros</h2>
+        <p>Serviteca Opita es una empresa dedicada a proporcionar servicios de alta calidad para automóviles en la
+            región de Opita. Con años de experiencia en el mercado, nos enorgullece ofrecer soluciones confiables y
+            eficientes para todas las necesidades de tu vehículo.</p>
+
+        <p>Nuestro equipo de expertos altamente capacitados está comprometido en garantizar que tu automóvil funcione de
+            manera óptima. Ofrecemos una amplia gama de servicios, que incluyen mantenimiento preventivo, reparaciones
+            mecánicas, cambio de aceite, alineación y balanceo, y mucho más.</p>
+
+        <p>En Serviteca Opita, la satisfacción del cliente es nuestra principal prioridad. Trabajamos incansablemente
+            para superar tus expectativas y mantener tu vehículo en perfectas condiciones. Siempre estamos dispuestos a
+            escuchar tus necesidades y responder a tus preguntas, brindándote un servicio personalizado.</p>
+
+        <p>Gracias por confiar en Serviteca Opita para el cuidado de tu automóvil. Esperamos tener el placer de
+            atenderte y servirte pronto.</p>
+        <div class="mission-vision">
+            <h2 style="text-align: center;">Misión</h2>
+            <p>Nuestra misión en Serviteca Opita es proporcionar servicios de alta calidad para el mantenimiento y
+                cuidado de automóviles, brindando soluciones confiables y eficientes a nuestros clientes. Nos esforzamos
+                por superar las expectativas de nuestros clientes y garantizar la seguridad y el rendimiento óptimo de
+                sus vehículos.</p>
+        </div>
+
+        <div class="mission-vision">
+            <h2 style="text-align: center;">Visión</h2>
+            <p>Nuestra visión en Serviteca Opita es convertirnos en el referente líder en servicios automotrices en la
+                región de Opita y ser reconocidos por nuestra excelencia en el servicio al cliente y la calidad en
+                nuestros servicios. Buscamos expandir nuestra presencia y seguir creciendo para satisfacer las
+                necesidades cambiantes de nuestros clientes y la industria automotriz.</p>
+        </div>
+
+    </div>
+
+    {%endblock %}
+    {% block piePagina %}
+    {% include "piePagina.html" %}
+    {%endblock %}

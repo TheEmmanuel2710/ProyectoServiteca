@@ -231,7 +231,7 @@
             dataType: 'json',
             success: function (data) {
                 // Rellenar el formulario de la modal con los datos obtenidos
-                var totalConSimbolo = "$" + data.factura.facTotal; 
+                var totalConSimbolo = "$" + data.factura.facTotal;
                 $("#txtTotal").val(totalConSimbolo);
                 $("#cbEstado").val(data.factura.facEstado);
                 $("#txtCodigo").val(data.factura.facCodigo);
@@ -239,10 +239,10 @@
                 $("#txtNombres").val(data.cliente.persona.perNombres);
                 $("#txtApellidos").val(data.cliente.persona.perApellidos);
                 $("#idFactura").val(id);
-    
+
                 var form = $('#ActualizarFac').find('.needs-validation')[0];
                 form.classList.remove('was-validated');
-    
+
                 $('#ActualizarFac').modal('show');
             },
             error: function (error) {
@@ -251,7 +251,7 @@
             }
         });
     }
-    
+
 
     $('#ActualizarFac').on('hide.bs.modal', function (event) {
         var form = $(this).find('.needs-validation')[0];
