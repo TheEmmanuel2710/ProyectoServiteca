@@ -127,24 +127,29 @@
             </div>
             <!-- Modal body -->
             <div class="modal-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Servicio</th>
-                            <th>Costo</th>
-                            <th>Empleado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaDetalles">
-                    </tbody>
-                </table>
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <div class="w-105 table-responsive" style="margin: 0 auto;">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Servicio</th>
+                                <th>Costo</th>
+                                <th>Empleado</th>
+                                <th>Estado</th>
+                                <th>Observaciones Técnico</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaDetalles">
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 
@@ -217,21 +222,27 @@
                 var detalles = data.detalles;
                 var detallesHtml = "";
 
-                for (var i = 0; i < detalles.length; i += 2) {
+                for (var i = 0; i < detalles.length; i += 1) {
                     var campoServicio = detalles[i].servicio.serNombre;
                     var campoCosto = "$" + detalles[i].servicio.serCosto;
                     var campoEmpleado = detalles[i].empleado.perNombres + " " + detalles[i].empleado.perApellidos;
-
-                    if ((i + 1) < detalles.length) {
-                        campoServicio += "<br>" + detalles[i + 1].servicio.serNombre;
-                        campoCosto += "<br>$" + detalles[i + 1].servicio.serCosto;
-                        campoEmpleado += "<br>" + detalles[i + 1].empleado.perNombres + " " + detalles[i + 1].empleado.perApellidos;
-                    }
+                    var campoEstado = detalles[i].estado.detEstadoServicio;
+                    var campoObservaciones = detalles[i].observaciones.detObservaciones;
 
                     detallesHtml += "<tr>";
                     detallesHtml += "<td>" + campoServicio + "</td>";
                     detallesHtml += "<td>" + campoCosto + "</td>";
                     detallesHtml += "<td>" + campoEmpleado + "</td>";
+                    detallesHtml += "<td>" + campoEstado + "</td>";
+                    detallesHtml += "<td>";
+
+                    if (campoObservaciones === null) {
+                        detallesHtml += "No hay observaciones hechas por el técnico todavía.";
+                    } else {
+                        detallesHtml += campoObservaciones;
+                    }
+
+                    detallesHtml += "</td>";
                     detallesHtml += "</tr>";
                 }
 
@@ -257,7 +268,7 @@
         title: 'Actualización de datos',
         text: '{{mensaje}}',
         icon: 'success',
-        confirmButtonColor: '#3085d6',
+        confirmButtonColor: 'black',
         confirmButtonText: 'Aceptar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -271,7 +282,7 @@
         title: 'Actualización de datos',
         text: '{{mensaje}}',
         icon: 'error',
-        confirmButtonColor: '#3085d6',
+        confirmButtonColor: 'black',
         confirmButtonText: 'Aceptar'
     }).then((result) => {
         if (result.isConfirmed) {

@@ -6,6 +6,7 @@ import random
 import string
 from django.contrib.auth import authenticate
 from django.contrib import auth
+import pywhatkit
 from rest_framework.response import Response
 from django.conf import settings
 import urllib
@@ -14,6 +15,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.db.models import Sum
 import threading
+from django.http import HttpResponse
 from django.http import Http404
 from django.http import JsonResponse
 from smtplib import SMTPException
@@ -483,13 +485,13 @@ def consultarCliente(request, id):
         }
         return JsonResponse({"cliente": datos_cliente})
     except Cliente.DoesNotExist:
-        return JsonResponse({"error": "Cliente no encontrado."}, status=404)
+        return JsonResponse({"Error": "Cliente no encontrado."}, status=404)
     except Persona.DoesNotExist:
-        return JsonResponse({"error": "Persona no encontrada."}, status=404)
+        return JsonResponse({"Error": "Persona no encontrada."}, status=404)
     except ValueError:
-        return JsonResponse({"error": "ID inválido."}, status=400)
+        return JsonResponse({"Error": "ID inválido."}, status=400)
     except Exception as error:
-        return JsonResponse({"error": str(error)}, status=500)
+        return JsonResponse({"Error": str(error)}, status=500)
 
 
 def consultarFactura(request, id):
@@ -540,6 +542,14 @@ def consultarFactura(request, id):
             servicios_con_empleados.append(servicio_con_empleado)
             total_costo += servicio.serCosto
 
+            detalle_servicio_prestado = {
+                "detalleServicio": servicio.serNombre,
+                "detalleEmpleado": f"{empleado.empPersona.perNombres} {empleado.empPersona.perApellidos}",
+                "detalleEstadoServicio": detalle.detEstadoServicio,
+                "detalleObservaciones": detalle.detObservaciones,
+            }
+            servicios_con_empleados[-1]["detalleServicioPrestado"] = detalle_servicio_prestado
+
         datos_factura = {
             "facTotal": total_costo,
             "facEstado": factura.facEstado,
@@ -547,18 +557,17 @@ def consultarFactura(request, id):
             "facFecha": factura.facFecha.strftime("%Y-%m-%d %H:%M:%S"),
             "nombresServiciosPrestados": servicios_con_empleados,
         }
-
         return JsonResponse({"cliente": datos_cliente, "factura": datos_factura})
     except Factura.DoesNotExist:
-        return JsonResponse({"error": "Factura no encontrada."}, status=404)
+        return JsonResponse({"Error": "Factura no encontrada."}, status=404)
     except Cliente.DoesNotExist:
-        return JsonResponse({"error": "Cliente no encontrado."}, status=404)
+        return JsonResponse({"Error": "Cliente no encontrado."}, status=404)
     except Persona.DoesNotExist:
-        return JsonResponse({"error": "Persona no encontrada."}, status=404)
+        return JsonResponse({"Error": "Persona no encontrada."}, status=404)
     except ValueError:
-        return JsonResponse({"error": "ID inválido."}, status=400)
+        return JsonResponse({"Error": "id Inválido."}, status=400)
     except Exception as error:
-        return JsonResponse({"error": str(error)}, status=500)
+        return JsonResponse({"Error": str(error)}, status=500)
 
 
 def ActualizarFac(request):
@@ -586,10 +595,10 @@ def ActualizarFac(request):
             estado = True
             mensaje = "Factura actualizada correctamente."
         except Factura.DoesNotExist:
-            return JsonResponse({"error": "Factura no encontrada."}, status=404)
+            return JsonResponse({"Error": "Factura no encontrada."}, status=404)
         except Exception as error:
             transaction.rollback()
-            mensaje = f"Error al actualizar factura,{error}."
+            mensaje = f"Error al actualizar factura: {error}."
     facturasNP = Factura.objects.filter(
         facEstado="No Pagada")
     facturasP = Factura.objects.filter(facEstado="Pagada")
@@ -737,11 +746,11 @@ def consultarVehiculo(request, id):
         }
         return JsonResponse({"vehiculo": datos_vehiculo})
     except Vehiculo.DoesNotExist:
-        return JsonResponse({"error": "Vehiculo no encontrado."}, status=404)
+        return JsonResponse({"Error": "Vehiculo no encontrado."}, status=404)
     except ValueError:
-        return JsonResponse({"error": "ID inválido."}, status=400)
+        return JsonResponse({"Error": "ID inválido."}, status=400)
     except Exception as error:
-        return JsonResponse({"error": str(error)}, status=500)
+        return JsonResponse({"Error": str(error)}, status=500)
 
 
 def generarPassword():
@@ -847,9 +856,9 @@ def consultarUsuario(request, id):
         return JsonResponse({"usuario": datos_usuario})
 
     except User.DoesNotExist:
-        return JsonResponse({"error": "Usuario no encontrado."}, status=404)
+        return JsonResponse({"Error": "Usuario no encontrado."}, status=404)
     except Exception as error:
-        return JsonResponse({"error": str(error)}, status=500)
+        return JsonResponse({"Error": str(error)}, status=500)
 
 
 def vistaLogin(request):
@@ -964,22 +973,26 @@ def enviarCorreo(asunto=None, mensaje=None, destinatario=None):
 
 def vistaRegistrarServiciosPrestados(request):
     """
-    Esta vista renderiza la página para registrar servicios prestados. Dependiendo del rol del usuario autenticado, muestra
-    diferentes opciones y formularios para registrar servicios prestados, empleados, vehículos y clientes.
+    Vista que renderiza una página web donde se registanl los datos correspondientes para 
+    registrar un servicio solicitado.
 
     Args:
-        request (HttpRequest): El objeto de solicitud HTTP de Django.
+        request (HttpRequest): La solicitud HTTP realizada por el usuario.
 
     Returns:
-        HttpResponse: Una respuesta HTTP que renderiza la página para registrar servicios prestados.
+        HttpResponse: Una respuesta HTTP que muestra la página correspondiente al rol del usuario.
     """
-
     user = request.user
 
     if user.groups.filter(name='Asistente').exists():
+        rol = Group.objects.get(name='Tecnico')
+
+        usuariosTecnicos = User.objects.filter(groups=rol)
+
+        empleados = Empleado.objects.filter(user__in=usuariosTecnicos)
+
         vehiculos = Vehiculo.objects.all()
         clientes = Cliente.objects.all()
-        empleados = Empleado.objects.all()
         servicios = Servicio.objects.all()
         serviciosPrestados = ServicioPrestado.objects.all()
 
@@ -992,7 +1005,7 @@ def vistaRegistrarServiciosPrestados(request):
         }
         return render(request, "asistente/frmRegistrarServicioPrestado.html", retorno)
 
-    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta URL."
 
     if user.groups.filter(name='Administrador').exists():
         return render(request, "administrador/inicio.html", {"mensaje": mensaje})
@@ -1037,11 +1050,24 @@ def generarCodigoFactura():
     return f'SVP-{siguienteNumero:06d}'
 
 
+whatsapp_web_abierto = False
+
+
+def abrirWhatsAppWeb():
+    """
+    Valida si whatsapp web ya esta abierto
+    """
+    global whatsapp_web_abierto
+    if not whatsapp_web_abierto:
+        pywhatkit.open_web()
+        whatsapp_web_abierto = True
+
+
 def registrarServicioPrestado(request):
     """
-    Esta funcion permite registrar un serivicioPrestado a la base de datos,
+    Esta funcion permite registrar un serivicio solicitado a la base de datos,
     tambien manda un correo electronico al cliente asociado al servicio prestado y tambien envia en
-    un correo electronico a los empleados que esten asociados al detalle servicio prestado,por otra
+    un correo electronico y un mensaje de whatsapp a los empleados que esten asociados al detalle servicio prestado,por otra
     parte tambien genera un factura en pdf con los datos del servicio prestado y el detalle servicio
     prestado. 
 
@@ -1091,7 +1117,8 @@ def registrarServicioPrestado(request):
                     detalleServicioPrestado = DetalleServicioPrestado(
                         detServicio=servicio,
                         detServicioPrestado=servicioPrestado,
-                        detEmpleado=empleado
+                        detEmpleado=empleado,
+                        detEstadoServicio='Asignado'
                     )
                     detalleServicioPrestado.save()
                     total_costo += servicio.serCosto
@@ -1112,6 +1139,9 @@ def registrarServicioPrestado(request):
                 # Llama a generarFacturaPdf con el objeto de factura
                 factura_pdf = generarFacturaPdf(servicioPrestado, factura)
 
+                if not whatsapp_web_abierto:
+                    abrirWhatsAppWeb()
+
                 # Enviar correos a los empleados implicados en el detalle servicio
                 for empleado, servicios_asignados in empleados_notificados.items():
                     vehiculo_placa = servicioPrestado.serpVehi.vehPlaca
@@ -1125,6 +1155,20 @@ def registrarServicioPrestado(request):
                     else:
                         servicios_asignados_str += ","
                     mensaje_empleado = f"Le informamos que se le ha asignado el siguiente servicio: {servicios_asignados_str} el cual deberá ser atendido en el vehículo con placa: {vehiculo_placa}, en nombre del cliente: {cliente_nombre}. Agradecemos su atención y diligencia en la prestación de este servicio."
+
+                    # Agrega el código del país al número de teléfono del empleado
+                    codigoPais = "+57"
+                    numeroTem = empleado.empPersona.perNumeroCelular
+                    if not numeroTem.startswith("+"):
+                        numeroTem = f"{codigoPais}{numeroTem}"
+
+                    # Mensaje de WhatsApp
+                    mensaje_whatsapp = f"Le informamos que se le ha asignado el siguiente servicio: {servicios_asignados_str} Agradecemos su atención y diligencia en la prestación de este servicio."
+
+                    # Envía el mensaje de WhatsApp
+                    pywhatkit.sendwhatmsg_instantly(
+                        numeroTem, mensaje_whatsapp)
+
                     thread_empleado = threading.Thread(
                         target=enviarCorreo, args=(asunto_empleado, mensaje_empleado, empleado.empPersona.perCorreo))
                     thread_empleado.start()
@@ -1133,8 +1177,7 @@ def registrarServicioPrestado(request):
                 servicios_cliente_str = ", ".join(
                     [f"{Servicio.objects.get(id=int(detalle['idServicio'])).serNombre}: ${Servicio.objects.get(id=int(detalle['idServicio'])).serCosto}" for detalle in detalleServicioPrestado_lista])
                 asunto_cliente = 'Registro de Servicios Solicitados'
-                mensaje_cliente = f"Estimado(a) {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos}, \
-                reciba un cordial saludo,nos complace informarle que su servicio ha sido registrado con los siguientes detalles: {servicios_cliente_str}. Agradecemos su confianza en nuestros servicios y quedamos a su disposición para cualquier consulta adicional."
+                mensaje_cliente = f"Estimado(a) {cliente.cliPersona.perNombres} {cliente.cliPersona.perApellidos},reciba un cordial saludo,nos complace informarle que su servicio ha sido registrado con los siguientes detalles: {servicios_cliente_str}. Agradecemos su confianza en nuestros servicios y quedamos a su disposición para cualquier consulta adicional."
 
                 # Crear el objeto de correo electrónico
                 correo_cliente = EmailMessage(
@@ -1160,7 +1203,7 @@ def registrarServicioPrestado(request):
             rollback_requerido = False
         except Exception as error:
             rollback_requerido = True
-            mensaje = f"Error,{error}"
+            mensaje = f"Error: {error}."
         if rollback_requerido:
             transaction.rollback()
     retorno = {"estado": estado, "mensaje": mensaje}
@@ -1211,6 +1254,7 @@ def consultarServicioPrestado(request, id):
             empleado_detalle = detalle.detEmpleado
 
             datos_detalles.append({
+                "idDetalle": detalle.id,
                 "servicio": {
                     "serNombre": servicio_detalle.serNombre,
                     "serCosto": servicio_detalle.serCosto,
@@ -1218,6 +1262,12 @@ def consultarServicioPrestado(request, id):
                 "empleado": {
                     "perNombres": empleado_detalle.empPersona.perNombres,
                     "perApellidos": empleado_detalle.empPersona.perApellidos,
+                },
+                "estado": {
+                    "detEstadoServicio": detalle.detEstadoServicio
+                },
+                "observaciones": {
+                    "detObservaciones": detalle.detObservaciones
                 }
             })
 
@@ -1234,9 +1284,9 @@ def consultarServicioPrestado(request, id):
         })
 
     except ServicioPrestado.DoesNotExist:
-        return JsonResponse({"error": "Servicio Prestado no encontrado."}, status=404)
+        return JsonResponse({"Error": "Servicio Prestado no encontrado."}, status=404)
     except Exception as error:
-        return JsonResponse({"error": str(error)}, status=500)
+        return JsonResponse({"Error": str(error)}, status=500)
 
 
 def actualizarServicioPrestado(request):
@@ -1288,7 +1338,7 @@ def actualizarServicioPrestado(request):
                 thread_cliente.start()
 
         except ServicioPrestado.DoesNotExist:
-            return JsonResponse({"error": "Servicio prestado no encontrado."}, status=404)
+            return JsonResponse({"Error": "Servicio prestado no encontrado."}, status=404)
         except Exception as error:
             transaction.rollback()
             mensaje = f"Error al actualizar servicio prestado: {error}."
@@ -1408,7 +1458,7 @@ def vistaGestionarSolicitudesV(request):
             "estadoServicioPrestado": estadoServicioPrestado,
             "vehiculos": vehiculos,
             "clientes": clientes,
-            "estadoServicioPrestado": estadoServicioPrestado
+            "estadoServicioPrestado": estadoServicioPrestado,
         }
 
         return render(request, "tecnico/vistaGestionarSolicitudesVehiculos.html", retorno)
@@ -1449,7 +1499,7 @@ def actualizarVehiculo(request):
             vehiculo = Vehiculo.objects.select_for_update().get(pk=idVehiculo)
 
             if Vehiculo.objects.filter(vehPlaca=placa).exclude(pk=idVehiculo).exists():
-                mensaje = "La nueva placa ya está en uso por otro vehículo."
+                mensaje = "Erro : La nueva placa ya está en uso por otro vehículo."
             else:
                 vehiculo.vehPlaca = placa
                 vehiculo.vehMarca = marca
@@ -1457,12 +1507,12 @@ def actualizarVehiculo(request):
                 vehiculo.vehTipo = tipoV
                 vehiculo.save()
                 estado = True
-                mensaje = "Vehículo actualizado correctamente."
+                mensaje = "Vehículo Actualizado Correctamente."
     except Vehiculo.DoesNotExist:
         mensaje = "El vehículo no existe."
     except Exception as error:
         transaction.rollback()
-        mensaje = f"Error al actualizar vehiculo,{error}."
+        mensaje = f"Error al actualizar vehículo: {error}."
 
     vehiculos = Vehiculo.objects.all()
     retorno = {
@@ -1504,7 +1554,7 @@ def actualizarCliente(request):
             persona = cliente.cliPersona
 
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
-                mensaje = "La nueva identificación ya está en uso por otro cliente."
+                mensaje = "Error : La nueva identificación ya está en uso por otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists():
                 mensaje = "El nuevo correo electrónico ya está en uso por otro cliente."
             elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
@@ -1568,8 +1618,8 @@ def actualizarEmpleado(request):
             persona = empleado.empPersona
 
             if Persona.objects.exclude(id=persona.id).filter(perIdentificacion=identificacion).exists():
-                mensaje = "La  nueva identificación ya está en uso por otro empleado."
-            elif Persona.objects.exclude(id=persona.id).filter(perCorreo=correo).exists() or User.objects.filter(email=correo).exists():
+                mensaje = "La nueva identificación ya está en uso por otro empleado."
+            elif (User.objects.filter(email=correo).exclude(id=usuario.id).exists()):
                 mensaje = "El nuevo correo electrónico ya está en uso por otro empleado."
             elif Persona.objects.exclude(id=persona.id).filter(perNumeroCelular=numero).exists():
                 mensaje = "El nuevo número de celular ya está en uso por otro empleado."
@@ -1969,8 +2019,10 @@ class ServicioPrestadoDetalladoList(generics.ListCreateAPIView):
     def get_queryset(self):
         perIdentificacion = self.kwargs['perIdentificacion']
 
-        queryset = ServicioPrestado.objects.filter(
-            serpCli_cliPersona_perIdentificacion=perIdentificacion)
+        cliente = get_object_or_404(
+            Cliente, cliPersona__perIdentificacion=perIdentificacion)
+
+        queryset = ServicioPrestado.objects.filter(serpCli=cliente)
 
         return queryset
 
@@ -2393,25 +2445,39 @@ def mostrarMensaje(request):
 
 
 def atenderServicio(request, id):
+    """
+    Vista que se utiliza para atender un servicio prestado. Esta vista cambia el estado del detalle del servicio
+    a 'En Proceso' y notifica a los asistentes mediante correo electrónico.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP realizada por el usuario.
+        id (int): El ID del detalle del servicio prestado que se va a atender.
+
+    Returns:
+        JsonResponse: Una respuesta JSON indicando si la operación se realizó con éxito o no.
+    """
+
     if request.method == 'GET':
-        servicio = get_object_or_404(ServicioPrestado, pk=id)
-        servicio.serpEstado = 'En Proceso'
-        servicio.save()
-        vehiculo = servicio.serpVehi
+        detalle_servicio = get_object_or_404(DetalleServicioPrestado, pk=id)
 
-        asistente_group = Group.objects.get(name='Asistente')
+        detalle_servicio.detEstadoServicio = 'En Proceso'
+        detalle_servicio.save()
 
-        asistentes = User.objects.filter(groups=asistente_group)
+        servicio_prestado = detalle_servicio.detServicioPrestado
+        vehiculo = servicio_prestado.serpVehi
+        servicio = detalle_servicio.detServicio
+
+        asistentes = User.objects.filter(userTipo='Asistente')
 
         for asistente in asistentes:
             try:
                 enviarCorreo(
-                    asunto="Notificación de Tecnico",
+                    asunto="Notificación de Técnico",
                     mensaje=f"Estimado/a {asistente.username},\n\n"
-                    f"Me complace informarle que me comprometo a cumplir con la prestación del servicio a partir de hoy para el cliente"
-                    f"{servicio.serpCli.cliPersona.perNombres} {servicio.serpCli.cliPersona.perApellidos}, quien es el propietario del vehículo con placa: {vehiculo.vehPlaca}.\n\n"
+                    f"Me complace informarle que me comprometo a cumplir con la prestación del servicio '{servicio.serNombre}' a partir de hoy para el cliente "
+                    f"'{servicio_prestado.serpCli.cliPersona.perNombres} {servicio_prestado.serpCli.cliPersona.perApellidos}', quien es el propietario del vehículo con placa '{vehiculo.vehPlaca}'.\n\n"
                     f"Atentamente,\n"
-                    f"{request.user.first_name} {request.user.last_name}",
+                    f"{request.user.first_name} {request.user.last_name}.",
                     destinatario=asistente.email
                 )
             except Exception as e:
@@ -2424,23 +2490,39 @@ def atenderServicio(request, id):
 
 
 def finalizarServicio(request, id):
+    """
+    Vista que se utiliza para finalizar un servicio prestado. Esta vista cambia el estado del detalle del servicio
+    a 'Finalizado' y notifica a los asistentes mediante correo electrónico.
+
+    Args:
+        request (HttpRequest): La solicitud HTTP realizada por el usuario.
+        id (int): El ID del detalle del servicio prestado que se va a finalizar.
+
+    Returns:
+        JsonResponse: Una respuesta JSON indicando si la operación se realizó con éxito o no.
+    """
+
     if request.method == 'GET':
-        servicio = get_object_or_404(ServicioPrestado, pk=id)
-        vehiculo = servicio.serpVehi
+        detalle_servicio = get_object_or_404(DetalleServicioPrestado, pk=id)
 
-        asistente_group = Group.objects.get(name='Asistente')
+        detalle_servicio.detEstadoServicio = 'Finalizado'
+        detalle_servicio.save()
 
-        asistentes = User.objects.filter(groups=asistente_group)
+        servicio_prestado = detalle_servicio.detServicioPrestado
+        vehiculo = servicio_prestado.serpVehi
+        servicio = detalle_servicio.detServicio
+
+        asistentes = User.objects.filter(userTipo='Asistente')
 
         for asistente in asistentes:
             try:
                 enviarCorreo(
                     asunto="Notificación de Tecnico",
                     mensaje=f"Estimado/a {asistente.username},\n\n"
-                    f"Me complace informarle que he concluido satisfactoriamente el servicio solicitado por el cliente "
-                    f"{servicio.serpCli.cliPersona.perNombres} {servicio.serpCli.cliPersona.perApellidos}, quien es el propietario del vehículo con placa: {vehiculo.vehPlaca}.\n\n"
+                    f"Me complace informarle que he concluido satisfactoriamente el servicio '{servicio.serNombre}', solicitado por el cliente "
+                    f"'{servicio_prestado.serpCli.cliPersona.perNombres} {servicio_prestado.serpCli.cliPersona.perApellidos}', quien es el propietario del vehículo con placa '{vehiculo.vehPlaca}'.\n\n"
                     f"Atentamente,\n"
-                    f"{request.user.first_name} {request.user.last_name}",
+                    f"{request.user.first_name} {request.user.last_name}.",
                     destinatario=asistente.email
                 )
             except Exception as e:
@@ -2450,3 +2532,98 @@ def finalizarServicio(request, id):
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False})
+
+
+def guardarObservacionesFinalizacion(request):
+    if request.method == 'POST':
+        detalle_id = request.POST.get('detalle_id')
+        comentario = request.POST.get('comentario')
+
+        try:
+            detalle = DetalleServicioPrestado.objects.get(id=detalle_id)
+            detalle.detObservaciones = comentario
+            detalle.save()
+            return JsonResponse({'success': True, 'message': 'Observacion guardada con éxito'})
+        except DetalleServicioPrestado.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Detalle de servicio no encontrado'})
+
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
+def consultarDetalleServicioPrestado(request, id):
+    """
+    Consulta los detalles de un servicio prestado y devuelve la información en formato JSON.
+
+    ...
+
+    :return: Un objeto JsonResponse con los detalles del servicio prestado.
+    :rtype: JsonResponse
+    """
+
+    try:
+        servicioPrestado = ServicioPrestado.objects.get(id=id)
+
+        if request.user.is_authenticated:
+            empleado_sesion = request.user.userEmpleado
+            detalles_servicio = DetalleServicioPrestado.objects.filter(
+                detServicioPrestado=servicioPrestado,
+                detEmpleado=empleado_sesion
+            )
+        else:
+            detalles_servicio = []
+
+        datos_serviciosP = {
+            "id": servicioPrestado.id,
+            "serpObservaciones": servicioPrestado.serpObservaciones,
+            "serpFechaServicio": servicioPrestado.serpFechaServicio,
+            "serpEstado": servicioPrestado.serpEstado,
+        }
+
+        datos_cliente = {
+            "id": servicioPrestado.serpCli.id,
+            "cliPersona": {
+                "perNombres": servicioPrestado.serpCli.cliPersona.perNombres,
+                "perApellidos": servicioPrestado.serpCli.cliPersona.perApellidos,
+            }
+        }
+
+        datos_detalles = []
+
+        for detalle in detalles_servicio:
+            servicio_detalle = detalle.detServicio
+            empleado_detalle = detalle.detEmpleado
+
+            datos_detalles.append({
+                "idDetalle": detalle.id,
+                "servicio": {
+                    "serNombre": servicio_detalle.serNombre,
+                    "serCosto": servicio_detalle.serCosto,
+                },
+                "empleado": {
+                    "perNombres": empleado_detalle.empPersona.perNombres,
+                    "perApellidos": empleado_detalle.empPersona.perApellidos,
+                },
+                "estado": {
+                    "detEstadoServicio": detalle.detEstadoServicio
+                },
+                "observaciones": {
+                    "detObservaciones": detalle.detObservaciones
+                }
+            })
+
+        datos_vehiculo = {
+            "id": servicioPrestado.serpVehi.id,
+            "vehPlaca": servicioPrestado.serpVehi.vehPlaca,
+        }
+
+        return JsonResponse({
+            "servicioPrestado": datos_serviciosP,
+            "cliente": datos_cliente,
+            "vehiculo": datos_vehiculo,
+            "detalles": datos_detalles
+        })
+
+    except ServicioPrestado.DoesNotExist:
+        return JsonResponse({"Error": "Servicio Prestado no encontrado."}, status=404)
+    except Exception as error:
+        return JsonResponse({"Error": str(error)}, status=500)

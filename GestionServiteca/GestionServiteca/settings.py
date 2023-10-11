@@ -133,8 +133,8 @@ SESSION_COOKIE_AGE = 8 * 60 * 60
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+# Para guardar archivos de multimedia
 STATIC_URL = os.path.join(BASE_DIR, '/static/')
-# para guardar archivos de multimedia
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -145,10 +145,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'appGestionServiteca.User'
 
-# recaptcha
+# rRecaptcha
 GOOGLE_RECAPTCHA_SECRET_KEY = '6LevdIonAAAAAFkDaO3PDkt3J0-dWGSAHGJEDMZE'
 
-# variables configuración correo
+# Variables configuración correo
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "theemmanuelwtg@gmail.com"

@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -11,11 +12,11 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-   
+
 }
 
-#fotoPerfil{
-   border-radius: 50%;
+#fotoPerfil {
+    border-radius: 50%;
 
 }
 
@@ -24,7 +25,7 @@ body {
     justify-content: space-evenly;
 }
 
-.error404{
+.error404 {
     display: grid;
     place-items: center;
     width: 100%;
@@ -33,7 +34,7 @@ body {
     text-align: center
 }
 
-#e404{
+#e404 {
     font-family: 'NuevaFuente', sans-serif;
     font-size: 160px;
     margin: 0;
@@ -46,10 +47,10 @@ body {
 }
 
 
-section{
+section {
     position: relative;
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -59,7 +60,7 @@ section{
 
 
 
-section::before{
+section::before {
     content: '';
     position: absolute;
     bottom: 0;
@@ -70,7 +71,7 @@ section::before{
     z-index: 10;
 }
 
-section img{
+section img {
     position: absolute;
     top: 0;
     left: 0;
@@ -80,54 +81,62 @@ section img{
     pointer-events: none;
 }
 
-section #slogan{
+#persona {
+    width: 200px;
+    height: 300px;
+    left: 48%;
+    top: 70%;
+}
+
+section #slogan {
     position: absolute;
-   
+
     font-size: 3vmax;
     text-align: center;
     font-family: 'Rancho', sans-serif;
     line-height: 0.8em;
     white-space: nowrap;
     transform: translateY(-200px);
-    margin-left: 10vw;  
-    color: rgb(12, 12, 12);
-    font-family: 'Anton', sans-serif; 
+    margin-left: 10vw;
+    color: rgb(235, 61, 61);
+    font-family: 'Anton', sans-serif;
 }
 
-section #btn{
+section #btn {
     text-decoration: none;
     display: inline-block;
     border-color: red !important;
     padding: 8px 30px;
-    color: #000000;
+    color: #ffffff;
     font-size: 1.2em;
     font-weight: 500;
     letter-spacing: 2px;
     background: transparent;
-    border-radius: 20px; 
-    transform: translateY(20px); 
-    transform: translateX(60px); 
+    border-radius: 20px;
+    transform: translateY(20px);
+    transform: translateX(60px);
 }
-section #btn:hover{
+
+section #btn:hover {
     background: #000000;
     color: white;
 }
 
-.sec{
-    background: #1c0522;
+.sec {
+    background: rgb(49, 45, 45);
     position: relative;
     padding: 80px;
- 
+
 }
 
-.sec h2{
+.sec h2 {
     font-size: 3.5vw;
     color: #fff;
     margin-bottom: 10px;
     text-transform: uppercase;
 }
 
-.sec h3{
+.sec h3 {
     font-size: 2vw;
     color: #fff;
     margin-bottom: 10px;
@@ -135,39 +144,59 @@ section #btn:hover{
 
 
 /* AHORA HAREMOS EL RESPONSIVO */
-@media (max-width: 991px){
-    .sec{
+@media (max-width: 991px) {
+
+    section {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+        overflow: hidden;
+        margin-top: -54px;
+    }
+
+    .sec {
         padding: 60px;
     }
-   
-    .sec h2{
+
+    .sec h2 {
         font-size: 23px;
         color: #fff;
         margin-bottom: 10px;
         text-transform: uppercase;
     }
-    
-    .sec h3{
+
+    .sec h3 {
         font-size: 20px;
         color: #fff;
         margin-bottom: 10px;
     }
-   
+
+    #persona {
+        width: 200px;
+        height: 300px;
+        left: 48%;
+        top: 68%;
+    }
 }
+
 .contenido {
     min-height: 70vh;
     margin-top: 70px;
-   
+
 }
 
 
-#titulo{
+#titulo {
 
     color: rgb(12, 12, 12);
     font-family: 'Anton', sans-serif;
 }
 
-#titulos{
+#titulos {
     color: rgb(41, 38, 38);
 }
 
@@ -483,6 +512,7 @@ a:hover {
     color: red;
     font-size: 64px;
 }
+
 #iconoxdMenu {
     color: red;
     font-size: 64px;
@@ -512,7 +542,7 @@ a:hover {
     text-decoration: none;
     font-weight: 500 !important;
     margin-left: 40px !important;
-    
+
 }
 
 #navAsistente a::after {
@@ -668,6 +698,7 @@ a:hover {
     color: #fff;
     user-select: none;
 }
+
 /*Comienzo del nav principal*/
 #navigation a {
     position: relative;
@@ -717,6 +748,7 @@ a:hover {
     background: #ff0000;
     color: #ffffff;
 }
+
 /*Fin del nav principal*/
 .wrapper {
     margin: 0% auto;
@@ -951,7 +983,7 @@ a:hover {
     border-radius: 15px;
     transition: all 400ms ease;
     margin-bottom: 5px;
-   margin-left: 100px;
+    margin-left: 100px;
 }
 
 .card .contenido-card .button2:hover {
@@ -1016,9 +1048,43 @@ a:hover {
 }
 
 @media only screen and (min-width: 280px) and (max-width: 413px) {
+
+
+    #persona {
+        width: 200px;
+        height: 300px;
+        left: 48%;
+        top: 55% !important;
+    }
+
+    #img-graficaS {
+        height: 500px;
+        width: 100%;
+    }
+
+    #img-graficaE {
+        height: 500px;
+        width: 100%;
+    }
+
+    #img-graficaC {
+        height: 500px;
+        width: 100%;
+    }
+
+    .grafica {
+        margin-top: 60px;
+        display: grid;
+        place-items: center;
+        min-height: 600px;
+    }
+
+
+
     .container-card {
         flex-wrap: wrap;
     }
+
     .card .contenido-card .button2 {
         display: inline-block;
         background: #000000;
@@ -1032,13 +1098,23 @@ a:hover {
         border-radius: 15px;
         transition: all 400ms ease;
         margin-bottom: 5px;
-       margin-left: 117px !important;
+        margin-left: 117px !important;
     }
 
     .pie-pagina .grupo-1 .box p {
         color: #efefef;
         margin-bottom: 10px;
         margin-left: 20px;
+    }
+
+
+    .navbar-collapse {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        margin-right: 50px;
     }
 
     .card {
@@ -1059,15 +1135,16 @@ a:hover {
         place-items: center;
     }
 
-    .select-menu{
+    .select-menu {
         margin-right: -178px;
     }
+
     #iconoxd {
         margin-left: -50px;
-  
+
     }
 
-    
+
     .select-menu .options {
 
         width: 300px !important;
@@ -1076,17 +1153,18 @@ a:hover {
         margin-top: 24px !important;
         border-radius: 8px !important;
         background: #000000 !important;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1) ;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
         display: none;
         z-index: 9999;
         margin-left: -209px !important;
     }
-    #iconoxdMenu{
+
+    #iconoxdMenu {
         margin-left: -70px;
     }
- 
-  
-   
+
+
+
     .navbar-collapse {
         display: flex;
         flex-wrap: wrap;
@@ -1095,13 +1173,14 @@ a:hover {
 
         box-sizing: border-box;
     }
+
     .contenido {
         min-height: 150vh;
         margin-top: 150px;
-       
+
     }
-    
- 
+
+
     #logo {
         width: 120px;
         height: 50px;
@@ -1117,10 +1196,21 @@ a:hover {
         height: 50px;
         margin-left: -80px;
     }
+
     .pie-pagina .grupo-1 .box p {
         color: #efefef;
         margin-bottom: 10px;
         margin-left: 10px;
+    }
+
+
+    .navbar-collapse {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        margin-right: 50px;
     }
 
     .navigation a {
@@ -1161,12 +1251,13 @@ a:hover {
     .select-menu {
         margin-right: -178px;
     }
+
     #iconoxd {
         margin-left: -50px;
-  
+
     }
 
-    
+
     .select-menu .options {
 
         width: 300px !important;
@@ -1175,18 +1266,20 @@ a:hover {
         margin-top: 24px !important;
         border-radius: 8px !important;
         background: #000000 !important;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1) ;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
         display: none;
         z-index: 9999;
         margin-left: -209px !important;
     }
+
 
 }
 
 
 
 #collapsibleNavbar {
-    margin-left: 20%; /* Ajusta este valor según tus necesidades */
+    margin-left: 20%;
+    /* Ajusta este valor según tus necesidades */
 }
 
 
@@ -1266,7 +1359,7 @@ a:hover {
 
 @media only screen and (max-width:768px) {
 
-  
+
     .card .contenido-card .button2 {
         display: inline-block;
         background: #000000;
@@ -1280,8 +1373,9 @@ a:hover {
         border-radius: 15px;
         transition: all 400ms ease;
         margin-bottom: 5px;
-       margin-left: 176px;
+        margin-left: 176px;
     }
+
     .navigation a {
         position: relative;
         font-size: 1.5em;
@@ -1292,7 +1386,7 @@ a:hover {
 
     }
 
-    
+
     .navigation .btnLogin-popup {
         width: 170px;
         height: 60px;
@@ -1337,8 +1431,9 @@ a:hover {
         color: #fff;
         text-decoration: none;
         font-weight: 500;
-        
+
     }
+
 
     #navAdministrador a {
         position: relative;
@@ -1346,16 +1441,18 @@ a:hover {
         color: #fff;
         text-decoration: none;
         font-weight: 500;
-        
+
     }
+
     #navTecnico a {
         position: relative;
         font-size: 15px;
         color: #fff;
         text-decoration: none;
         font-weight: 500;
-        
+
     }
+
     .navigation a {
         position: relative;
         font-size: 1.2em;
@@ -1583,7 +1680,7 @@ a:hover {
 
 
     }
-    
+
 
     .navigation .btnLogin-popup {
         width: 130px;
@@ -1617,36 +1714,36 @@ a:hover {
         margin-right: -60px;
     }
 
-    
-#navAsistente a {
-    position: relative;
-    font-size: 15px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    margin-right: -150px;
-    padding: 0 27px;
-    
-}
 
-#navAsistente a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 100%;
-    height: 3px;
-    background: #ff0000;
-    border-radius: 5px;
-    transform-origin: right;
-    transform: scaleX(0);
-    transition: transform .5s;
-}
+    #navAsistente a {
+        position: relative;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        margin-right: -150px;
+        padding: 0 27px;
 
-#navAsistente a:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
-}
+    }
+
+    #navAsistente a::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 100%;
+        height: 3px;
+        background: #ff0000;
+        border-radius: 5px;
+        transform-origin: right;
+        transform: scaleX(0);
+        transition: transform .5s;
+    }
+
+    #navAsistente a:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
 }
 
 
@@ -1669,14 +1766,20 @@ a:hover {
         color: #fff;
         text-decoration: none;
         font-weight: 500;
-        margin-right: -110px;
-    
+        margin-right: -120px;
         padding: 0 30px;
-        
+
+    }
+
+    #persona {
+        width: 203px;
+        height: 312px;
+        left: 48%;
+        top: 78%;
     }
 }
 
-  
+
 .button2 {
     font-size: 1rem;
     padding: 0.8em 2em;
@@ -1687,15 +1790,17 @@ a:hover {
     font-weight: bolder;
     transition: cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s;
     box-shadow: -5px 5px 0px 0px rgb(255, 0, 0);
-  }
-  
+}
+
 .button2:hover {
     transform: translate(5px, -5px);
-  }
+}
 
 .btn3 {
-    margin-top: auto; /* Empuja el botón hacia la parte inferior del contenedor */
+    margin-top: auto;
+    /* Empuja el botón hacia la parte inferior del contenedor */
 }
+
 .card2 {
     width: 17em;
     height: 22.5em;
@@ -1706,50 +1811,50 @@ a:hover {
     border-bottom-left-radius: 20px;
     display: flex;
     flex-direction: column;
-  }
-  
-  .card2 span {
+}
+
+.card2 span {
     font-weight: bold;
     color: white;
     text-align: center;
     display: block;
     font-size: 1em;
-  }
-  
-  .card2 .info {
+}
+
+.card2 .info {
     font-weight: 400;
     color: white;
     display: block;
     text-align: center;
     font-size: 0.72em;
     margin: 1em;
-  }
-  
-  .card2 .img {
+}
+
+.card2 .img {
     width: 10.8em;
     height: 10.8em;
     background: white;
     border-radius: 15px;
     margin: auto;
-  }
-  
-  .card2 .share {
+}
+
+.card2 .share {
     margin-top: 1em;
     display: flex;
     justify-content: center;
     gap: 1em;
-  }
-  
-  .card2 a {
+}
+
+.card2 a {
     color: white;
     transition: .4s ease-in-out;
-  }
-  
-  .card2 a:hover {
+}
+
+.card2 a:hover {
     color: red;
-  }
-  
-  .card2 button {
+}
+
+.card2 button {
     padding: 0.8em 1.7em;
     display: block;
     margin: auto;
@@ -1758,18 +1863,20 @@ a:hover {
     font-weight: bold;
 
     transition: .4s ease-in-out;
-  }
-  
-  .card2 button:hover {
+}
+
+.card2 button:hover {
     background: rgb(0, 0, 0);
     color: white;
     cursor: pointer;
-  }
+}
 
 .imagenes {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Muestra hasta 3 elementos por fila */
-    gap: 20px; /* Espacio entre elementos */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    /* Muestra hasta 3 elementos por fila */
+    gap: 20px;
+    /* Espacio entre elementos */
 }
 
 .card2 {
@@ -1781,7 +1888,8 @@ a:hover {
 
 @media (max-width: 768px) {
     .imagenes {
-        grid-template-columns: repeat(auto-fit, minmax(100%, 1fr)); /* Elementos apilados uno debajo del otro */
+        grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+        /* Elementos apilados uno debajo del otro */
     }
 
     .card2 .img {
@@ -1790,30 +1898,31 @@ a:hover {
         background: white;
         border-radius: 15px;
         margin: auto;
-      }
-      #navAsistente a {
+    }
+
+    #navAsistente a {
         position: relative;
         font-size: 15px;
         color: #fff;
         text-decoration: none;
         font-weight: 500;
         margin-right: -110px;
-    
+
         padding: 0 30px;
-        
+
     }
-    
+
     .card2 {
-        width: 100%; 
+        width: 100%;
     }
-    
-#img22 {
-    width: 20.8em !important;
-    height: 10.8em !important;
-    background: rgb(255, 255, 255) !important;
-    border-radius: 15px;
-    margin: auto;
-  }
+
+    #img22 {
+        width: 20.8em !important;
+        height: 10.8em !important;
+        background: rgb(255, 255, 255) !important;
+        border-radius: 15px;
+        margin: auto;
+    }
 }
 
 
@@ -1823,19 +1932,22 @@ a:hover {
     background: white;
     border-radius: 15px;
     margin: auto;
-  }
+}
 
-.imagenes{
+.imagenes {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Centra horizontalmente las tarjetas */
-    gap: 40px; /* Espacio entre las tarjetas */
+    justify-content: center;
+    /* Centra horizontalmente las tarjetas */
+    gap: 40px;
+    /* Espacio entre las tarjetas */
 }
 
-#cambiar{ 
+#cambiar {
     color: black;
 }
-#cambiar:hover{
+
+#cambiar:hover {
     color: red;
 }
 
@@ -1847,8 +1959,38 @@ a:hover {
         text-decoration: none;
         font-weight: 500;
         margin-right: -110px;
-    
+
         padding: 0 30px;
-        
+
+    }
+
+    #persona {
+        width: 200px;
+        height: 300px;
+        left: 48%;
+        top: 74%;
+    }
+}
+
+@media (max-width: 1280px) {
+    #navAsistente a {
+        position: relative;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        margin-right: -110px;
+
+        padding: 0 30px;
+
+    }
+}
+
+@media (min-width: 992px) {
+    .navbar-expand-lg {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        text-align: center;
     }
 }

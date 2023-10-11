@@ -15,7 +15,13 @@ $(function () {
         if (validarCamposDetalleServicioP()) {
             agregarDetalleServicioPrestados();
         } else {
-            Swal.fire("Registro Servicio Prestado", "Por favor, complete todos los campos del formulario.", "error");
+            Swal.fire({
+                title: "Registro Servicio Prestado",
+                text: "Por favor, complete todos los campos del formulario.",
+                icon: "error",
+                confirmButtonText: "OK",
+                confirmButtonColor: "black"
+            });
         }
     });
 
@@ -23,7 +29,13 @@ $(function () {
         if (validarCamposRegistroServicioP()) {
             registroServivicioPrestado();
         } else {
-            Swal.fire("Registro Servicio Prestado", "Por favor, complete todos los campos del formulario.", "error");
+            Swal.fire({
+                title: "Registro Servicio Prestado",
+                text: "Por favor, complete todos los campos del formulario.",
+                icon: "error",
+                confirmButtonText: "OK",
+                confirmButtonColor: "black"
+            });
         }
     });
 
@@ -97,7 +109,7 @@ function registroServivicioPrestado() {
                     title: 'Registro de Servicio Prestado',
                     text: resultado.mensaje,
                     icon: 'success',
-                    confirmButtonColor: '#3085d6',
+                    confirmButtonColor: 'black',
                     confirmButtonText: 'Aceptar'
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -109,7 +121,7 @@ function registroServivicioPrestado() {
                     title: 'Error en el registro',
                     text: resultado.mensaje,
                     icon: 'error',
-                    confirmButtonColor: '#3085d6',
+                    confirmButtonColor: 'black',
                     confirmButtonText: 'Aceptar'
                 });
             }
@@ -120,7 +132,7 @@ function registroServivicioPrestado() {
                 title: 'Error en la petición',
                 text: 'Ha ocurrido un error en la petición AJAX.',
                 icon: 'error',
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: 'black',
                 confirmButtonText: 'Aceptar'
             });
         }

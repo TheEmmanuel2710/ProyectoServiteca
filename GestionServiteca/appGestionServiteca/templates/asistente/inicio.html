@@ -37,7 +37,7 @@
         <i class="bi bi-cash-coin" id="cambiar"></i>
       </a>
     </div>
-    <div class="text-center fw-bold">G.Servicios Prestados</div>
+    <div class="text-center fw-bold">G.Facturas</div>
   </div>
 
 
@@ -48,7 +48,7 @@
         <i class="bi bi-list-check" id="cambiar"></i>
       </a>
     </div>
-    <div class="text-center fw-bold">G.Servicios Prestados</div>
+    <div class="text-center fw-bold">G.Servicios Solicitados</div>
   </div>
 
 </div>
@@ -58,7 +58,7 @@
     title: 'Sistema Serviteca',
     text: '{{mensaje2}}',
     icon: 'info',
-    confirmButtonColor: '#3085d6',
+    confirmButtonColor: 'black',
     confirmButtonText: 'Aceptar'
   }).then((result) => {
     if (result.isConfirmed) {
@@ -74,6 +74,7 @@
       icon: 'info',
       title: 'Sistema Serviteca',
       text: mensaje,
+      confirmButtonColor: 'black',
       confirmButtonText: 'Aceptar'
     }).then((result) => {
       if (result.isConfirmed) {

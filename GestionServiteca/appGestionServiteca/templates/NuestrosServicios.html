@@ -7,15 +7,16 @@
 <link rel="stylesheet" href="{% static '../static/css/app.css' %}">
 
 <section>
-  <img src="{% static '../static/images/nube1.png' %}" alt="nube1" id="nube1">
-  <img src="{% static '../static/images/fondo_transparente.png' %}" alt="" id="transparente">
-  <img src="{% static '../static/images/nube2.png' %}" alt="nube2" id="nube2">
-  <h2 id="slogan">¡Encuentra tus servicios!</h2>
-  <button id="btn">Desplazate</button>
+  <img src="{% static '../static/images/nube1.png' %}" alt="nube1" id="nube1" style="z-index: 2;">
+  <img src="{% static '../static/images/nube1.png' %}" alt="" id="transparente" style="z-index: 2;">
+  <img src="{% static '../static/images/nube2.png' %}" alt="nube2" id="nube2" style="z-index: 2;">
+  <h2 id="slogan" style="z-index: 2;">¡Encuentra tus servicios!</h2>
+  <button id="btn" style="z-index: 2;">Desplazate</button>
 
-  <img src="{% static '../static/images/fondo.png' %}" alt="fondo" id="fondo">
-  <img src="{% static '../static/images/viento.png' %}" alt="viento" id="viento">
-  <img src="{% static '../static/images/persona.png' %}" alt="persona" id="persona">
+  <img src="{% static '../static/images/taller.jpeg' %}" alt="fondo" id="fondo" >
+  <img src="{% static '../static/images/viento.png' %}" alt="viento" id="viento" style="z-index: 2;">
+  <div>
+  <img src="{% static '../static/images/persona.png' %}" alt="persona" id="persona" style="z-index: 2;">
 </section>
 
 <div class="sec">

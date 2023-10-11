@@ -27,8 +27,12 @@ estadoFactura = [
 estadoServicioPrestado = [
     ('Cancelado', 'Cancelado'), ('Solicitado',
                                  'Solicitado'), ('Terminado', 'Terminado'),
-    ('Entregado', 'Entregado'), ('En Proceso',
-                                 'En Proceso'), ('Finalizado', 'Finalizado')
+    ('Entregado', 'Entregado')
+]
+
+estadoServicio = [
+    ('En Proceso',
+     'En Proceso'), ('Asignado', 'Asignado'), ('Finalizado', 'Finalizado')
 ]
 
 tiposMarcas = [
@@ -163,6 +167,10 @@ class DetalleServicioPrestado(models.Model):
         ServicioPrestado, on_delete=models.PROTECT, db_comment="Hace relación al servicio FK")
     detEmpleado = models.ForeignKey(
         Empleado, on_delete=models.PROTECT, db_comment="Hace relación al empleado FK")
+    detEstadoServicio = models.CharField(
+        max_length=10, null=True, default='Asignado', choices=estadoServicio, db_comment="Estado del servicio")
+    detObservaciones = models.TextField(
+        null=True, db_comment="Observaciones acerca del servicio prestado realizado")
 
     def __str__(self):
         return f"{self.detServicio} {self.detServicioPrestado}"

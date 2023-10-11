@@ -13,7 +13,7 @@ function cerrarSesion() {
             title: 'Sistema Serviteca',
             text: 'Inactividad detectada, Sesión Cerrada.',
             icon: 'info',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: 'black',
             confirmButtonText: 'Aceptar'
         }).then(() => {
             location.href = "/salir/";

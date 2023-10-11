@@ -15,6 +15,7 @@ class ClienteSerializer(serializers.ModelSerializer):
     def get_cliPersona_info(self, obj):
         persona = obj.cliPersona
         return {
+            'perIdentificacion': persona.perIdentificacion,
             'perNombres': persona.perNombres,
             'perApellidos': persona.perApellidos,
             'perCorreo': persona.perCorreo,
@@ -27,10 +28,14 @@ class ClienteSerializer(serializers.ModelSerializer):
 
 
 class ServicioPrestadoSerializer(serializers.ModelSerializer):
+    serpCli_info = ClienteSerializer(source='serpCli', read_only=True)
+    serpVehi_placa = serializers.CharField(
+        source='serpVehi.vehPlaca', read_only=True)
+
     class Meta:
         model = ServicioPrestado
-        fields = ('id', 'serpCli', 'serpVehi', 'serpEstado',
-                  'serpObservaciones', 'serpFechaServicio')
+        fields = ('id', 'serpCli_info', 'serpVehi_placa',
+                  'serpEstado', 'serpObservaciones', 'serpFechaServicio')
 
 
 class DetalleServicioPrestadoSerializer(serializers.ModelSerializer):
@@ -38,7 +43,15 @@ class DetalleServicioPrestadoSerializer(serializers.ModelSerializer):
         source='detServicio.serNombre', read_only=True)
     detEmpleado = serializers.CharField(
         source='detEmpleado.empPersona.perNombres', read_only=True)
+    detObservaciones = serializers.SerializerMethodField()
+
+    def get_detObservaciones(self, obj):
+        if obj.detObservaciones is not None:
+            return obj.detObservaciones
+        else:
+            return "No hay observaciones hechas por el técnico todavía."
 
     class Meta:
         model = DetalleServicioPrestado
-        fields = ('id', 'detServicio', 'detEmpleado')
+        fields = ('id', 'detServicio', 'detEmpleado', 'detEstadoServicio',
+                  'detObservaciones', 'detServicioPrestado')
