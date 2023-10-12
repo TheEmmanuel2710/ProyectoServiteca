@@ -7,44 +7,130 @@
     <h1 class="text-center">Restablecimiento de Contraseña</h1>
     {% if validlink %}
     <p class="text-center">Ingresa tu nueva contraseña</p>
-    <form class="needs-validation" method="post" class="needs-validation" novalidate>
+    <form class="needs-validation" method="post" novalidate>
         {% csrf_token %}
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="nuevaContraseña" name="nuevaContraseña" required>
+            <input type="password" class="form-control" id="nuevaContraseña" name="nuevaContraseña" required>
             <label for="nuevaContraseña">Nueva Contraseña:</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="confirmarContraseña" name="confirmarContraseña" required>
+            <label for="confirmarContraseña">Confirmar Contraseña:</label>
         </div>
         <br>
         <div style="display: grid; justify-items: center;">
-            <button id="btnEnviar" type="submit" class="btn">Cambio Contraseña</button>
+            <button id="btnEnviar" type="submit" class="btn">Cambiar Contraseña</button>
         </div>
     </form>
-    {% else %}
-    <p class="text-center">El enlace para restablecimiento de contraseña no es válido. Por favor, verifique el enlace o
-        solicita un nuevo enlace de restablecimiento.</p>
-    {% endif %}
-</div>
+    <br>
+    <button type="button" style="background-color: black;color: white;" data-bs-toggle="modal"
+        data-bs-target="#RequerimientosContraseña">
+        Ver Requisitos de Contraseña
+    </button>
 
+    <div class="modal fade" id="RequerimientosContraseña" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Requisitos de Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="RequerimientosContraseñaTexto">
+                        - Al menos una letra mayúscula.
+                        <br>
+                        - Al menos una letra minúscula.
+                        <br>
+                        - Al menos un número.
+                        <br>
+                        - Al menos 8 caracteres.
+                        <br>
+                        - No debe contener espacios.
+                        <br>
+                        - Las contraseñas deben coincidir.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<p class="text-center">El enlace para restablecimiento de contraseña no es válido. Por favor, verifique el enlace o
+    solicita un nuevo enlace de restablecimiento.</p>
+{% endif %}
 
 <script>
     (() => {
         "use strict";
 
-        const forms = document.querySelectorAll(".needs-validation");
+        const form = document.querySelector(".needs-validation");
+        const nuevaContraseña = document.getElementById("nuevaContraseña");
+        const confirmarContraseña = document.getElementById("confirmarContraseña");
+        const btnEnviar = document.getElementById("btnEnviar");
+        const RequerimientosContraseñaTexto = document.getElementById("RequerimientosContraseñaTexto");
 
-        Array.from(forms).forEach((form) => {
-            form.addEventListener(
-                "submit",
-                (event) => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
+        form.addEventListener("submit", (event) => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
 
-                    form.classList.add("was-validated");
-                },
-                false
-            );
+            if (!validacionContraseña()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            form.classList.add("was-validated");
         });
+
+        function validacionContraseña() {
+            const password = nuevaContraseña.value;
+            const confirmPassword = confirmarContraseña.value;
+            let validacion = true;
+            if (password !== confirmPassword) {
+                alert("Las contraseñas no coinciden.");
+                validacion = false;
+            }
+
+            if (password == "" || confirmPassword == "") {
+                alert("Debe ingresar datos en ambos campos.");
+                validacion = false;
+            }
+
+
+            if (!/^(?=.*[a-z])/.test(password)) {
+                alert("La contraseña debe contener al menos una letra minúscula.");
+                validacion = false;
+            }
+
+            if (!/^(?=.*[A-Z])/.test(password)) {
+                alert("La contraseña debe contener al menos una letra mayúscula.");
+                validacion = false;
+            }
+
+            if (!/^(?=.*\d)/.test(password)) {
+                alert("La contraseña debe contener al menos un número.");
+                validacion = false;
+            }
+
+            if (password.length < 8) {
+                alert("La contraseña debe tener al menos 8 caracteres.");
+                validacion = false;
+            }
+
+            if (password.includes(" ")) {
+                alert("La contraseña no debe contener espacios.");
+                validacion = false;
+            }
+
+            if (validacion) {
+                alert("Los requisitos se cumplen satisfactoriamente.");
+            }
+
+            return validacion;
+        }
+
     })();
 </script>
 {% endblock %}

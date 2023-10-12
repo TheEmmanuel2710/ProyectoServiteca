@@ -159,8 +159,13 @@ function agregarDetalleServicioPrestados() {
         frmdetalleSerciosP.reset();
         mostrarDatosTabla();
     } else {
-        Swal.fire("Registro Detalle",
-            "El servicio seleccionado ya se ha agregado en el detalle", "info");
+        Swal.fire({
+            title: 'Registro Detalle',
+            text: 'El servicio seleccionado ya se ha agregado en el detalle,por favor verificar.',
+            icon: 'info',
+            confirmButtonColor: 'black',
+            confirmButtonText: 'Aceptar'
+        });
     }
 }
 /**

@@ -82,14 +82,14 @@
   });
 </script>
 <script>
-  window.onload = function() {
+  window.onload = function () {
     var myInput = document.getElementById('txtPassword');
-    myInput.onpaste = function(e) {
+    myInput.onpaste = function (e) {
       e.preventDefault();
       alert("Esta acción está prohibida");
     }
-    
-    myInput.oncopy = function(e) {
+
+    myInput.oncopy = function (e) {
       e.preventDefault();
       alert("Esta acción está prohibida");
     }
