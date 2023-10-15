@@ -13,13 +13,17 @@
         class="needs-validation w-75" novalidate>
         {% csrf_token%}
         <h3 class="text-center fw-bold" style="color: black;">REGISTRAR EMPLEADO</h3>
+        <p class="text-center fw-bold" style="color: black;">Campo Obligatorio: (*)
+            <br>
+            Campo Opcional: ( )
+        </p>
         <br>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
-                <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificacion :</label>
+                <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación :</label>
                 <input type="number" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
-                    placeholder="Identificacion del empleado" required>
-                <div class="invalid-feedback">Por favor ingrese la identificacion del empleado</div>
+                    placeholder="Identificación del empleado" required>
+                <div class="invalid-feedback">Por favor ingrese la identificación del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="txtNombres" class="fw-bold" style="color: black;">Nombres :</label>
@@ -42,15 +46,15 @@
                 <div class="invalid-feedback">Por favor ingrese el correo electronico del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtNumeroC" class="fw-bold" style="color: black;">Numero telefonico :</label>
+                <label for="txtNumeroC" class="fw-bold" style="color: black;">Número de Celular :</label>
                 <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                    placeholder="Numero cel del empleado" required />
-                <div class="invalid-feedback">Por favor ingrese el numero telefonico del empleado</div>
+                    placeholder="Número cel del empleado" required />
+                <div class="invalid-feedback">Por favor ingrese el número de celular del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
                 <label for="txtCargo" class="fw-bold" style="color: black;">Cargo :</label>
-                <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,30}" name="txtCargo" class="form-control" id="txtCargo"
-                    placeholder="Cargo del empleado" required>
+                <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,30}" name="txtCargo" class="form-control"
+                    id="txtCargo" placeholder="Cargo del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese el cargo del empleado</div>
             </div>
         </div>

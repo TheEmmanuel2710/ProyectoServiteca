@@ -1,3 +1,5 @@
+from django.core.mail import send_mail
+from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from appGestionServiteca.models import *
 from django.contrib.auth.models import Group
@@ -22,9 +24,7 @@ from smtplib import SMTPException
 from rest_framework import generics
 from appGestionServiteca.serializers import PersonaSerializer, ClienteSerializer, ServicioPrestadoSerializer, DetalleServicioPrestadoSerializer
 import matplotlib.pyplot as plt
-import matplotlib
 from fpdf import FPDF
-from datetime import datetime
 import os
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -1981,22 +1981,34 @@ def habilitarUsuario(request, user_id):
 # -----INICIO API-----
 
 class PersonaList(generics.ListCreateAPIView):
+    """
+    API para listar y crear personas.
+    """
     queryset = Persona.objects.all()
     serializer_class = PersonaSerializer
 
 
 class PersonaDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API para recuperar, actualizar y eliminar una persona específica.
+    """
     queryset = Persona.objects.all()
     lookup_field = 'perIdentificacion'
     serializer_class = PersonaSerializer
 
 
 class ClienteList(generics.ListCreateAPIView):
+    """
+    API para listar y crear clientes.
+    """
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
 
 
 class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API para recuperar, actualizar y eliminar un cliente específico.
+    """
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
 
@@ -2009,11 +2021,17 @@ class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ServicioPrestadoList(generics.ListCreateAPIView):
+    """
+    API para listar y crear servicios prestados.
+    """
     queryset = ServicioPrestado.objects.all()
     serializer_class = ServicioPrestadoSerializer
 
 
 class ServicioPrestadoDetalladoList(generics.ListCreateAPIView):
+    """
+    API para listar servicios prestados para un cliente específico.
+    """
     serializer_class = ServicioPrestadoSerializer
 
     def get_queryset(self):
@@ -2027,12 +2045,10 @@ class ServicioPrestadoDetalladoList(generics.ListCreateAPIView):
         return queryset
 
 
-# class ServicioPrestadoDetail(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = ServicioPrestado.objects.all()
-#     serializer_class = ServicioPrestadoSerializer
-
-
 class DetalleServicioPrestadoList(generics.ListCreateAPIView):
+    """
+    API para listar y crear detalles de servicio prestado asociados a un servicio prestado específico.
+    """
     serializer_class = DetalleServicioPrestadoSerializer
 
     def get_queryset(self):
@@ -2051,7 +2067,7 @@ class DetalleServicioPrestadoList(generics.ListCreateAPIView):
 
 def mostrarGrafica1(request):
     """
-    Genera y muestra una gráfica de barras que representa la cantidad de solicitudes por servicio.
+    Genera y muestra una gráfica de barras que representa la cantidad de solicitudes de servicios solicitados.
 
     Args:
         request: El objeto de solicitud de Django.
@@ -2059,33 +2075,74 @@ def mostrarGrafica1(request):
     Returns:
         render: Una respuesta de renderización de Django que muestra la gráfica en una vista.
     """
+    filtro_tiempo = request.GET.get('filtro_tiempo', None)
 
-    matplotlib.use('Agg')
-    todos_servicios = Servicio.objects.all()
-    if DetalleServicioPrestado.objects.exists():
-        servicios_con_registros = Servicio.objects.filter(
-            detalleservicioprestado__isnull=False).distinct()
+    servicios_con_registros = Servicio.objects.filter(
+        detalleservicioprestado__isnull=False
+    )
 
-        servicios_con_cantidad = servicios_con_registros.annotate(
+    if filtro_tiempo == 'Hoy':
+        hoy = datetime.now().date()
+        detalles_servicios = DetalleServicioPrestado.objects.filter(
+            detServicio__in=servicios_con_registros,
+            detServicioPrestado__serpFechaServicio__date=hoy
+        )
+
+    elif filtro_tiempo == 'Mes':
+        hoy = datetime.now().date()
+        primer_dia_del_mes = hoy.replace(day=1)
+        ultimo_dia_del_mes = (hoy.replace(
+            day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        detalles_servicios = DetalleServicioPrestado.objects.filter(
+            detServicio__in=servicios_con_registros,
+            detServicioPrestado__serpFechaServicio__date__range=[
+                primer_dia_del_mes, ultimo_dia_del_mes]
+        )
+
+    elif filtro_tiempo == 'Trimestre':
+        hoy = datetime.now().date()
+        mes_actual = hoy.month
+        if mes_actual in [1, 2, 3]:
+            primer_dia_del_trimestre = hoy.replace(month=1, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=3, day=31)
+        elif mes_actual in [4, 5, 6]:
+            primer_dia_del_trimestre = hoy.replace(month=4, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=6, day=30)
+        elif mes_actual in [7, 8, 9]:
+            primer_dia_del_trimestre = hoy.replace(month=7, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=9, day=30)
+        elif mes_actual in [10, 11, 12]:
+            primer_dia_del_trimestre = hoy.replace(month=10, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=12, day=31)
+        detalles_servicios = DetalleServicioPrestado.objects.filter(
+            detServicio__in=servicios_con_registros,
+            detServicioPrestado__serpFechaServicio__date__range=[
+                primer_dia_del_trimestre, ultimo_dia_del_trimestre]
+        )
+
+    elif filtro_tiempo == 'Año':
+        hoy = datetime.now().date()
+        primer_dia_del_anio = hoy.replace(month=1, day=1)
+        ultimo_dia_del_anio = hoy.replace(month=12, day=31)
+        detalles_servicios = DetalleServicioPrestado.objects.filter(
+            detServicio__in=servicios_con_registros,
+            detServicioPrestado__serpFechaServicio__date__range=[
+                primer_dia_del_anio, ultimo_dia_del_anio]
+        )
+
+    elif filtro_tiempo == 'Historico':
+        servicios_con_registros = Servicio.objects.annotate(
             cantidad_solicitudes=Count('detalleservicioprestado'))
 
-        cantidad_solicitudes_dict = {
-            servicio.id: 0 for servicio in servicios_con_registros}
-
-        for servicio in servicios_con_cantidad:
-            cantidad_solicitudes_dict[servicio.id] = int(
-                servicio.cantidad_solicitudes)
-
-        nombresS = [servicio.serNombre for servicio in servicios_con_registros]
-
-        valores = [cantidad_solicitudes_dict[servicio.id]
-                   for servicio in servicios_con_registros]
-    else:
-        nombresS = [servicio.serNombre for servicio in todos_servicios]
-        valores = [0] * len(todos_servicios)
+    servicios_con_cantidad = servicios_con_registros.annotate(
+        cantidad_solicitudes=Count('detalleservicioprestado'))
+    nombres_servicios = [
+        servicio.serNombre for servicio in servicios_con_registros]
+    valores = [
+        servicio.cantidad_solicitudes for servicio in servicios_con_cantidad]
 
     plt.figure(figsize=(10, 6))
-    plt.bar(nombresS, valores)
+    plt.bar(nombres_servicios, valores)
     plt.xlabel('Servicios')
     plt.ylabel('Cantidad de Solicitudes')
     plt.title('Cantidad de Solicitudes por Servicio')
@@ -2110,7 +2167,7 @@ def mostrarGrafica1(request):
 
 def mostrarGrafica2(request):
     """
-    Genera y muestra una gráfica de barras que representa la cantidad de servicios prestados por cada empleado.
+    Genera y muestra una gráfica de barras que representa la cantidad de solicitudes de servicios solicitado atendidos por cada empleado.
 
     Args:
         request: El objeto de solicitud de Django.
@@ -2118,33 +2175,70 @@ def mostrarGrafica2(request):
     Returns:
         render: Una respuesta de renderización de Django que muestra la gráfica en una vista.
     """
+    filtro_tiempo = request.GET.get('filtro_tiempo', None)
 
-    matplotlib.use('Agg')
+    empleados_con_registros = Empleado.objects.filter(
+        detalleservicioprestado__isnull=False
+    )
+    if filtro_tiempo == 'Hoy':
+        hoy = datetime.now().date()
+        detalles_servicios = DetalleServicioPrestado.objects.filter(
+            detEmpleado__in=empleados_con_registros,
+            detServicioPrestado__serpFechaServicio__date=hoy
+        )
 
-    if DetalleServicioPrestado.objects.exists():
-        empleados_con_registros = Empleado.objects.filter(
-            detalleservicioprestado__isnull=False).distinct()
+    elif filtro_tiempo == 'Mes':
+        hoy = datetime.now().date()
+        primer_dia_del_mes = hoy.replace(day=1)
+        ultimo_dia_del_mes = (hoy.replace(
+            day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        detalles_servicios = DetalleServicioPrestado.objects.filter(
+            detEmpleado__in=empleados_con_registros,
+            detServicioPrestado__serpFechaServicio__date__range=[
+                primer_dia_del_mes, ultimo_dia_del_mes]
+        )
 
-        empleados_con_cantidad = empleados_con_registros.annotate(
-            cantidad_servicios_prestados=Count('detalleservicioprestado'))
+    elif filtro_tiempo == 'Trimestre':
+        hoy = datetime.now().date()
+        mes_actual = hoy.month
+        if mes_actual in [1, 2, 3]:
+            primer_dia_del_trimestre = hoy.replace(month=1, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=3, day=31)
+        elif mes_actual in [4, 5, 6]:
+            primer_dia_del_trimestre = hoy.replace(month=4, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=6, day=30)
+        elif mes_actual in [7, 8, 9]:
+            primer_dia_del_trimestre = hoy.replace(month=7, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=9, day=30)
+        elif mes_actual in [10, 11, 12]:
+            primer_dia_del_trimestre = hoy.replace(month=10, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=12, day=31)
 
-        cantidad_servicios_dict = {
-            empleado.id: 0 for empleado in empleados_con_registros}
+        detalles_servicios = DetalleServicioPrestado.objects.filter(
+            detEmpleado__in=empleados_con_registros,
+            detServicioPrestado__serpFechaServicio__date__range=[
+                primer_dia_del_trimestre, ultimo_dia_del_trimestre]
+        )
 
-        for empleado in empleados_con_cantidad:
-            cantidad_servicios_dict[empleado.id] = int(
-                empleado.cantidad_servicios_prestados)
+    elif filtro_tiempo == 'Año':
+        hoy = datetime.now().date()
+        primer_dia_del_anio = hoy.replace(month=1, day=1)
+        ultimo_dia_del_anio = hoy.replace(month=12, day=31)
 
-        nombres_empleados = [
-            empleado.empPersona.perNombres for empleado in empleados_con_registros]
+        detalles_servicios = DetalleServicioPrestado.objects.filter(
+            detEmpleado__in=empleados_con_registros,
+            detServicioPrestado__serpFechaServicio__date__range=[
+                primer_dia_del_anio, ultimo_dia_del_anio]
+        )
+    elif filtro_tiempo == "Historico":
+        empleados_con_registros = Empleado.objects.all()
+    empleados_con_cantidad = empleados_con_registros.annotate(
+        cantidad_servicios_prestados=Count('detalleservicioprestado'))
 
-        cantidad_servicios = [cantidad_servicios_dict[empleado.id]
-                              for empleado in empleados_con_registros]
-    else:
-        todos_empleados = Empleado.objects.all()
-        nombres_empleados = [
-            empleado.empPersona.perNombres for empleado in todos_empleados]
-        cantidad_servicios = [0] * len(todos_empleados)
+    nombres_empleados = [
+        empleado.empPersona.perNombres for empleado in empleados_con_registros]
+    cantidad_servicios = [
+        empleado.cantidad_servicios_prestados for empleado in empleados_con_cantidad]
 
     plt.figure(figsize=(10, 6))
     plt.bar(nombres_empleados, cantidad_servicios)
@@ -2167,12 +2261,13 @@ def mostrarGrafica2(request):
     retorno = {
         "ruta_grafica": ruta_grafica
     }
+
     return render(request, "administrador/vistaGraficas.html", retorno)
 
 
 def mostrarGrafica3(request):
     """
-    Genera y muestra una gráfica de barras que representa la cantidad de solicitudes de servicios prestados por cada cliente.
+    Genera y muestra una gráfica de barras que representa la cantidad de solicitudes de servicios solicitado por los clientes.
 
     Args:
         request: El objeto de solicitud de Django.
@@ -2180,54 +2275,200 @@ def mostrarGrafica3(request):
     Returns:
         render: Una respuesta de renderización de Django que muestra la gráfica en una vista.
     """
-
-    matplotlib.use('Agg')
-
+    filtro_tiempo = request.GET.get('filtro_tiempo', None)
     todos_clientes = Cliente.objects.all()
 
-    if ServicioPrestado.objects.exists():
-        clientes_con_cantidad = Cliente.objects.filter(servicioprestado__isnull=False).annotate(
-            cantidad_servicios_prestados=Count('servicioprestado'))
+    nombres_clientes = []
+    cantidad_servicios = []
 
-        nombres_clientes = [
-            cliente.cliPersona.perNombres for cliente in clientes_con_cantidad]
+    if filtro_tiempo == 'Hoy':
+        hoy = datetime.now().date()
+        servicios_prestados = ServicioPrestado.objects.filter(
+            serpCli__in=todos_clientes,
+            serpFechaServicio__date=hoy
+        )
 
-        cantidad_servicios = [int(cliente.cantidad_servicios_prestados)
-                              for cliente in clientes_con_cantidad]
+    elif filtro_tiempo == 'Mes':
+        hoy = datetime.now().date()
+        primer_dia_del_mes = hoy.replace(day=1)
+        ultimo_dia_del_mes = (hoy.replace(
+            day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        servicios_prestados = ServicioPrestado.objects.filter(
+            serpCli__in=todos_clientes,
+            serpFechaServicio__date__range=[
+                primer_dia_del_mes, ultimo_dia_del_mes]
+        )
+
+    elif filtro_tiempo == 'Trimestre':
+        hoy = datetime.now().date()
+        mes_actual = hoy.month
+        if mes_actual in [1, 2, 3]:
+            primer_dia_del_trimestre = hoy.replace(month=1, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=3, day=31)
+        elif mes_actual in [4, 5, 6]:
+            primer_dia_del_trimestre = hoy.replace(month=4, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=6, day=30)
+        elif mes_actual in [7, 8, 9]:
+            primer_dia_del_trimestre = hoy.replace(month=7, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=9, day=30)
+        elif mes_actual in [10, 11, 12]:
+            primer_dia_del_trimestre = hoy.replace(month=10, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=12, day=31)
+        servicios_prestados = ServicioPrestado.objects.filter(
+            serpCli__in=todos_clientes,
+            serpFechaServicio__date__range=[
+                primer_dia_del_trimestre, ultimo_dia_del_trimestre]
+        )
+
+    elif filtro_tiempo == 'Año':
+        hoy = datetime.now().date()
+        primer_dia_del_anio = hoy.replace(month=1, day=1)
+        ultimo_dia_del_anio = hoy.replace(month=12, day=31)
+        servicios_prestados = ServicioPrestado.objects.filter(
+            serpCli__in=todos_clientes,
+            serpFechaServicio__date__range=[
+                primer_dia_del_anio, ultimo_dia_del_anio]
+        )
+
+    elif filtro_tiempo == 'Historico':
+        for cliente in todos_clientes:
+            cantidad_servicios.append(cliente.servicioprestado_set.count())
+            nombres_clientes.append(cliente.cliPersona.perNombres)
+
+    nombres_clientes_filtrados = []
+    cantidad_servicios_filtrados = []
+    for i in range(len(nombres_clientes)):
+        if cantidad_servicios[i] > 0:
+            nombres_clientes_filtrados.append(nombres_clientes[i])
+            cantidad_servicios_filtrados.append(cantidad_servicios[i])
+
+    if nombres_clientes_filtrados and cantidad_servicios_filtrados:
+        plt.figure(figsize=(10, 6))
+        plt.bar(nombres_clientes_filtrados, cantidad_servicios_filtrados)
+        plt.xlabel('Clientes')
+        plt.ylabel('Cantidad de Solicitudes de Servicios Prestados')
+        plt.title('Cantidad de Servicios Prestados a Clientes')
+
+        ruta_grafica = os.path.join(
+            settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras_clientes.png')
+
+        plt.xticks(rotation=45)
+
+        plt.yticks(range(min(cantidad_servicios_filtrados),
+                   max(cantidad_servicios_filtrados) + 1))
+
+        plt.tight_layout()
+
+        plt.savefig(ruta_grafica)
+
+        retorno = {
+            "ruta_grafica": ruta_grafica
+        }
     else:
-        nombres_clientes = [
-            cliente.cliPersona.perNombres for cliente in todos_clientes]
-        cantidad_servicios = [0] * len(todos_clientes)
+        retorno = {
+            "ruta_grafica": None
+        }
 
-    plt.figure(figsize=(10, 6))
-    plt.bar(nombres_clientes, cantidad_servicios)
-    plt.xlabel('Clientes')
-    plt.ylabel('Cantidad de Solicitudes de Servicios Prestados')
-    plt.title('Cantidad de Servicios Prestados a Clientes')
+    return render(request, "administrador/vistaGraficas.html", retorno)
 
-    ruta_grafica = os.path.join(
-        settings.MEDIA_ROOT, 'graficas', 'grafica_de_barras_clientes.png')
 
-    plt.xticks(rotation=45)
+def mostrarGrafica4(request):
+    """
+    Genera y muestra una gráfica de barras que representa el total de dinero gastado en facturas.
 
-    if cantidad_servicios:
-        plt.yticks(range(min(cantidad_servicios), max(cantidad_servicios) + 1))
+    Args:
+        request: El objeto de solicitud de Django.
 
-    plt.tight_layout()
+    Returns:
+        render: Una respuesta de renderización de Django que muestra la gráfica en una vista.
+    """
+    filtro_tiempo = request.GET.get('filtro_tiempo', None)
 
-    plt.savefig(ruta_grafica)
+    facturas_con_registros = Factura.objects.all()
 
-    retorno = {
-        "ruta_grafica": ruta_grafica
-    }
+    if filtro_tiempo == 'Hoy':
+        hoy = datetime.now().date()
+        facturas = facturas_con_registros.filter(facFecha__date=hoy)
+    elif filtro_tiempo == 'Mes':
+        hoy = datetime.now().date()
+        primer_dia_del_mes = hoy.replace(day=1)
+        ultimo_dia_del_mes = (hoy.replace(
+            day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        facturas = facturas_con_registros.filter(
+            facFecha__range=[primer_dia_del_mes, ultimo_dia_del_mes])
+    elif filtro_tiempo == 'Trimestre':
+        hoy = datetime.now().date()
+        mes_actual = hoy.month
+        if mes_actual in [1, 2, 3]:
+            primer_dia_del_trimestre = hoy.replace(month=1, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=3, day=31)
+        elif mes_actual in [4, 5, 6]:
+            primer_dia_del_trimestre = hoy.replace(month=4, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=6, day=30)
+        elif mes_actual in [7, 8, 9]:
+            primer_dia_del_trimestre = hoy.replace(month=7, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=9, day=30)
+        elif mes_actual in [10, 11, 12]:
+            primer_dia_del_trimestre = hoy.replace(month=10, day=1)
+            ultimo_dia_del_trimestre = hoy.replace(month=12, day=31)
+        facturas = facturas_con_registros.filter(
+            facFecha__range=[primer_dia_del_trimestre, ultimo_dia_del_trimestre])
+    elif filtro_tiempo == 'Año':
+        hoy = datetime.now().date()
+        primer_dia_del_año = hoy.replace(month=1, day=1)
+        ultimo_dia_del_año = hoy.replace(month=12, day=31)
+        facturas = facturas_con_registros.filter(
+            facFecha__range=[primer_dia_del_año, ultimo_dia_del_año])
+    else:
+        facturas = facturas_con_registros
+
+    total_dinero = facturas.aggregate(total_gastado=Sum('facTotal'))[
+        'total_gastado']
+
+    if total_dinero is None:
+        total_dinero = 0
+
+    if total_dinero > 0:
+        plt.figure(figsize=(10, 6))
+        plt.bar(['Total'], [total_dinero])
+        plt.ylabel('Total de Dinero Recolectado')
+        plt.title('Total de Dinero Registrado en Facturas')
+
+        ruta_grafica = os.path.join(
+            settings.MEDIA_ROOT, 'graficas', 'grafica_de_dinero.png')
+
+        plt.tight_layout()
+        plt.savefig(ruta_grafica)
+
+        retorno = {
+            "ruta_grafica": ruta_grafica
+        }
+    else:
+        retorno = {
+            "mensaje": "No hay facturas registradas en la fecha seleccionada."
+        }
+
     return render(request, "administrador/vistaGraficas.html", retorno)
 
 
 def mostrarGraficas(request):
-    mostrarGrafica1(request)
-    mostrarGrafica2(request)
-    mostrarGrafica3(request)
-    return render(request, "administrador/vistaGraficas.html")
+    user = request.user
+    if user.groups.filter(name='Administrador').exists():
+        mostrarGrafica1(request)
+        mostrarGrafica2(request)
+        mostrarGrafica3(request)
+        mostrarGrafica4(request)
+        return render(request, "administrador/vistaGraficas.html")
+    
+    mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
+
+    if user.groups.filter(name='Tecnico').exists():
+        return render(request, "tecnico/inicio.html", {"mensaje": mensaje})
+
+    if user.groups.filter(name='Asistente').exists():
+        return render(request, "asistente/inicio.html", {"mensaje": mensaje})
+
+    return render(request, "inicio.html", {"mensaje": "Debe iniciar sesión."})
 
 
 def generarFacturaPdf(servicioPrestado, factura):
@@ -2351,14 +2592,16 @@ def registrarPeticionForgot(request):
                 uidb64 = urlsafe_base64_encode(force_bytes(usuario.pk))
                 # Generar el token
                 token = default_token_generator.make_token(usuario)
-                # Enviar correo al usuario
-                asunto = 'Solicitud de Restablecimiento de Contraseña'
-                mensaje = f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña.<br> \
-                Por favor, haga clic en el siguiente enlace para continuar con el proceso: http://127.0.0.1:8000/cambiarContrasena/{uidb64}/{token}/'
-                thread = threading.Thread(
-                    target=enviarCorreo, args=(asunto, mensaje, usuario.email))
-                thread.start()
-
+                # Construir el enlace de restablecimiento de contraseña
+                enlace = f"http://127.0.0.1:8000/cambiarContrasena/{uidb64}/{token}/"
+                # Enviar el enlace por correo electrónico
+                send_mail(
+                    'Solicitud de Restablecimiento de Contraseña',
+                    f'Cordial saludo, {usuario.first_name} {usuario.last_name}, ha solicitado el restablecimiento de contraseña. Por favor, haga clic en el siguiente enlace para continuar con el proceso: {enlace}',
+                    'theemmanuelwtg@gmail.com',
+                    [usuario.email],
+                    fail_silently=False,
+                )
                 mensaje = "Correo enviado exitosamente,por favor verifique su bandeja de entrada."
                 estado = True
         except User.DoesNotExist:

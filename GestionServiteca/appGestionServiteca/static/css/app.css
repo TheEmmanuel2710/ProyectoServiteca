@@ -460,17 +460,22 @@ header {
 
 #img-graficaS {
     height: 600px;
-    width: 50%;
+    width: 100%;
 }
 
 #img-graficaE {
     height: 600px;
-    width: 50%;
+    width: 100%;
 }
 
 #img-graficaC {
     height: 600px;
-    width: 50%;
+    width: 100%;
+}
+
+#img-graficaD {
+    height: 600px;
+    width: 100%;
 }
 
 .grafica {
@@ -1068,6 +1073,11 @@ a:hover {
     }
 
     #img-graficaC {
+        height: 500px;
+        width: 100%;
+    }
+
+    #img-graficaD {
         height: 500px;
         width: 100%;
     }

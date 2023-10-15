@@ -338,3 +338,48 @@ Time: 19:9
 Phone Number: +573133566799
 Message: Le informamos que se le ha asignado el siguiente servicio: Cambio de Aceite, Sincronización, Agradecemos su atención y diligencia en la prestación de este servicio.
 --------------------
+Date: 14/10/2023
+Time: 10:43
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Cambio de Aceite, Sincronización, Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------
+Date: 14/10/2023
+Time: 11:14
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Cambio de Aceite. Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------
+Date: 14/10/2023
+Time: 11:47
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Cambio de Aceite, Sincronización, Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------
+Date: 14/10/2023
+Time: 12:49
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Cambio de Aceite, Sincronización, Revisión electrónica, Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------
+Date: 15/10/2023
+Time: 8:0
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Rectificación de rines. Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------
+Date: 15/10/2023
+Time: 9:21
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Alineación y Balanceo. Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------
+Date: 15/10/2023
+Time: 9:21
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Alineación y Balanceo. Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------
+Date: 15/10/2023
+Time: 9:52
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Cambio de Aceite. Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------
+Date: 15/10/2023
+Time: 14:17
+Phone Number: +573133566799
+Message: Le informamos que se le ha asignado el siguiente servicio: Cambio de pastillas de frenos. Agradecemos su atención y diligencia en la prestación de este servicio.
+--------------------

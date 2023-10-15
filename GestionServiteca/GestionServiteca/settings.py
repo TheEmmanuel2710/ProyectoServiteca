@@ -149,6 +149,7 @@ AUTH_USER_MODEL = 'appGestionServiteca.User'
 GOOGLE_RECAPTCHA_SECRET_KEY = '6LevdIonAAAAAFkDaO3PDkt3J0-dWGSAHGJEDMZE'
 
 # Variables configuración correo
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "theemmanuelwtg@gmail.com"

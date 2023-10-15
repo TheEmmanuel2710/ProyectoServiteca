@@ -7,13 +7,98 @@
 {%endblock %}
 {% block contenido %}
 {% load static%}
-<div class="grafica">
-    <img src="../media/graficas/grafica_de_servicios.png" id="img-graficaS">
-    <br>
-    <img src="../media/graficas/grafica_de_barras_empleados.png" id="img-graficaE">
-    <br>
-    <img src="../media/graficas/grafica_de_barras_clientes.png" id="img-graficaC">
+<div class="grafica-container">
+    <div class="grafica-item">
+        <h1>Gráfica Servicios</h1>
+        <img src="../media/graficas/grafica_de_servicios.png" id="img-graficaS"><br><br>
+        <form method="get" action="/mostrarGrafica1/">
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Hoy">Día de hoy</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Mes">Mes</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Trimestre">Trimestre</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Año">Año</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Historico">Todos los datos</button>
+        </form>
+    </div>
+    <div class="grafica-item">
+        <h1>Gráfica Empleados</h1>
+        <img src="../media/graficas/grafica_de_barras_empleados.png" id="img-graficaE"><br><br>
+        <form method="get" action="/mostrarGrafica2/">
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Hoy">Día de hoy</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Mes">Mes</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Trimestre">Trimestre</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Año">Año</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Historico">Todos los datos</button>
+        </form>
+    </div>
+    <div class="grafica-item">
+        <h1>Gráfica Clientes</h1>
+        <img src="../media/graficas/grafica_de_barras_clientes.png" id="img-graficaC"><br><br>
+        <form method="get" action="/mostrarGrafica3/">
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Hoy">Día de hoy</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Mes">Mes</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Trimestre">Trimestre</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Año">Año</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Historico">Todos los datos</button>
+        </form>
+    </div>
+    <div class="grafica-item">
+        <h1>Gráfica Dinero</h1>
+        <img src="../media/graficas/grafica_de_dinero.png" id="img-graficaD"><br><br>
+        <form method="get" action="/mostrarGrafica4/">
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Hoy">Día de hoy</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Mes">Mes</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Trimestre">Trimestre</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Año">Año</button>
+            <button type="submit" class="btn" style="background-color: black;color: white;" name="filtro_tiempo"
+                value="Historico">Todos los datos</button>
+        </form>
+    </div>
 </div>
+<style>
+    .grafica-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .grafica-item {
+        text-align: center;
+        background-color: #f5f5f5;
+        padding: 20px;
+    }
+
+    @media (max-width: 767px) {
+
+        .btn {
+            background-color: black;
+            color: white;
+            margin: 5px 0;
+            padding: 10px;
+            width: 100%;
+        }
+    }
+</style>
+
+
 {%endblock %}
 {% block piePagina %}
 {% include "piePagina.html" %}
