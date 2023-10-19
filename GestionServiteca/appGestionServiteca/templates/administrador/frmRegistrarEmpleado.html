@@ -20,19 +20,19 @@
         <br>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
-                <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación :</label>
+                <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación: (*)</label>
                 <input type="number" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
                     placeholder="Identificación del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese la identificación del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtNombres" class="fw-bold" style="color: black;">Nombres :</label>
-                <input type="text" name="txtNombres" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,150}" max="15"
+                <label for="txtNombres" class="fw-bold" style="color: black;">Nombres: (*)</label>
+                <input type="text" name="txtNombres" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,150}"
                     class="form-control" id="txtNombres" placeholder="Nombres del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese los nombres del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos :</label>
+                <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos: (*)</label>
                 <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,150}" name="txtApellidos" class="form-control"
                     id="txtApellidos" placeholder="Apellidos del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese los apellidos del empleado</div>
@@ -40,19 +40,19 @@
         </div>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
-                <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico :</label>
+                <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico: (*)</label>
                 <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
-                    placeholder="Correo del empleado" required>
-                <div class="invalid-feedback">Por favor ingrese el correo electronico del empleado</div>
+                    placeholder="Correo electrónico del empleado" required>
+                <div class="invalid-feedback">Por favor ingrese el correo electrónico del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtNumeroC" class="fw-bold" style="color: black;">Número de Celular :</label>
+                <label for="txtNumeroC" class="fw-bold" style="color: black;">Número de Celular:  (*)</label>
                 <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                    placeholder="Número cel del empleado" required />
+                    placeholder="Número de celular del empleado" required />
                 <div class="invalid-feedback">Por favor ingrese el número de celular del empleado</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtCargo" class="fw-bold" style="color: black;">Cargo :</label>
+                <label for="txtCargo" class="fw-bold" style="color: black;">Cargo: (*)</label>
                 <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,30}" name="txtCargo" class="form-control"
                     id="txtCargo" placeholder="Cargo del empleado" required>
                 <div class="invalid-feedback">Por favor ingrese el cargo del empleado</div>
@@ -60,13 +60,13 @@
         </div>
         <div class="form-group row">
             <div class="mb-3 col-lg-6">
-                <label for="txtSueldo" class="fw-bold" style="color: black;">Sueldo :</label>
+                <label for="txtSueldo" class="fw-bold" style="color: black;">Sueldo: (*)</label>
                 <input type="number" class="form-control" id="txtSueldo" name="txtSueldo"
                     placeholder="Sueldo del empleado" required />
                 <div class="invalid-feedback">Por favor ingrese el sueldo del empleado</div>
             </div>
             <div class="mb-3 col-lg-6">
-                <label for="cbEstado" class="fw-bold" style="color: black;">Estado del Empleado :</label>
+                <label for="cbEstado" class="fw-bold" style="color: black;">Estado del Empleado: (*)</label>
                 <select name="cbEstado" id="cbEstado" class="form-select" required>
                     <option value="">Seleccione</option>
                     {% for estado in estadoEmpl %}
@@ -78,7 +78,7 @@
         </div>
         <div class="form-group row">
             <div class="mb-3 col-lg-6">
-                <label for="cbTipo" class="fw-bold" style="color: black;">Tipo Usuario :</label>
+                <label for="cbTipo" class="fw-bold" style="color: black;">Tipo Usuario: (*)</label>
                 <select name="cbTipo" id="cbTipo" class="form-select" required>
                     <option value="">Seleccione</option>
                     {% for tipo in tipoUsuario %}
@@ -88,7 +88,7 @@
                 <div class="invalid-feedback">Por favor seleccione el tipo de empleado</div>
             </div>
             <div class="mb-3 col-lg-6">
-                <label for="cbRol" class="fw-bold" style="color: black;">Rol en el Sistema :</label>
+                <label for="cbRol" class="fw-bold" style="color: black;">Rol en el Sistema: (*)</label>
                 <select name="cbRol" id="cbRol" class="form-select" required>
                     <option value="">Seleccione</option>
                     {% for rol in roles %}
@@ -100,7 +100,7 @@
         </div>
         <div class="form-group row">
             <div class="mb-3 col-lg-12">
-                <label for="fileFoto" class="fw-bold" style="color: black;">Foto del empleado :</label>
+                <label for="fileFoto" class="fw-bold" style="color: black;">Foto del empleado: ( )</label>
                 <input type="file" name="fileFoto" class="form-control" id="fileFoto" placeholder="Foto">
             </div>
         </div>

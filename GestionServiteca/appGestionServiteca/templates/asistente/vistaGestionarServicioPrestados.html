@@ -21,7 +21,7 @@
                 <th style="background-color:black ;">Observaciones</th>
                 <th style="background-color:black ;">Fecha y Hora</th>
                 <th style="background-color:black ;">Cliente</th>
-                <th style="background-color:black ;">Vehiculo</th>
+                <th style="background-color:black ;">Vehículo</th>
                 <th style="background-color:black ;">Estado</th>
                 <th style="background-color:black ;">Acción</th>
             </tr>
@@ -62,6 +62,11 @@
                     novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="idServicioP" id="idServicioP" value="">
+                    <p class="text-center fw-bold" style="color: black;">
+                        Campo Obligatorio: (*)
+                        <br>
+                        Campo Opcional: ( )
+                    </p>
                     <div class="form-group row">
                         <div class="mb-3 col-lg-6">
                             <label for="txtObservaciones" class="fw-bold" style="color: black;">Observaciones:</label>
@@ -95,7 +100,7 @@
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label for="cbEstado" class="fw-bold" style="color: black;">Estado del servicio
-                                prestado:</label>
+                                prestado: (*)</label>
                             <select name="cbEstado" id="cbEstado" class="form-select" required>
                                 <option value="">Seleccione</option>
                                 {% for estado in estadoServicioPrestado %}

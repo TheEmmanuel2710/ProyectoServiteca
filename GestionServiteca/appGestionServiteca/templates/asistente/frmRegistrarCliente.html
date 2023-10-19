@@ -14,42 +14,46 @@
         {% csrf_token%}
         <h3 class="text-center fw-bold" style="color:black ;">REGISTRAR CLIENTE</h3>
         <br>
+        <p class="text-center fw-bold" style="color: black;">Campo Obligatorio: (*)
+            <br>
+            Campo Opcional: ( )
+        </p>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
-                <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación:</label>
+                <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación: (*)</label>
                 <input type="number" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
                     placeholder="Identificación del cliente" required>
                 <div class="invalid-feedback">Por favor ingrese la identificación del cliente</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
+                <label for="txtNombres" class="fw-bold" style="color: black;">Nombres: (*)</label>
                 <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,70}" name="txtNombres" class="form-control"
                     id="txtNombres" placeholder="Nombres del cliente" required>
                 <div class="invalid-feedback">Por favor ingrese el nombre del cliente</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos</label>
+                <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos: (*)</label>
                 <input type="text" name="txtApellidos" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,70}" class="form-control"
                     id="txtApellidos" placeholder="Apellidos del cliente" required>
                 <div class="invalid-feedback">Por favor ingrese el apellido del cliente</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
+                <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico: (*)</label>
                 <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
-                    placeholder="Correo del cliente" required>
-                <div class="invalid-feedback">Por favor ingrese el correo electronico del cliente</div>
+                    placeholder="Correo electrónico del cliente" required>
+                <div class="invalid-feedback">Por favor ingrese el correo electrónico del cliente</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtNumeroC" class="fw-bold" style="color: black;">Numero telefonico:</label>
+                <label for="txtNumeroC" class="fw-bold" style="color: black;">Número de Celular: (*)</label>
                 <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                    placeholder="Numero telefonico del cliente" required />
-                <div class="invalid-feedback">Por favor ingrese el numero telefonico del cliente</div>
+                    placeholder="Número de celular del cliente" required />
+                <div class="invalid-feedback">Por favor ingrese el número telefonico del cliente</div>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtDirreccion" class="fw-bold" style="color: black;">Direccion:</label>
+                <label for="txtDirreccion" class="fw-bold" style="color: black;">Dirección: (*)</label>
                 <input type="text" name="txtDireccion" class="form-control" id="txtDireccion"
-                    placeholder="Direccion del cliente" required>
-                <div class="invalid-feedback">Por favor ingrese la direccion del cliente</div>
+                    placeholder="Dirección del cliente" required>
+                <div class="invalid-feedback">Por favor ingrese la dirección del cliente</div>
             </div>
             <br>
             <div class="d-flex justify-content-center">

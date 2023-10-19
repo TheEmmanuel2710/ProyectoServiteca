@@ -8,7 +8,7 @@
 {% block contenido %}
 {% load static %}
 <script src="{% static '../static/js/inactividad.js' %}"></script>
-<h3 class="text-center fw-bold">GESTIONAR VEHICULOS</h3>
+<h3 class="text-center fw-bold">GESTIONAR VEHÍCULOS</h3>
 <a href="/vistaRegistrarVehiculo/"><button class="btn"
         style="color: white; background-color: black; margin-left: 12.5%;">Agregar</button></a>
 <div class="w-75 table-responsive" style="margin: 0 auto; margin-bottom: 5rem;">
@@ -47,7 +47,7 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header tituloModal">
-                <h4 class="modal-title">Actualizar Vehiculo</h4>
+                <h4 class="modal-title">Actualizar Vehículo</h4>
                 <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
             </div>
             <!-- Modal body -->
@@ -56,38 +56,43 @@
                     novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="idVehiculo" id="idVehiculo" value="">
+                    <p class="text-center fw-bold" style="color: black;">
+                        Campo Obligatorio: (*)
+                        <br>
+                        Campo Opcional: ( )
+                    </p>
                     <div class="form-group row">
                         <div class="mb-3 col-lg-4">
-                            <label for="txtPlaca" class="fw-bold" style="color: black;">Placa:</label>
+                            <label for="txtPlaca" class="fw-bold" style="color: black;">Placa: (*)</label>
                             <input type="text" name="txtPlaca" class="form-control" id="txtPlaca"
-                                placeholder="Placa del vehiculo" required>
-                            <div class="invalid-feedback">Por favor ingrese la placa del vehiculo</div>
+                                placeholder="Placa del vehículo" required>
+                            <div class="invalid-feedback">Por favor ingrese la placa del vehículo</div>
                         </div>
                         <div class="mb-3 col-lg-4">
-                            <label for="cbMarca" class="fw-bold" style="color: black;">Marca:</label>
+                            <label for="cbMarca" class="fw-bold" style="color: black;">Marca: (*)</label>
                             <select name="cbMarca" id="cbMarca" class="form-select" required>
                                 <option value="">Seleccione</option>
                                 {% for marca in tipoMar %}
                                 <option value="{{marca.0}}">{{marca.1}}</option>
                                 {% endfor %}
                             </select>
-                            <div class="invalid-feedback">Por favor ingrese la marca del vehiculo</div>
+                            <div class="invalid-feedback">Por favor ingrese la marca del vehículo</div>
                         </div>
                         <div class="mb-3 col-lg-4" style="margin: 0% auto;">
-                            <label for="cbTipoV" class="fw-bold" style="color: black;">Tipo de Vehiculo:</label>
+                            <label for="cbTipoV" class="fw-bold" style="color: black;">Tipo de Vehículo: (*)</label>
                             <select name="cbTipoV" id="cbTipoV" class="form-select" required>
                                 <option value="">Seleccione</option>
                                 {% for tipo in tipoVeh %}
                                 <option value="{{tipo.0}}">{{tipo.1}}</option>
                                 {% endfor %}
                             </select>
-                            <div class="invalid-feedback">Por favor ingrese el tipo del vehiculo</div>
+                            <div class="invalid-feedback">Por favor ingrese el tipo del vehículo</div>
                         </div>
                         <div class="mb-3 col-lg-12">
-                            <label for="txtModelo" class="fw-bold" style="color: black;">Modelo</label>
+                            <label for="txtModelo" class="fw-bold" style="color: black;">Modelo: (*)</label>
                             <input type="number" name="txtModelo" class="form-control" id="txtModelo"
-                                placeholder="Modelo del vehiculo" required>
-                            <div class="invalid-feedback">Por favor ingrese el modelo del vehiculo</div>
+                                placeholder="Modelo del vehículo" required>
+                            <div class="invalid-feedback">Por favor ingrese el modelo del vehículo</div>
                         </div>
                     </div>
                     <!-- Modal footer -->

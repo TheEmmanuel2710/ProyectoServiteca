@@ -12,32 +12,37 @@
 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
     <form action="/ActualizarUsuAs/" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
+        <p class="text-center fw-bold" style="color: black;">
+            Campo Obligatorio: (*)
+            <br>
+            Campo Opcional: ( )
+        </p>
         <div class="form-group row">
             <div class="mb-3 col-lg-4">
-                <label for="txtNombres" class="fw-bold" style="color: black;">Nombres</label>
+                <label for="txtNombres" class="fw-bold" style="color: black;">Nombres: (*)</label>
                 <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,150}" name="txtNombres" class="form-control"
                     id="txtNombres" placeholder="Nombre" value="{{ user.first_name }}" required>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos</label>
+                <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos: (*)</label>
                 <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,150}" name="txtApellidos" class="form-control"
                     id="txtApellidos" placeholder="Apellidos" value="{{ user.last_name }}" required>
             </div>
             <div class="mb-3 col-lg-4">
-                <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico</label>
+                <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico: (*)</label>
                 <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
-                    placeholder="correo Electrónico" value="{{ user.email }}" required>
+                    placeholder="Correo electrónico" value="{{ user.email }}" required>
             </div>
         </div>
         <div class="form-group row">
             <div class="mb-3 col-lg-6">
-                <label for="cbTipo" class="fw-bold" style="color: black;">Tipo Usuario</label>
+                <label for="cbTipo" class="fw-bold" style="color: black;">Tipo Usuario: (*)</label>
                 <select name="cbTipo" id="cbTipo" class="form-select" disabled>
                     <option value="" selected>{{ user.userTipo }}</option>
                 </select>
             </div>
             <div class="mb-3 col-lg-6">
-                <label for="cbRol" class="fw-bold" style="color: black;">Rol en el Sistema</label>
+                <label for="cbRol" class="fw-bold" style="color: black;">Rol en el Sistema: (*)</label>
                 <select name="cbRol" id="cbRol" class="form-select" disabled>
                     <option value="Asistente" selected>Asistente</option>
                 </select>
@@ -45,7 +50,7 @@
         </div>
         <div class="form-group row">
             <div class="mb-3 col-lg-12">
-                <label for="fileFoto" class="fw-bold" style="color: black;">Foto de la Persona</label>
+                <label for="fileFoto" class="fw-bold" style="color: black;">Foto de la Persona: ( )</label>
                 <input type="file" name="fileFoto" class="form-control" id="fileFoto" placeholder="Foto">
             </div>
         </div>

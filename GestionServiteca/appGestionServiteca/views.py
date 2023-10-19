@@ -2081,6 +2081,9 @@ def mostrarGrafica1(request):
         detalleservicioprestado__isnull=False
     )
 
+    nombres_servicios = []  # Definir las variables fuera de las condiciones
+    valores = []
+
     if filtro_tiempo == 'Hoy':
         hoy = datetime.now().date()
         detalles_servicios = DetalleServicioPrestado.objects.filter(
@@ -2133,35 +2136,37 @@ def mostrarGrafica1(request):
     elif filtro_tiempo == 'Historico':
         servicios_con_registros = Servicio.objects.annotate(
             cantidad_solicitudes=Count('detalleservicioprestado'))
+        nombres_servicios = [
+            servicio.serNombre for servicio in servicios_con_registros]
+        valores = [
+            servicio.cantidad_solicitudes for servicio in servicios_con_registros]
 
-    servicios_con_cantidad = servicios_con_registros.annotate(
-        cantidad_solicitudes=Count('detalleservicioprestado'))
-    nombres_servicios = [
-        servicio.serNombre for servicio in servicios_con_registros]
-    valores = [
-        servicio.cantidad_solicitudes for servicio in servicios_con_cantidad]
+    # Comprobar si hay datos disponibles para el filtro seleccionado
+    if not nombres_servicios:
+        mensaje = "No hay datos disponibles para el filtro seleccionado."
+        retorno = {
+            "mensaje": mensaje
+        }
+    else:
+        # Generar la gráfica solo si hay datos
+        plt.figure(figsize=(10, 6))
+        plt.bar(nombres_servicios, valores)
+        plt.xlabel('Servicios')
+        plt.ylabel('Cantidad de Solicitudes')
+        plt.title('Cantidad de Solicitudes por Servicio')
 
-    plt.figure(figsize=(10, 6))
-    plt.bar(nombres_servicios, valores)
-    plt.xlabel('Servicios')
-    plt.ylabel('Cantidad de Solicitudes')
-    plt.title('Cantidad de Solicitudes por Servicio')
+        ruta_grafica = os.path.join(
+            settings.MEDIA_ROOT, 'graficas', 'grafica_de_servicios.png')
 
-    ruta_grafica = os.path.join(
-        settings.MEDIA_ROOT, 'graficas', 'grafica_de_servicios.png')
-
-    plt.xticks(rotation=45)
-
-    if valores:
+        plt.xticks(rotation=45)
         plt.yticks(range(min(valores), max(valores) + 1))
+        plt.tight_layout()
+        plt.savefig(ruta_grafica)
 
-    plt.tight_layout()
+        retorno = {
+            "ruta_grafica": ruta_grafica
+        }
 
-    plt.savefig(ruta_grafica)
-
-    retorno = {
-        "ruta_grafica": ruta_grafica
-    }
     return render(request, "administrador/vistaGraficas.html", retorno)
 
 
@@ -2331,12 +2336,20 @@ def mostrarGrafica3(request):
         )
 
     elif filtro_tiempo == 'Historico':
-        for cliente in todos_clientes:
-            cantidad_servicios.append(cliente.servicioprestado_set.count())
-            nombres_clientes.append(cliente.cliPersona.perNombres)
+        clientes_con_servicios = todos_clientes.annotate(
+            cantidad_servicios=Count('servicioprestado'))
+
+        clientes_con_servicios_registrados = clientes_con_servicios.filter(
+            cantidad_servicios__gt=0)
+
+        nombres_clientes = [
+            cliente.cliPersona.perNombres for cliente in todos_clientes]
+        cantidad_servicios = [
+            cliente.cantidad_servicios if cliente in clientes_con_servicios_registrados else 0 for cliente in clientes_con_servicios]
 
     nombres_clientes_filtrados = []
     cantidad_servicios_filtrados = []
+
     for i in range(len(nombres_clientes)):
         if cantidad_servicios[i] > 0:
             nombres_clientes_filtrados.append(nombres_clientes[i])
@@ -2365,8 +2378,9 @@ def mostrarGrafica3(request):
             "ruta_grafica": ruta_grafica
         }
     else:
+        mensaje = "No hay datos disponibles para el filtro seleccionado."
         retorno = {
-            "ruta_grafica": None
+            "mensaje": mensaje,
         }
 
     return render(request, "administrador/vistaGraficas.html", retorno)
@@ -2459,7 +2473,7 @@ def mostrarGraficas(request):
         mostrarGrafica3(request)
         mostrarGrafica4(request)
         return render(request, "administrador/vistaGraficas.html")
-    
+
     mensaje = "Nuestro sistema detecta que su rol no cuenta con los permisos necesarios para acceder a esta url."
 
     if user.groups.filter(name='Tecnico').exists():
@@ -2585,6 +2599,9 @@ def registrarPeticionForgot(request):
         correo = request.POST.get('txtCorreo')
         try:
             usuario = User.objects.get(email=correo)
+            # Antes de registrar una nueva solicitud, verifica y elimina la solicitud anterior si existe
+            PeticionForgot.objects.filter(id_user=usuario).delete()
+
             with transaction.atomic():
                 peticion = PeticionForgot(id_user=usuario)
                 peticion.save()
@@ -2602,7 +2619,7 @@ def registrarPeticionForgot(request):
                     [usuario.email],
                     fail_silently=False,
                 )
-                mensaje = "Correo enviado exitosamente,por favor verifique su bandeja de entrada."
+                mensaje = "Correo enviado exitosamente, por favor verifique su bandeja de entrada."
                 estado = True
         except User.DoesNotExist:
             mensaje = "El correo electrónico no está registrado en ningun usuario."
@@ -2656,6 +2673,7 @@ def cambiarContraseña(request, uidb64, token):
 
             PeticionForgot.objects.filter(
                 id_user=user).update(estado='Inactiva')
+            PeticionForgot.objects.filter(id_user=user).delete()
             return redirect('/mostrarMensaje/')
 
         peticiones = PeticionForgot.objects.filter(id_user=user)
@@ -2663,9 +2681,9 @@ def cambiarContraseña(request, uidb64, token):
             peticion = peticiones.first()
             tiempoAc = timezone.now()
             tiempoDif = tiempoAc - peticion.fechaHoraCreacion
-        # Validacion para expirar el enlace de recuperacion de contraseña segun un tiempo pre-establecido
-            if tiempoDif.total_seconds() > 3600:  # 1 hora en segundos
+            if tiempoDif.total_seconds() > 3600:
                 peticiones.update(estado='Inactiva')
+                peticiones.delete()
                 return render(request, 'cambiarContrasena.html', {'validlink': False})
 
         return render(request, 'cambiarContrasena.html', {'validlink': True})

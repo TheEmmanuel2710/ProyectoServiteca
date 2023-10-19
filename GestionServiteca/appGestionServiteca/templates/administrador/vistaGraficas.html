@@ -97,6 +97,21 @@
         }
     }
 </style>
+{% if mensaje %}
+<script>
+    Swal.fire({
+        title: 'Información Grafica',
+        text: '{{mensaje}}',
+        icon: 'info',
+        confirmButtonColor: 'black',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaGraficas/"
+        }
+    });
+</script>
+{% endif %}
 
 
 {%endblock %}

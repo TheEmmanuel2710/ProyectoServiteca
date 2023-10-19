@@ -21,7 +21,7 @@
             <tr class="text-center bg-dark text-white">
                 <th style="background-color: black;">Identificación</th>
                 <th style="background-color: black;">Nombre Completo</th>
-                <th style="background-color: black;">Correo</th>
+                <th style="background-color: black;">Correo Electrónico</th>
                 <th style="background-color: black;">Tipo</th>
                 <th style="background-color: black;">Número Celular</th>
                 <th style="background-color: black;">Cargo</th>
@@ -66,15 +66,19 @@
                     novalidate>
                     {% csrf_token %}
                     <input type="hidden" name="idUsuario" id="idUsuario" value="">
+                    <p class="text-center fw-bold" style="color: black;">Campo Obligatorio: (*)
+                        <br>
+                        Campo Opcional: ( )
+                    </p>
                     <div class="form-group row">
                         <div class="mb-3 col-lg-6">
-                            <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación:</label>
+                            <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación:(*) </label>
                             <input type="number" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
                                 placeholder="Identificación del empleado" required>
                             <div class="invalid-feedback">Por favor ingrese la identificación del empleado</div>
                         </div>
                         <div class="mb-3 col-lg-6">
-                            <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
+                            <label for="txtNombres" class="fw-bold" style="color: black;">Nombres: (*)</label>
                             <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,70}" name="txtNombres"
                                 class="form-control" id="txtNombres" placeholder="Nombres del empleado" required>
                             <div class="invalid-feedback">Por favor ingrese los nombres del empleado</div>
@@ -82,28 +86,28 @@
                     </div>
                     <div class="form-group row">
                         <div class="mb-3 col-lg-6">
-                            <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos:</label>
+                            <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos: (*)</label>
                             <input type="text" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,70}" name="txtApellidos"
                                 class="form-control" id="txtApellidos" placeholder="Nombre del empleado" required>
                             <div class="invalid-feedback">Por favor ingrese los apellidos del empleado</div>
                         </div>
                         <div class="mb-3 col-lg-6">
-                            <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
+                            <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico: (*)</label>
                             <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
-                                placeholder="Correo del empleado" required>
+                                placeholder="Correo electrónico del empleado" required>
                             <div class="invalid-feedback">Por favor ingrese el correo electrónico del empleado</div>
                         </div>
                     </div>
                     <div class="form-group row">
 
                         <div class="mb-3 col-lg-6">
-                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Número telefónico:</label>
+                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Número de Celular: (*)</label>
                             <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                                placeholder="# telefónico del empleado" required>
-                            <div class="invalid-feedback">Por favor ingrese el número telefónico del empleado</div>
+                                placeholder="Número de celular del empleado" required>
+                            <div class="invalid-feedback">Por favor ingrese el número de celular del empleado</div>
                         </div>
                         <div class="mb-3 col-lg-6">
-                            <label for="txtCargo" class="fw-bold" style="color: black;">Cargo:</label>
+                            <label for="txtCargo" class="fw-bold" style="color: black;">Cargo: (*)</label>
                             <input type="text" name="txtCargo" class="form-control" id="txtCargo"
                                 placeholder="Cargo del empleado" required>
                             <div class="invalid-feedback">Por favor ingrese el cargo del empleado</div>
@@ -111,13 +115,13 @@
                     </div>
                     <div class="form-group row">
                         <div class="mb-3 col-lg-6">
-                            <label for="txtSueldo" class="fw-bold" style="color: black;">Sueldo:</label>
+                            <label for="txtSueldo" class="fw-bold" style="color: black;">Sueldo: (*)</label>
                             <input type="number" class="form-control" id="txtSueldo" name="txtSueldo"
                                 placeholder="Sueldo del empleado" required>
                             <div class="invalid-feedback">Por favor ingrese el sueldo del empleado</div>
                         </div>
                         <div class="mb-3 col-lg-6">
-                            <label for="cbEstado" class="fw-bold" style="color: black;">Estado del Empleado:</label>
+                            <label for="cbEstado" class="fw-bold" style="color: black;">Estado del Empleado: (*)</label>
                             <select name="cbEstado" id="cbEstado" class="form-select" required>
                                 <option value="">Seleccione</option>
                                 {% for estado in estadoEmpl %}

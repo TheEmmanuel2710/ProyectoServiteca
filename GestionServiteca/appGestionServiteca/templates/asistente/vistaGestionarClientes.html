@@ -17,11 +17,11 @@
     <table id="tblClientes" class="table table-bordered table-hover">
         <thead>
             <tr class="text-center text-white">
-                <th style="background-color:black ;">Identificacion</th>
+                <th style="background-color:black ;">Identificación</th>
                 <th style="background-color:black ;">Nombre Completo</th>
-                <th style="background-color:black ;">Correo</th>
-                <th style="background-color:black ;">Numero de celular</th>
-                <th style="background-color:black ;">Direccion</th>
+                <th style="background-color:black ;">Correo Electrónico</th>
+                <th style="background-color:black ;">Número de celular</th>
+                <th style="background-color:black ;">Dirección</th>
                 <th style="background-color:black ;">Acción</th>
             </tr>
         </thead>
@@ -57,43 +57,48 @@
                 <form action="/ActualizarC/" method="post" enctype="multipart/form-data" class="needs-validation"
                     novalidate>
                     {% csrf_token %}
+                    <p class="text-center fw-bold" style="color: black;">Campo Obligatorio: (*)
+                        <br>
+                        Campo Opcional: ( )
+                    </p>
                     <input type="hidden" name="idCliente" id="idCliente" value="">
                     <div class="form-group row">
                         <div class="mb-3 col-lg-4">
-                            <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificacion:</label>
+                            <label for="txtIdentificacion" class="fw-bold" style="color: black;">Identificación:
+                                (*)</label>
                             <input type="text" name="txtIdentificacion" class="form-control" id="txtIdentificacion"
-                                placeholder="Identificacion del cliente" required>
-                            <div class="invalid-feedback">Por favor ingrese la identificacion del cliente</div>
+                                placeholder="Identificación del cliente" required>
+                            <div class="invalid-feedback">Por favor ingrese la identificación del cliente</div>
                         </div>
                         <div class="mb-3 col-lg-4">
-                            <label for="txtNombres" class="fw-bold" style="color: black;">Nombres:</label>
+                            <label for="txtNombres" class="fw-bold" style="color: black;">Nombres: (*)</label>
                             <input type="text" name="txtNombres" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,70}"
                                 class="form-control" id="txtNombres" placeholder="Nombres del empleado" required>
                             <div class="invalid-feedback">Por favor ingrese el nombre del cliente</div>
                         </div>
                         <div class="mb-3 col-lg-4">
-                            <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos</label>
+                            <label for="txtApellidos" class="fw-bold" style="color: black;">Apellidos: (*)</label>
                             <input type="text" name="txtApellidos" pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ ]{1,70}"
                                 class="form-control" id="txtApellidos" placeholder="Apellidos del cliente" required>
                             <div class="invalid-feedback">Por favor ingrese el apellido del cliente</div>
                         </div>
                         <div class="mb-3 col-lg-4">
-                            <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico:</label>
+                            <label for="txtCorreo" class="fw-bold" style="color: black;">Correo Electrónico: (*)</label>
                             <input type="email" name="txtCorreo" class="form-control" id="txtCorreo"
-                                placeholder="Correo del cliente" required>
-                            <div class="invalid-feedback">Por favor ingrese el correo electronico del cliente</div>
+                                placeholder="Correo electrónico del cliente" required>
+                            <div class="invalid-feedback">Por favor ingrese el correo electrónico del cliente</div>
                         </div>
                         <div class="mb-3 col-lg-4">
-                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Numero de celular:</label>
+                            <label for="txtNumeroC" class="fw-bold" style="color: black;">Número de celular: (*)</label>
                             <input type="number" class="form-control" id="txtNumeroC" name="txtNumeroC"
-                                placeholder="Numero telefonico del cliente" required />
-                            <div class="invalid-feedback">Por favor ingrese el numero telefonico del cliente</div>
+                                placeholder="Número de celular del cliente" required />
+                            <div class="invalid-feedback">Por favor ingrese el numero de celular del cliente</div>
                         </div>
                         <div class="mb-3 col-lg-4">
-                            <label for="txtDirreccion" class="fw-bold" style="color: black;">Direccion:</label>
+                            <label for="txtDirreccion" class="fw-bold" style="color: black;">Dirección: (*)</label>
                             <input type="text" name="txtDireccion" class="form-control" id="txtDireccion"
-                                placeholder="Direccion del cliente" required>
-                            <div class="invalid-feedback">Por favor ingrese la direccion del cliente</div>
+                                placeholder="Dirección del cliente" required>
+                            <div class="invalid-feedback">Por favor ingrese la dirección del cliente</div>
                         </div>
                     </div>
                     <!-- Modal footer -->

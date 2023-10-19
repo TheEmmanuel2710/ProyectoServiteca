@@ -28,13 +28,18 @@
 </script>
 {% endfor%}
 <h3 class="text-center fw-bold">REGISTRAR SERVICIO SOLICITADO</h3>
+<p class="text-center fw-bold" style="color: black;">
+    Campo Obligatorio: (*)
+    <br>
+    Campo Opcional: ( )
+</p>
 <div class="principal">
     <div id="datosGenerales" class="d-flex justify-content-center align-items-center"
         style="margin-bottom: 7rem; width: 100%;">
         <form action="" id="frmDatosGenerales" enctype="multipart/form-data" class="needs-validation w-75" novalidate>
             <div class="form-group row">
                 <div class="col-lg-6 mb-3">
-                    <label for="cbCliente" class="fw-bold" style="color: black;">Cliente:</label>
+                    <label for="cbCliente" class="fw-bold" style="color: black;">Cliente: (*)</label>
                     <select name="cbCliente" id="cbCliente" class="form-select" required>
                         <option value="">Seleccione</option>
                         {% for cliente in clientes %}
@@ -46,19 +51,19 @@
                     <div class="invalid-feedback">Por favor seleccione el cliente</div>
                 </div>
                 <div class="col-lg-6 mb-3">
-                    <label for="cbVehiculo" class="fw-bold" style="color: black;">Vehiculo:</label>
+                    <label for="cbVehiculo" class="fw-bold" style="color: black;">Vehículo: (*)</label>
                     <select name="cbVehiculo" id="cbVehiculo" class="form-select" required>
                         <option value="">Seleccione</option>
                         {% for vehiculo in vehiculos %}
                         <option value="{{vehiculo.id}}">{{vehiculo.vehPlaca}}</option>
                         {% endfor %}
                     </select>
-                    <div class="invalid-feedback">Por favor seleccione el vehiculo</div>
+                    <div class="invalid-feedback">Por favor seleccione el vehículo</div>
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <div class="col-lg-12 mb-3">
-                    <label for="txtObservaciones" class="fw-bold" style="color: black;">Observaciones:</label>
+                    <label for="txtObservaciones" class="fw-bold" style="color: black;">Observaciones: ( )</label>
                     <textarea name="txtObservaciones" id="txtObservaciones" class="form-control" cols="30"
                         rows="5"></textarea>
                 </div>
@@ -77,7 +82,7 @@
             <thead>
                 <tr class="bg-secondary text-white text-center">
                     <th style="background-color: black;">Cliente</th>
-                    <th style="background-color: black;">Vehiculo</th>
+                    <th style="background-color: black;">Vehículo</th>
                     <th style="background-color: black;">Empleado</th>
                     <th style="background-color: black;">Servicio</th>
                     <th style="background-color: black;">Costo</th>
@@ -112,7 +117,7 @@
                         <div class="form-group row">
                             <div class="col-lg-6 mb-3">
                                 <label for="cbServicio" class="fw-bold" style="color: black;">Servicio
-                                    Solicitado:</label>
+                                    Solicitado: (*)</label>
                                 <select name="cbServicio" id="cbServicio" class="form-select" required>
                                     <option value="">Seleccione</option>
                                     {% for servicio in servicios %}
@@ -123,7 +128,7 @@
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="txtCosto" class="fw-bold" style="color: black;">Costo del servicio
-                                    solicitado:</label>
+                                    solicitado: (*)</label>
                                 <input type="text" name="txtCosto" id="txtCosto" style="height: 35px; width: 100%;"
                                     readonly>
                                 <div class="invalid-feedback">Por favor seleccione el costo del servicio que solicitan
@@ -132,7 +137,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-12 mb-3">
-                                <label for="cbEmpleado" class="fw-bold" style="color: black;">Empleado:</label>
+                                <label for="cbEmpleado" class="fw-bold" style="color: black;">Empleado: (*)</label>
                                 <select name="cbEmpleado" id="cbEmpleado" class="form-select" required>
                                     <option value="">Seleccione</option>
                                     {% for empleado in empleados %}
